@@ -1,7 +1,7 @@
 # [FAPRI-MU - Food and Agriculture Policy Research Insitute](https://www.fapri.missouri.edu)
 ## Using FAPRI Baselines for Producer Pricing
 
-### Data
+### Data and Calculations
 Blah
 ### Strategies
 Blah
