@@ -3,6 +3,12 @@
 
 ### Data and Calculations
 Blah
+#### Futures Market
+Blah
+#### Baseline
+Blah
+#### Basis
+Blah
 ### Strategies
 There are three basic strategies:
 * Seasonal Sales
