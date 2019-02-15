@@ -4,7 +4,10 @@
 ### Data and Calculations
 Blah
 ### Strategies
-Blah
+There are three basic strategies:
+* Seasonal Sales
+* Price Objective
+* Trailing Stop
 #### Seasonal Sales
 Blah
 #### Price Objective
