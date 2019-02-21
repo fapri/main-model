@@ -1,13 +1,13 @@
 # Corn
 
 library(readxl)
+library(lubridate)
 
-Corn_CropYears <- read_excel("Data/Corn_CropYears.xlsx", sheet = "Sheet1", col_types = c("text", "date", "date"))
-Corn_FuturesMarket <- read_excel("Data/Corn_FuturesMarket.xlsx", sheet = "Sheet1", col_types = c("date", "numeric", "numeric"))
-Corn_Basis <- read_excel("Data/Corn_Basis.xlsx", sheet = "Sheet1")
-Corn_Baseline <- read_excel("Data/Corn_Baseline.xlsx", sheet = "Sheet1", col_types = c("date", 
-                                                            "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", 
-                                                            "numeric", "numeric", "numeric", "numeric", "numeric", "numeric"))
+Corn_CropYears <- read.csv("Data/Corn_CropYears.csv", stringsAsFactors = FALSE)
+Corn_FuturesMarket <- read.csv("Data/Corn_FuturesMarket.csv", stringsAsFactors = FALSE)
+Corn_Basis <- read.csv("Data/Corn_Basis.csv", stringsAsFactors = FALSE)
+Corn_Baseline <- read.csv("Data/Corn_Baseline.csv", stringsAsFactors = FALSE)
+
 lockBinding("Corn_CropYears", globalenv())
 lockBinding("Corn_FuturesMarket", globalenv())
 lockBinding("Corn_Basis", globalenv())
@@ -17,16 +17,13 @@ lockBinding("Corn_Baseline", globalenv())
 createCropYear <- function(cropYear, startDate, stopDate) {
   # TODO Match the baseline, basis, and historical futures market prices which lie between startDate and stopDate
   # TODO set any other constant variables such as number of sales, percentage sold, etc
+
+  interval = interval(mdy(startDate), mdy(stopDate))
   
-  model <- data.frame(
-    emp_id = c (1:5), 
-    emp_name = c("Rick","Dan","Michelle","Ryan","Gary"),
-    salary = c(623.3,515.2,611.0,729.0,843.25), 
-    start_date = as.Date(c("2012-01-01", "2013-09-23", "2014-11-15", "2014-05-11", "2015-03-27")),
-    stringsAsFactors = FALSE
-  )
+  marketingYear <- Corn_FuturesMarket[which(mdy(Corn_FuturesMarket$Date) %within% interval), 1:3]
   
-  cropYearObj = list("Crop Year" = cropYear, "Model" = model)
+  cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, 
+                     "Interval" = interval, "Marketing Year" = marketingYear)
   
   return(cropYearObj)
 }
