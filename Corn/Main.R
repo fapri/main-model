@@ -20,11 +20,17 @@ createCropYear <- function(cropYear, startDate, stopDate) {
   intervalPre = interval(mdy(startDate), mdy(harvest) - days(1))
   intervalPost = interval(mdy(harvest), mdy(stopDate))
   
-  marketingYearPre <- Corn_FuturesMarket[which(mdy(Corn_FuturesMarket$Date) %within% intervalPre), 1:2]
+  marketingYearPre <- Corn_FuturesMarket[which(mdy(Corn_FuturesMarket$Date) %within% intervalPre), c(1, 2)]
   marketingYearPre <- setNames(marketingYearPre, c("Date","Price"))
   marketingYearPost <- Corn_FuturesMarket[which(mdy(Corn_FuturesMarket$Date) %within% intervalPost), c(1, 3)]
   marketingYearPost <- setNames(marketingYearPost, c("Date","Price"))
-  marketingYear = rbind(marketingYearPre, marketingYearPost)
+  marketingYear <- rbind(marketingYearPre, marketingYearPost)
+  
+  marketingYear[,c("Baseline", "60th", "70th", "80th", "90th", "95th")] <- NA
+  for(row in 1:nrow(marketingYear)) {
+    #if in inverval do these coulmns and subtract this basis??
+    #else do these other columns and basis??
+  }
   
   #TODO Start the baseline and basis matching
   
