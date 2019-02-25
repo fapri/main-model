@@ -32,8 +32,6 @@ createCropYear <- function(cropYear, startDate, stopDate) {
     #else do these other columns and basis??
   }
   
-  #TODO Start the baseline and basis matching
-  
   cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, 
                      "Interval" = interval, "Marketing Year" = marketingYear)
   
