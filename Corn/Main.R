@@ -26,6 +26,7 @@ createCropYear <- function(cropYear, startDate, stopDate) {
   marketingYearPost <- setNames(marketingYearPost, c("Date","Price"))
   marketingYear = rbind(marketingYearPre, marketingYearPost)
   
+  #TODO Start the baseline and basis matching
   
   cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, 
                      "Interval" = interval, "Marketing Year" = marketingYear)
