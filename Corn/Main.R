@@ -15,12 +15,18 @@ lockBinding("Corn_Baseline", globalenv())
 
 # Creates a crop year based on the input parameters
 createCropYear <- function(cropYear, startDate, stopDate) {
-  # TODO Match the baseline, basis, and historical futures market prices which lie between startDate and stopDate
-  # TODO set any other constant variables such as number of sales, percentage sold, etc
-
-  interval = interval(mdy(startDate), mdy(stopDate))
+  harvest = paste("09-01", toString(year(mdy(startDate))), sep="-")
   
-  marketingYear <- Corn_FuturesMarket[which(mdy(Corn_FuturesMarket$Date) %within% interval), 1:3]
+  intervalPre = interval(mdy(startDate), mdy(harvest) - days(1))
+  intervalPost = interval(mdy(harvest), mdy(stopDate))
+  
+  marketingYearPre <- Corn_FuturesMarket[which(mdy(Corn_FuturesMarket$Date) %within% intervalPre), 1:2]
+  marketingYearPre <- setNames(marketingYearPre, c("Date","Price"))
+  (marketingYearPre)
+  marketingYearPost <- Corn_FuturesMarket[which(mdy(Corn_FuturesMarket$Date) %within% intervalPost), c(1, 3)]
+  marketingYearPost <- setNames(marketingYearPost, c("Date","Price"))
+  marketingYear = rbind(marketingYearPre, marketingYearPost)
+  
   
   cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, 
                      "Interval" = interval, "Marketing Year" = marketingYear)
