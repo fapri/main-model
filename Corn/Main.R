@@ -42,3 +42,14 @@ Corn_CropYearObjects = list()
 for(i in 1:nrow(Corn_CropYears)) {
   Corn_CropYearObjects[[i]] = createCropYear(Corn_CropYears[i,1], Corn_CropYears[i,2], Corn_CropYears[i,3])
 }
+
+
+#Maybe use this df (tempBaselineDates) of dates to replicate dates in for the baseline. Then merge the result with marketingYear
+tempBaselineDates = data.frame(Date = seq(Corn_CropYearObjects[[1]]$`Marketing Year`$Date %>% mdy %>% head(1), Corn_CropYearObjects[[1]]$`Marketing Year`$Date %>% mdy %>% tail(1), by=1))
+
+#Start of loop to determine which basline should be copied in. This issues but looks like a good start.
+
+marchTemp1 =  tempBaselineDates[which(month(tempBaselineDates$Date) == 3),]
+aprilTemp1 =  tempBaselineDates[which(month(tempBaselineDates$Date) == 4),]
+
+baselineSegments1 = c(marchTemp1, aprilTemp1)
