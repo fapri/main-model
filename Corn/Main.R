@@ -31,7 +31,7 @@ createCropYear <- function(cropYear, startDate, stopDate) {
   
   marketingYear[,c("Baseline", "60th", "70th", "80th", "90th", "95th")] <- NA
   
-  interval1 = interval(mdy(startDate), mdy(marchUpdate1) - days(1))
+  interval1 = interval(mdy(startDate) - months(6), mdy(marchUpdate1) - days(1))
   interval2 = interval(mdy(marchUpdate1), mdy(harvest) - days(1))
   interval3 = interval(mdy(harvest), mdy(marchUpdate2) - days(1))
   interval4 = interval(mdy(marchUpdate2), mdy(stopDate))
