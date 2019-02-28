@@ -1,6 +1,5 @@
 # Corn
 
-library(readxl)
 library(lubridate)
 library(dplyr)
 
@@ -31,7 +30,7 @@ createCropYear <- function(cropYear, startDate, stopDate) {
   
   marketingYear[,c("Baseline", "60th", "70th", "80th", "90th", "95th")] <- NA
   
-  interval1 = interval(mdy(startDate) - months(6), mdy(marchUpdate1) - days(1))
+  interval1 = interval(mdy(startDate) - months(5), mdy(marchUpdate1) - days(1))
   interval2 = interval(mdy(marchUpdate1), mdy(harvest) - days(1))
   interval3 = interval(mdy(harvest), mdy(marchUpdate2) - days(1))
   interval4 = interval(mdy(marchUpdate2), mdy(stopDate))
@@ -46,7 +45,7 @@ createCropYear <- function(cropYear, startDate, stopDate) {
       marketingYear[row, "90th"] = Corn_Baseline[which(mdy(Corn_Baseline$Date) %within% interval1), 12]
       marketingYear[row, "95th"] = Corn_Baseline[which(mdy(Corn_Baseline$Date) %within% interval1), 13]
       
-      marketingYear[row, "Basis"] = Corn_Basis[which((Corn_Basis$CropYear) %within% intervalBasis), 2]
+      # marketingYear[row, "Basis"] = Corn_Basis[which((Corn_Basis$CropYear) %within% intervalBasis), 2]
     }
     else if(mdy(marketingYear$Date[row]) %within% interval2) {
       marketingYear[row, "Baseline"] = Corn_Baseline[which(mdy(Corn_Baseline$Date) %within% interval2), 8]
@@ -74,21 +73,19 @@ createCropYear <- function(cropYear, startDate, stopDate) {
     }
   }
   
+  # marketingYear[,c("Basis")] <- NA
+  # 
+  # intervalBasis = interval(mdy(startDate) - months(4), mdy(harvest) - days(1))
+  # 
+  # for(row in 1:nrow(marketingYear)) {
+  #   if(mdy(marketingYear$Date[row]) %within% interval1) {
+  #     marketingYear[row, "Basis"] = Corn_Basis[which((Corn_Basis$CropYearStart) == year(intervalBasis$start)), 3]
+  #   }
+  #   else if(mdy(marketingYear$Date[row]) %within% interval2) {
+  #     marketingYear[row, "Basis"] = Corn_Basis[which((Corn_Basis$CropYearEnd) == year(intervalBasis$start) + 1), 3]
+  #   }
+  # }
   
-  marketingYear[,c("Basis")] <- NA
-  
-  intervalBasis = interval(mdy(startDate) - months(4), mdy(harvest) - days(1))
-  
-  for(row in 1:nrow(marketingYear)) {
-    if(mdy(marketingYear$Date[row]) %within% interval1) {
-      marketingYear[row, "Basis"] = Corn_Basis[which((Corn_Basis$CropYearStart) == year(intervalBasis$start)), 3]
-    }
-    else if(mdy(marketingYear$Date[row]) %within% interval2) {
-      marketingYear[row, "Basis"] = Corn_Basis[which((Corn_Basis$CropYearEnd) == year(intervalBasis$start) + 1), 3]
-  }
-  
-  
-
   cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, 
                      "Interval" = interval, "Marketing Year" = marketingYear)
   
@@ -99,25 +96,3 @@ Corn_CropYearObjects = list()
 for(i in 1:nrow(Corn_CropYears)) {
   Corn_CropYearObjects[[i]] = createCropYear(Corn_CropYears[i,1], Corn_CropYears[i,2], Corn_CropYears[i,3])
 }
-
-
-#2007-2008 basis good from sep 1 2007 - aug 31 2008
-
-
-# cropYear = Corn_CropYears[1,1]
-# startDate = Corn_CropYears[1,2]
-# stopDate = Corn_CropYears[1,3]
-
-
-
-
-
-#Maybe use this df (tempBaselineDates) of dates to replicate dates in for the baseline. Then merge the result with marketingYear
-tempBaselineDates = data.frame(Date = seq(Corn_CropYearObjects[[1]]$`Marketing Year`$Date %>% mdy %>% head(1), Corn_CropYearObjects[[1]]$`Marketing Year`$Date %>% mdy %>% tail(1), by=1))
-
-#Start of loop to determine which basline should be copied in. This issues but looks like a good start.
-
-marchTemp1 =  tempBaselineDates[which(month(tempBaselineDates$Date) == 3),]
-aprilTemp1 =  tempBaselineDates[which(month(tempBaselineDates$Date) == 4),]
-
-baselineSegments1 = c(marchTemp1, aprilTemp1)
