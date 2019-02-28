@@ -81,9 +81,10 @@ createCropYear <- function(cropYear, startDate, stopDate) {
   
   for(row in 1:nrow(marketingYear)) {
     if(mdy(marketingYear$Date[row]) %within% interval1) {
-      marketingYear[row, "Basis"] = Corn_Basis[which((Corn_Basis$CropYear) == year(intervalBasis$start)), 2]
+      marketingYear[row, "Basis"] = Corn_Basis[which((Corn_Basis$CropYearStart) == year(intervalBasis$start)), 3]
     }
     else if(mdy(marketingYear$Date[row]) %within% interval2) {
+      marketingYear[row, "Basis"] = Corn_Basis[which((Corn_Basis$CropYearEnd) == year(intervalBasis$start) + 1), 3]
   }
   
   
@@ -100,7 +101,7 @@ for(i in 1:nrow(Corn_CropYears)) {
 }
 
 
-#2007-2007 basis good from sep 1 2007 - aug 31 2008
+#2007-2008 basis good from sep 1 2007 - aug 31 2008
 
 
 # cropYear = Corn_CropYears[1,1]
