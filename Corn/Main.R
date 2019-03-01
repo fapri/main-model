@@ -2,6 +2,7 @@
 
 library(lubridate)
 library(dplyr)
+library(ggplot2)
 
 Corn_CropYears <- read.csv("Data/Corn_CropYears.csv", stringsAsFactors = FALSE)
 Corn_FuturesMarket <- read.csv("Data/Corn_FuturesMarket.csv", stringsAsFactors = FALSE)
@@ -73,10 +74,7 @@ createCropYear <- function(cropYear, startDate, stopDate) {
       marketingYear[row, "95th"] = Corn_Baseline[which(mdy(Corn_Baseline$Date) %within% interval4), 7] - basis
     }
   }
-  
-  # marketingYear[15:20,]
-  
-  
+
   for(row in 1:nrow(marketingYear)) {
     if (marketingYear$Price[row] > marketingYear$`95th`[row])
       marketingYear[row, "Percentile"] = 95
@@ -94,9 +92,12 @@ createCropYear <- function(cropYear, startDate, stopDate) {
       marketingYear[row, "Percentile"] = 0
   }
   
-
+  
+  #This kind of works
+  Plot = ggplot(marketingYear, aes(x = mdy(marketingYear$Date), y = Price, group = 1)) + geom_line() + xlab("Day") + ylab("Price")
+  
   cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, 
-                     "Interval" = interval, "Marketing Year" = marketingYear)
+                     "Interval" = interval, "Marketing Year" = marketingYear, "Plot" = Plot)
   
   return(cropYearObj)
 }
@@ -104,7 +105,9 @@ createCropYear <- function(cropYear, startDate, stopDate) {
 Corn_CropYearObjects = list()
 for(i in 1:nrow(Corn_CropYears)) {
   Corn_CropYearObjects[[i]] = createCropYear(Corn_CropYears[i,1], Corn_CropYears[i,2], Corn_CropYears[i,3])
+  plot(Corn_CropYearObjects[[i]]$Plot)
 }
+
 
 # marketingYear[11,]
 # marketingYear[138,]
