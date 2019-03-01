@@ -22,9 +22,9 @@ createCropYear <- function(cropYear, startDate, stopDate) {
   intervalPre = interval(mdy(startDate), mdy(harvest) - days(1))
   intervalPost = interval(mdy(harvest), mdy(stopDate))
   
-  marketingYearPre <- Corn_FuturesMarket[which(mdy(Corn_FuturesMarket$Date) %within% intervalPre), c(1, 2)]
+  marketingYearPre <- Corn_FuturesMarket[which(mdy(Corn_FuturesMarket$Date) %within% intervalPre), c(1, 3)]
   marketingYearPre <- setNames(marketingYearPre, c("Date","Price"))
-  marketingYearPost <- Corn_FuturesMarket[which(mdy(Corn_FuturesMarket$Date) %within% intervalPost), c(1, 3)]
+  marketingYearPost <- Corn_FuturesMarket[which(mdy(Corn_FuturesMarket$Date) %within% intervalPost), c(1, 2)]
   marketingYearPost <- setNames(marketingYearPost, c("Date","Price"))
   marketingYear <- rbind(marketingYearPre, marketingYearPost)
   
@@ -55,7 +55,7 @@ createCropYear <- function(cropYear, startDate, stopDate) {
       marketingYear[row, "95th"] = Corn_Baseline[which(mdy(Corn_Baseline$Date) %within% interval2), 13] - basis
     }
     else if(mdy(marketingYear$Date[row]) %within% interval3) {
-      marketingYear[row, "Basis"] = Corn_Basis[which(Corn_Basis$CropYearStart == year(interval3$start)), 3]
+      basis = marketingYear[row, "Basis"] = Corn_Basis[which(Corn_Basis$CropYearStart == year(interval3$start)), 3]
       marketingYear[row, "Baseline"] = Corn_Baseline[which(mdy(Corn_Baseline$Date) %within% interval3), 2] - basis
       marketingYear[row, "60th"] = Corn_Baseline[which(mdy(Corn_Baseline$Date) %within% interval3), 3] - basis
       marketingYear[row, "70th"] = Corn_Baseline[which(mdy(Corn_Baseline$Date) %within% interval3), 4] - basis
@@ -64,7 +64,7 @@ createCropYear <- function(cropYear, startDate, stopDate) {
       marketingYear[row, "95th"] = Corn_Baseline[which(mdy(Corn_Baseline$Date) %within% interval3), 7] - basis
     }
     else if(mdy(marketingYear$Date[row]) %within% interval4) {
-      marketingYear[row, "Basis"] = Corn_Basis[which(Corn_Basis$CropYearEnd == year(interval4$start)), 3]
+      basis = marketingYear[row, "Basis"] = Corn_Basis[which(Corn_Basis$CropYearEnd == year(interval4$start)), 3]
       marketingYear[row, "Baseline"] = Corn_Baseline[which(mdy(Corn_Baseline$Date) %within% interval4), 2] - basis
       marketingYear[row, "60th"] = Corn_Baseline[which(mdy(Corn_Baseline$Date) %within% interval4), 3] - basis
       marketingYear[row, "70th"] = Corn_Baseline[which(mdy(Corn_Baseline$Date) %within% interval4), 4] - basis
@@ -73,18 +73,28 @@ createCropYear <- function(cropYear, startDate, stopDate) {
       marketingYear[row, "95th"] = Corn_Baseline[which(mdy(Corn_Baseline$Date) %within% interval4), 7] - basis
     }
   }
-
-  # intervalBasis = interval(mdy(startDate) - months(4), mdy(harvest) - days(1))
-  # 
-  # for(row in 1:nrow(marketingYear)) {
-  #   if(mdy(marketingYear$Date[row]) %within% interval1) {
-  #     marketingYear[row, "Basis"] = Corn_Basis[which((Corn_Basis$CropYearStart) == year(intervalBasis$start)), 3]
-  #   }
-  #   else if(mdy(marketingYear$Date[row]) %within% interval2) {
-  #     marketingYear[row, "Basis"] = Corn_Basis[which((Corn_Basis$CropYearEnd) == year(intervalBasis$start) + 1), 3]
-  #   }
-  # }
   
+  # marketingYear[15:20,]
+  
+  
+  for(row in 1:nrow(marketingYear)) {
+    if (marketingYear$Price[row] > marketingYear$`95th`[row])
+      marketingYear[row, "Percentile"] = 95
+    else if(marketingYear$Price[row] > marketingYear$`90th`[row])
+      marketingYear[row, "Percentile"] = 90
+    else if(marketingYear$Price[row] > marketingYear$`80th`[row])
+      marketingYear[row, "Percentile"] = 80
+    else if(marketingYear$Price[row] > marketingYear$`70th`[row])
+      marketingYear[row, "Percentile"] = 70
+    else if(marketingYear$Price[row] > marketingYear$`60th`[row])
+      marketingYear[row, "Percentile"] = 60
+    else if(marketingYear$Price[row] > marketingYear$Baseline[row])
+      marketingYear[row, "Percentile"] = 50
+    else
+      marketingYear[row, "Percentile"] = 0
+  }
+  
+
   cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, 
                      "Interval" = interval, "Marketing Year" = marketingYear)
   
@@ -95,3 +105,15 @@ Corn_CropYearObjects = list()
 for(i in 1:nrow(Corn_CropYears)) {
   Corn_CropYearObjects[[i]] = createCropYear(Corn_CropYears[i,1], Corn_CropYears[i,2], Corn_CropYears[i,3])
 }
+
+# marketingYear[11,]
+# marketingYear[138,]
+# marketingYear[262,]
+
+
+
+# cropYear = Corn_CropYears[1,1]
+# startDate = Corn_CropYears[1,2]
+# stopDate = Corn_CropYears[1,3]
+
+
