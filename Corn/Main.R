@@ -9,52 +9,65 @@ Corn_FuturesMarket <- read.csv("Data/Corn_FuturesMarket.csv", stringsAsFactors =
 Corn_Basis <- read.csv("Data/Corn_Basis.csv", stringsAsFactors = FALSE)
 Corn_Baseline <- read.csv("Data/Corn_Baseline.csv", stringsAsFactors = FALSE)
 
-#LOCK BINDING FOR Corn_FuturesMarket HAS MOVED BELOW ALL TIME HIGH CALCULATIONS
 lockBinding("Corn_CropYears", globalenv())
+lockBinding("Corn_FuturesMarket", globalenv())
 lockBinding("Corn_Basis", globalenv())
 lockBinding("Corn_Baseline", globalenv())
 
 
-#Finds All Time High
-#Stores into Corn_FuturesMarket Data Frame
-Corn_FuturesMarket$ATH_OC[1] = Corn_FuturesMarket$NearbyOC[1]
-for (row in 2:nrow(Corn_FuturesMarket)) {
-  if (Corn_FuturesMarket$NearbyOC[row] > Corn_FuturesMarket$ATH_OC[row-1])
-    Corn_FuturesMarket$ATH_OC[row] = Corn_FuturesMarket$NearbyOC[row]
-  else 
-    Corn_FuturesMarket$ATH_OC[row] = Corn_FuturesMarket$ATH_OC[row-1]
-}
-Corn_FuturesMarket$ATH_NC[1] = Corn_FuturesMarket$DecNC[1]
-for (row in 2:nrow(Corn_FuturesMarket)) {
-  if (Corn_FuturesMarket$DecNC[row] > Corn_FuturesMarket$ATH_NC[row-1])
-    Corn_FuturesMarket$ATH_NC[row] = Corn_FuturesMarket$DecNC[row]
-  else 
-    Corn_FuturesMarket$ATH_NC[row] = Corn_FuturesMarket$ATH_NC[row-1]
+#HOLDS ALL TIME HIGH, 10 DAY HIGH, AND 95% OF TEN DAY HIGH FEATURES
+createFeatures = function(OC, NC, rowMax) {
+
+  #ALL TIME HIGH FEATURE
+  ATH_OC = NA
+  ATH_OC[1] = OC[1]
+  for (row in 2:rowMax) {
+    if (OC[row] > ATH_OC[row-1])
+      ATH_OC[row] = OC[row]
+    else 
+      ATH_OC[row] = ATH_OC[row-1]
+  }
+  ATH_NC = NA
+  ATH_NC[1] = OC[1]
+  for (row in 2:rowMax) {
+    if (NC[row] > ATH_NC[row-1])
+      ATH_NC[row] = NC[row]
+    else 
+      ATH_NC[row] = ATH_NC[row-1]
+  }
+  ATH = data.frame(ATH_OC, ATH_NC)
+  
+  #TEN DAY HIGH FEATURE
+  TDH_OC = NA
+  for (row in 1:(rowMax-10)) {
+    tempCount = row+9
+    TDH_OC[tempCount+1] = max(OC[row:tempCount])
+  }
+  TDH_NC = NA
+  for (row in 1:(rowMax-10)) {
+    tempCount = row+9
+    TDH_NC[tempCount+1] = max(NC[row:tempCount])
+  }
+  
+  TDH = data.frame(TDH_OC, TDH_NC)
+  
+  #95% OF TEN DAY HIGH FEATURE
+  TDH_OC_95 = NA
+  TDH_NC_95 = NA
+  for (row in 11:(rowMax)) {
+    TDH_OC_95[row] = TDH_OC[row] * 0.95
+    TDH_NC_95[row] = TDH_NC[row] * 0.95
+  }
+  
+  TDH_95 = data.frame(TDH_OC_95, TDH_NC_95)
+  
+  featuresObj = list("All Time High" = ATH, "Ten Day High" = TDH, "95% of Ten Day High" = TDH_95)
+  
+  return(featuresObj)
+  
 }
 
-
-#Finds 10 Day High
-Corn_FuturesMarket$TDH_OC = NA
-for (row in 1:(nrow(Corn_FuturesMarket)-10)) {
-  tempCount = row+9
-  Corn_FuturesMarket$TDH_OC[tempCount+1] = max(Corn_FuturesMarket$NearbyOC[row:tempCount])
-}
-Corn_FuturesMarket$TDH_NC = NA
-for (row in 1:(nrow(Corn_FuturesMarket)-10)) {
-  tempCount = row+9
-  Corn_FuturesMarket$TDH_NC[tempCount+1] = max(Corn_FuturesMarket$DecNC[row:tempCount])
-}
-
-#Finds 95% of the 10 Day High
-Corn_FuturesMarket$TDH_OC_95 = NA
-Corn_FuturesMarket$TDH_NC_95 = NA
-for (row in 11:(nrow(Corn_FuturesMarket))) {
-  Corn_FuturesMarket$TDH_OC_95[row] = Corn_FuturesMarket$TDH_OC[row] * 0.95
-  Corn_FuturesMarket$TDH_NC_95[row] = Corn_FuturesMarket$TDH_NC[row] * 0.95
-}
-
-lockBinding("Corn_FuturesMarket", globalenv())
-
+featuresObjects = createFeatures(Corn_FuturesMarket$NearbyOC, Corn_FuturesMarket$DecNC, nrow(Corn_FuturesMarket))
 
 
 # Creates a crop year based on the input parameters
@@ -154,13 +167,8 @@ createCropYear <- function(cropYear, startDate, stopDate) {
 Corn_CropYearObjects = list()
 for(i in 1:nrow(Corn_CropYears)) {
   Corn_CropYearObjects[[i]] = createCropYear(Corn_CropYears[i,1], Corn_CropYears[i,2], Corn_CropYears[i,3])
-  plot(Corn_CropYearObjects[[i]]$Plot)
+  #plot(Corn_CropYearObjects[[i]]$Plot)
 }
-
-
-
-
-
 
 
 
