@@ -9,10 +9,53 @@ Corn_FuturesMarket <- read.csv("Data/Corn_FuturesMarket.csv", stringsAsFactors =
 Corn_Basis <- read.csv("Data/Corn_Basis.csv", stringsAsFactors = FALSE)
 Corn_Baseline <- read.csv("Data/Corn_Baseline.csv", stringsAsFactors = FALSE)
 
+#LOCK BINDING FOR Corn_FuturesMarket HAS MOVED BELOW ALL TIME HIGH CALCULATIONS
 lockBinding("Corn_CropYears", globalenv())
-lockBinding("Corn_FuturesMarket", globalenv())
 lockBinding("Corn_Basis", globalenv())
 lockBinding("Corn_Baseline", globalenv())
+
+
+#Finds All Time High
+#Stores into Corn_FuturesMarket Data Frame
+Corn_FuturesMarket$ATH_OC[1] = Corn_FuturesMarket$NearbyOC[1]
+for (row in 2:nrow(Corn_FuturesMarket)) {
+  if (Corn_FuturesMarket$NearbyOC[row] > Corn_FuturesMarket$ATH_OC[row-1])
+    Corn_FuturesMarket$ATH_OC[row] = Corn_FuturesMarket$NearbyOC[row]
+  else 
+    Corn_FuturesMarket$ATH_OC[row] = Corn_FuturesMarket$ATH_OC[row-1]
+}
+Corn_FuturesMarket$ATH_NC[1] = Corn_FuturesMarket$DecNC[1]
+for (row in 2:nrow(Corn_FuturesMarket)) {
+  if (Corn_FuturesMarket$DecNC[row] > Corn_FuturesMarket$ATH_NC[row-1])
+    Corn_FuturesMarket$ATH_NC[row] = Corn_FuturesMarket$DecNC[row]
+  else 
+    Corn_FuturesMarket$ATH_NC[row] = Corn_FuturesMarket$ATH_NC[row-1]
+}
+
+
+#Finds 10 Day High
+Corn_FuturesMarket$TDH_OC = NA
+for (row in 1:(nrow(Corn_FuturesMarket)-10)) {
+  tempCount = row+9
+  Corn_FuturesMarket$TDH_OC[tempCount+1] = max(Corn_FuturesMarket$NearbyOC[row:tempCount])
+}
+Corn_FuturesMarket$TDH_NC = NA
+for (row in 1:(nrow(Corn_FuturesMarket)-10)) {
+  tempCount = row+9
+  Corn_FuturesMarket$TDH_NC[tempCount+1] = max(Corn_FuturesMarket$DecNC[row:tempCount])
+}
+
+#Finds 95% of the 10 Day High
+Corn_FuturesMarket$TDH_OC_95 = NA
+Corn_FuturesMarket$TDH_NC_95 = NA
+for (row in 11:(nrow(Corn_FuturesMarket))) {
+  Corn_FuturesMarket$TDH_OC_95[row] = Corn_FuturesMarket$TDH_OC[row] * 0.95
+  Corn_FuturesMarket$TDH_NC_95[row] = Corn_FuturesMarket$TDH_NC[row] * 0.95
+}
+
+lockBinding("Corn_FuturesMarket", globalenv())
+
+
 
 # Creates a crop year based on the input parameters
 createCropYear <- function(cropYear, startDate, stopDate) {
@@ -29,7 +72,7 @@ createCropYear <- function(cropYear, startDate, stopDate) {
   marketingYearPost <- setNames(marketingYearPost, c("Date","Price"))
   marketingYear <- rbind(marketingYearPre, marketingYearPost)
   
-  marketingYear[,c("Baseline", "60th", "70th", "80th", "90th", "95th", "Basis")] <- NA
+  marketingYear[,c("Baseline", "60th", "70th", "80th", "90th", "95th", "Basis", "Percentile")] <- NA
   
   interval1 = interval(mdy(startDate) - months(5), mdy(marchUpdate1) - days(1))
   interval2 = interval(mdy(marchUpdate1), mdy(harvest) - days(1))
@@ -75,29 +118,35 @@ createCropYear <- function(cropYear, startDate, stopDate) {
     }
   }
 
-  for(row in 1:nrow(marketingYear)) {
+  
+  #Finds Percentiles
+  for (row in 1:nrow(marketingYear)) {
     if (marketingYear$Price[row] > marketingYear$`95th`[row])
       marketingYear[row, "Percentile"] = 95
-    else if(marketingYear$Price[row] > marketingYear$`90th`[row])
+    else if (marketingYear$Price[row] >= marketingYear$`90th`[row])
       marketingYear[row, "Percentile"] = 90
-    else if(marketingYear$Price[row] > marketingYear$`80th`[row])
+    else if (marketingYear$Price[row] >= marketingYear$`80th`[row])
       marketingYear[row, "Percentile"] = 80
-    else if(marketingYear$Price[row] > marketingYear$`70th`[row])
+    else if (marketingYear$Price[row] >= marketingYear$`70th`[row])
       marketingYear[row, "Percentile"] = 70
-    else if(marketingYear$Price[row] > marketingYear$`60th`[row])
+    else if (marketingYear$Price[row] >= marketingYear$`60th`[row])
       marketingYear[row, "Percentile"] = 60
-    else if(marketingYear$Price[row] > marketingYear$Baseline[row])
+    else if (marketingYear$Price[row] >= marketingYear$Baseline[row])
       marketingYear[row, "Percentile"] = 50
     else
       marketingYear[row, "Percentile"] = 0
   }
   
   
+  
   #This kind of works
-  Plot = ggplot(marketingYear, aes(x = mdy(marketingYear$Date), y = Price, group = 1)) + geom_line() + xlab("Day") + ylab("Price")
+  #Plot = ggplot(marketingYear, aes(x = mdy(marketingYear$Date), y = Price, group = 1)) + geom_line() + xlab("Day") + ylab("Price")
+  #cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, 
+  #                   "Interval" = interval, "Marketing Year" = marketingYear, "Plot" = Plot)
+  
   
   cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, 
-                     "Interval" = interval, "Marketing Year" = marketingYear, "Plot" = Plot)
+                     "Interval" = interval, "Marketing Year" = marketingYear)
   
   return(cropYearObj)
 }
@@ -109,9 +158,11 @@ for(i in 1:nrow(Corn_CropYears)) {
 }
 
 
-# marketingYear[11,]
-# marketingYear[138,]
-# marketingYear[262,]
+
+
+
+
+
 
 
 
