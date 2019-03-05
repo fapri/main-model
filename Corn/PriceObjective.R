@@ -4,7 +4,7 @@
 # Create the corn objects necessary to run the Price Objective strategy
 source('Corn/Main.R')
 
-# Finds all of the triggers for a given crop year
+# Finds all of the price objective triggers for a given crop year
 priceObjectiveTrigger = function(cropYear) {
   priceObjectiveTriggers = list()
   triggers = 0
