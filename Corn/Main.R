@@ -150,16 +150,8 @@ createCropYear <- function(cropYear, startDate, stopDate) {
       marketingYear[row, "Percentile"] = 0
   }
   
-  
-  
-  #This kind of works
-  Plot = ggplot(marketingYear, aes(x = mdy(marketingYear$Date), y = Price, group = 1)) + geom_line() + xlab("Day") + ylab("Price")
   cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, 
-                     "Interval" = interval, "Marketing Year" = marketingYear, "Plot" = Plot)
-  
-  
-  #cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, 
-  #                   "Interval" = interval, "Marketing Year" = marketingYear)
+                     "Interval" = interval, "Marketing Year" = marketingYear)
   
   return(cropYearObj)
 }
@@ -167,7 +159,20 @@ createCropYear <- function(cropYear, startDate, stopDate) {
 Corn_CropYearObjects = list()
 for(i in 1:nrow(Corn_CropYears)) {
   Corn_CropYearObjects[[i]] = createCropYear(Corn_CropYears[i,1], Corn_CropYears[i,2], Corn_CropYears[i,3])
-  plot(Corn_CropYearObjects[[i]]$Plot)
+}
+
+
+
+#Started Plotting Function
+plotMarketingYear = function (marketingYear){
+
+  Plot = ggplot(marketingYear, aes(x = mdy(Date), y = Price, group = 1)) + geom_line() + xlab("Day") + ylab("Price")
+  
+  return(Plot)
+}
+
+for(i in 1:length(Corn_CropYearObjects)) {
+  plot(plotMarketingYear(Corn_CropYearObjects[[i]]$`Marketing Year`))
 }
 
 
