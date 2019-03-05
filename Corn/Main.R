@@ -16,7 +16,7 @@ lockBinding("Corn_Baseline", globalenv())
 
 
 #HOLDS ALL TIME HIGH, 10 DAY HIGH, AND 95% OF TEN DAY HIGH FEATURES
-createFeatures = function(OC, NC, rowMax) {
+createFeatures = function(date, OC, NC, rowMax) {
 
   #ALL TIME HIGH FEATURE
   ATH_OC = NA
@@ -35,7 +35,7 @@ createFeatures = function(OC, NC, rowMax) {
     else 
       ATH_NC[row] = ATH_NC[row-1]
   }
-  ATH = data.frame(ATH_OC, ATH_NC)
+  ATH = data.frame("Date" = mdy(date), "OC" = ATH_OC, "NC" = ATH_NC)
   
   #TEN DAY HIGH FEATURE
   TDH_OC = NA
@@ -49,7 +49,7 @@ createFeatures = function(OC, NC, rowMax) {
     TDH_NC[tempCount+1] = max(NC[row:tempCount])
   }
   
-  TDH = data.frame(TDH_OC, TDH_NC)
+  TDH = data.frame("Date" = mdy(date),"OC" = TDH_OC, "NC" = TDH_NC)
   
   #95% OF TEN DAY HIGH FEATURE
   TDH_OC_95 = NA
@@ -59,7 +59,7 @@ createFeatures = function(OC, NC, rowMax) {
     TDH_NC_95[row] = TDH_NC[row] * 0.95
   }
   
-  TDH_95 = data.frame(TDH_OC_95, TDH_NC_95)
+  TDH_95 = data.frame("Date" = mdy(date), "OC" = TDH_OC_95 , "NC" = TDH_NC_95)
   
   featuresObj = list("All Time High" = ATH, "Ten Day High" = TDH, "95% of Ten Day High" = TDH_95)
   
@@ -67,7 +67,7 @@ createFeatures = function(OC, NC, rowMax) {
   
 }
 
-featuresObjects = createFeatures(Corn_FuturesMarket$NearbyOC, Corn_FuturesMarket$DecNC, nrow(Corn_FuturesMarket))
+featuresObjects = createFeatures(Corn_FuturesMarket$Date, Corn_FuturesMarket$NearbyOC, Corn_FuturesMarket$DecNC, nrow(Corn_FuturesMarket))
 
 
 # Creates a crop year based on the input parameters
@@ -153,13 +153,13 @@ createCropYear <- function(cropYear, startDate, stopDate) {
   
   
   #This kind of works
-  #Plot = ggplot(marketingYear, aes(x = mdy(marketingYear$Date), y = Price, group = 1)) + geom_line() + xlab("Day") + ylab("Price")
-  #cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, 
-  #                   "Interval" = interval, "Marketing Year" = marketingYear, "Plot" = Plot)
-  
-  
+  Plot = ggplot(marketingYear, aes(x = mdy(marketingYear$Date), y = Price, group = 1)) + geom_line() + xlab("Day") + ylab("Price")
   cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, 
-                     "Interval" = interval, "Marketing Year" = marketingYear)
+                     "Interval" = interval, "Marketing Year" = marketingYear, "Plot" = Plot)
+  
+  
+  #cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, 
+  #                   "Interval" = interval, "Marketing Year" = marketingYear)
   
   return(cropYearObj)
 }
@@ -167,7 +167,7 @@ createCropYear <- function(cropYear, startDate, stopDate) {
 Corn_CropYearObjects = list()
 for(i in 1:nrow(Corn_CropYears)) {
   Corn_CropYearObjects[[i]] = createCropYear(Corn_CropYears[i,1], Corn_CropYears[i,2], Corn_CropYears[i,3])
-  #plot(Corn_CropYearObjects[[i]]$Plot)
+  plot(Corn_CropYearObjects[[i]]$Plot)
 }
 
 
