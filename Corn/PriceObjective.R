@@ -27,7 +27,7 @@ priceObjectiveTrigger = function(cropYear) {
     }
   }
 
-  cropYear[['PO Triggers']] <- priceObjectiveTriggers
+  cropYear[['PO Triggers']] = priceObjectiveTriggers
   
   return(cropYear)
 }

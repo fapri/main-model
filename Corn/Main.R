@@ -4,10 +4,10 @@ library(lubridate)
 library(dplyr)
 library(ggplot2)
 
-Corn_CropYears <- read.csv("Data/Corn_CropYears.csv", stringsAsFactors = FALSE)
-Corn_FuturesMarket <- read.csv("Data/Corn_FuturesMarket.csv", stringsAsFactors = FALSE)
-Corn_Basis <- read.csv("Data/Corn_Basis.csv", stringsAsFactors = FALSE)
-Corn_Baseline <- read.csv("Data/Corn_Baseline.csv", stringsAsFactors = FALSE)
+Corn_CropYears = read.csv("Data/Corn_CropYears.csv", stringsAsFactors = FALSE)
+Corn_FuturesMarket = read.csv("Data/Corn_FuturesMarket.csv", stringsAsFactors = FALSE)
+Corn_Basis = read.csv("Data/Corn_Basis.csv", stringsAsFactors = FALSE)
+Corn_Baseline = read.csv("Data/Corn_Baseline.csv", stringsAsFactors = FALSE)
 
 lockBinding("Corn_CropYears", globalenv())
 lockBinding("Corn_FuturesMarket", globalenv())
@@ -79,13 +79,13 @@ createCropYear = function(cropYear, startDate, stopDate) {
   intervalPre = interval(mdy(startDate), mdy(harvest) - days(1))
   intervalPost = interval(mdy(harvest), mdy(stopDate))
   
-  marketingYearPre <- Corn_FuturesMarket[which(mdy(Corn_FuturesMarket$Date) %within% intervalPre), c(1, 3)]
-  marketingYearPre <- setNames(marketingYearPre, c("Date","Price"))
-  marketingYearPost <- Corn_FuturesMarket[which(mdy(Corn_FuturesMarket$Date) %within% intervalPost), c(1, 2)]
-  marketingYearPost <- setNames(marketingYearPost, c("Date","Price"))
-  marketingYear <- rbind(marketingYearPre, marketingYearPost)
+  marketingYearPre = Corn_FuturesMarket[which(mdy(Corn_FuturesMarket$Date) %within% intervalPre), c(1, 3)]
+  marketingYearPre = setNames(marketingYearPre, c("Date","Price"))
+  marketingYearPost = Corn_FuturesMarket[which(mdy(Corn_FuturesMarket$Date) %within% intervalPost), c(1, 2)]
+  marketingYearPost = setNames(marketingYearPost, c("Date","Price"))
+  marketingYear = rbind(marketingYearPre, marketingYearPost)
   
-  marketingYear[,c("Baseline", "60th", "70th", "80th", "90th", "95th", "Basis", "Percentile")] <- NA
+  marketingYear[,c("Baseline", "60th", "70th", "80th", "90th", "95th", "Basis", "Percentile")] = NA
   
   interval1 = interval(mdy(startDate) - months(5), mdy(marchUpdate1) - days(1))
   interval2 = interval(mdy(marchUpdate1), mdy(harvest) - days(1))
