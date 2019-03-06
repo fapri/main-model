@@ -6,23 +6,20 @@ source('Corn/Main.R')
 
 # Finds all of the price objective triggers for a given crop year
 priceObjectiveTrigger = function(cropYear) {
-  priceObjectiveTriggers = list()
-  triggers = 0
+  priceObjectiveTriggers = data.frame()
   
   marketingYear = cropYear[['Marketing Year']]
   
   # Checks the first day of the crop year
   if(marketingYear$Percentile[1] >= 70) {
-    triggers = triggers + 1
-    priceObjectiveTriggers[[triggers]] = c(marketingYear$Date[1], marketingYear$Percentile[1])
+    priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[1], "Percentile" = marketingYear$Percentile[1]))
   }
   
   # Checks all subsequent days
   for(row in 2:nrow(marketingYear)) {
     if(marketingYear$Percentile[row] >= 70) {
       if(marketingYear$Percentile[row - 1] < marketingYear$Percentile[row]) {
-        triggers = triggers + 1
-        priceObjectiveTriggers[[triggers]] = c(marketingYear$Date[row], marketingYear$Percentile[row])
+        priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], "Percentile" = marketingYear$Percentile[row]))
       }
     }
   }
