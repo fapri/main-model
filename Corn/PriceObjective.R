@@ -4,34 +4,55 @@
 # Create the corn objects necessary to run the Price Objective strategy
 source('Corn/Main.R')
 
+# Checks if currentDayPercentile is a price objective trigger
+isPriceObjective = function(previousDayPercentile, currentDayPercentile) {
+  # Check the first day of the crop year
+  if(is.null(previousDayPercentile)) {
+    if(currentDayPercentile >= 70) return(TRUE)
+    else return(FALSE)
+  } 
+  # Check all subsequent days
+  else if(previousDayPercentile >= 70 && previousDayPercentile < currentDayPercentile)
+      return(TRUE)
+  
+  return(FALSE)
+}
+
+# Checks...
+isAllTimeHigh = function(cropYear) {
+  return(FALSE)
+}
+
+# Checks...
+isTenDayHigh = function(cropYear) {
+  return(FALSE)
+}
+
 # Finds all of the price objective triggers for a given crop year
 priceObjectiveTrigger = function(cropYear) {
   priceObjectiveTriggers = data.frame()
   
   marketingYear = cropYear[['Marketing Year']]
-  
-  # Checks the first day of the crop year
-  if(marketingYear$Percentile[1] >= 70) {
-    priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[1], "Percentile" = marketingYear$Percentile[1]))
+
+  if(isPriceObjective(NULL, marketingYear$Percentile[1])) {
+    priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[1], 
+                                                                      "Percentile" = marketingYear$Percentile[1],
+                                                                      "Type" = "Price Objective"))
   }
   
-  # Checks all subsequent days
   for(row in 2:nrow(marketingYear)) {
-    if(marketingYear$Percentile[row] >= 70) {
-      if(marketingYear$Percentile[row - 1] < marketingYear$Percentile[row]) {
-        priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], "Percentile" = marketingYear$Percentile[row]))
-      }
+    if(isPriceObjective(marketingYear$Percentile[row - 1], marketingYear$Percentile[row])) {
+      priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
+                                                                        "Percentile" = marketingYear$Percentile[row],
+                                                                        "Type" = "Price Objective"))
     }
+    # else if ath...
+    # else if tdh...
   }
 
   cropYear[['PO Triggers']] = priceObjectiveTriggers
   
   return(cropYear)
-}
-
-# Actualizes the sales for a given crop year
-priceObjectiveActualize_v1 = function(cropYear) {
-  # Blah
 }
 
 # Gets the price objective triggers for earch crop year
