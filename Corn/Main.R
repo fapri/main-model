@@ -150,11 +150,13 @@ createCropYear = function(cropYear, startDate, stopDate) {
   }
   
   marketingYear$Date = mdy(marketingYear$Date)
-  marketingYearPre$Date = mdy(marketingYearPre$Date)
-  marketingYearPost$Date = mdy(marketingYearPost$Date)
+  marketingYearPre$Date = (mdy(marketingYearPre$Date))
+  marketingYearPost$Date = (mdy(marketingYearPost$Date))
+  intervalPrePost = data.frame(intervalPre, intervalPost)
   
-  cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, 
-                     "Interval" = interval, "Marketing Year" = marketingYear, "Marketing Year Pre" = marketingYearPre, "Marketing Year Post" = marketingYearPost)
+  cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, "Interval" = interval, 
+                     "Marketing Year" = marketingYear, "Marketing Year Pre" = marketingYearPre, 
+                     "Marketing Year Post" = marketingYearPost, "Pre/Post Interval" = intervalPrePost)
   
   return(cropYearObj)
 }
