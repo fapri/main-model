@@ -149,8 +149,12 @@ createCropYear = function(cropYear, startDate, stopDate) {
       marketingYear[row, "Percentile"] = 0
   }
   
+  marketingYear$Date = mdy(marketingYear$Date)
+  marketingYearPre$Date = mdy(marketingYearPre$Date)
+  marketingYearPost$Date = mdy(marketingYearPost$Date)
+  
   cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, 
-                     "Interval" = interval, "Marketing Year" = marketingYear)
+                     "Interval" = interval, "Marketing Year" = marketingYear, "Marketing Year Pre" = marketingYearPre, "Marketing Year Post" = marketingYearPost)
   
   return(cropYearObj)
 }
