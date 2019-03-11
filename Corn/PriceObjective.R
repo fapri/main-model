@@ -22,16 +22,16 @@ isPriceObjective = function(previousDayPercentile, currentDayPercentile) {
 }
 
 # Checks 5% Drop from Ten Day High
-isTenDayHigh = function(date, price, percentile, preInterval, postInterval) {
+isTenDayHigh = function(date, price, percentile, preInterval, postInterval, TDH) {
     
     # Checks if date is NC
     if (date %within% preInterval){
       # Checks if the price is in 95 percentile.
       # Checks if the price is > 95%TDH for NC
-      if (is.na(Corn_FeaturesObject$`95% of Ten Day High`[which(Corn_FeaturesObject$`95% of Ten Day High`$Date == date),]$NC)){
+      if (is.na(TDH[which(TDH$Date == date),]$NC)){
         return(F)
       }
-      else if (percentile == 95 && price < Corn_FeaturesObject$`95% of Ten Day High`[which(Corn_FeaturesObject$`95% of Ten Day High`$Date == date),]$NC){
+      else if (percentile == 95 && price < TDH[which(TDH$Date == date),]$NC){
         return(T)
       }
       else return(F)
@@ -41,7 +41,7 @@ isTenDayHigh = function(date, price, percentile, preInterval, postInterval) {
     else if (date %within% postInterval){
       # Checks if the price is in 95 percentile.
       # Checks if the price is > 95%TDH for OC
-      if (percentile == 95 && price < Corn_FeaturesObject$`95% of Ten Day High`[which(Corn_FeaturesObject$`95% of Ten Day High`$Date == date),]$OC){
+      if (percentile == 95 && price < TDH[which(TDH$Date == date),]$OC){
         return(T)
       }
       else return(F)
@@ -49,16 +49,16 @@ isTenDayHigh = function(date, price, percentile, preInterval, postInterval) {
 }
 
 # Checks All Time High
-isAllTimeHigh = function(date, price, percentile, preInterval, postInterval) {
+isAllTimeHigh = function(date, price, percentile, preInterval, postInterval, TDH, ATH) {
   
   #Checks if date is NC
   if (date %within% preInterval){
     # Checks if the price is in 95 percentile.
     # Checks if the price is > 95%TDH for NC
-    if (is.na(Corn_FeaturesObject$`95% of Ten Day High`[which(Corn_FeaturesObject$`95% of Ten Day High`$Date == date),]$NC)){
+    if (is.na(TDH[which(TDH$Date == date),]$NC)){
       return(F)
     }
-    else if (((price - Corn_FeaturesObject$`All Time High`[which(Corn_FeaturesObject$`All Time High`$Date == date),]$NC) > (-1)) && price < Corn_FeaturesObject$`95% of Ten Day High`[which(Corn_FeaturesObject$`95% of Ten Day High`$Date == date),]$NC){
+    else if (((price - ATH[which(ATH$Date == date),]$NC) > (-1)) && price < TDH[which(TDH$Date == date),]$NC){
       return(T)
     }
     else return(F)
@@ -68,11 +68,25 @@ isAllTimeHigh = function(date, price, percentile, preInterval, postInterval) {
   else if (date %within% postInterval){
     # Checks if the price is in 95 percentile.
     # Checks if the price is > 95%TDH for OC
-    if (((price - Corn_FeaturesObject$`All Time High`[which(Corn_FeaturesObject$`All Time High`$Date == date),]$OC) > (-1)) && price < Corn_FeaturesObject$`95% of Ten Day High`[which(Corn_FeaturesObject$`95% of Ten Day High`$Date == date),]$OC){
+    if (((price - ATH[which(ATH$Date == date),]$OC) > (-1)) && price < TDH[which(TDH$Date == date),]$OC){
       return(T)
     }
     else return(F)
   }
+}
+
+# Checks End of the Year Trailing Stop
+isEndYearTrailingStop = function(date, previousPercentile, currentPercentile, postInterval){
+  
+  # checks if date is in June
+  if (month(date) >=6 && year(date) == year(int_end(postInterval))){
+    # Checks if Market passes down a percentile
+    if (currentPercentile < previousPercentile && currentPercentile >= 60){
+      return(T)
+    }
+    else return(F)
+  }
+  else return(F)
 }
 
 # Finds all of the price objective triggers for a given crop year
@@ -95,22 +109,33 @@ priceObjectiveTrigger = function(cropYear) {
                                                                         "Type" = "Price Objective"))
     }
 
-    else if (isTenDayHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row], cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost)){
+    else if (isTenDayHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row], 
+                          cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
+                          Corn_FeaturesObject$`95% of Ten Day High`)){
       priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                         "Percentile" = marketingYear$Percentile[row],
                                                                         "Type" = "Ten Day High"))
     }
       
-    else if (isAllTimeHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row], cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost)){
+    else if (isAllTimeHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row],
+                           cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
+                           Corn_FeaturesObject$`95% of Ten Day High`, Corn_FeaturesObject$`All Time High`)){
       priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                         "Percentile" = marketingYear$Percentile[row],
                                                                         "Type" = "All Time High"))
+    }
+    
+    else if (isEndYearTrailingStop(mdy(marketingYear$Date[row]), marketingYear$Percentile[row - 1], marketingYear$Percentile[row], cropYear$`Pre/Post Interval`$intervalPost)){
+      priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
+                                                                        "Percentile" = marketingYear$Percentile[row],
+                                                                        "Type" = "End of Year Trailing Stop"))
     }
   }
 
   cropYear[['PO Triggers']] = priceObjectiveTriggers
   
   return(cropYear)
+  
 }
 
 # Gets the price objective triggers for earch crop year
