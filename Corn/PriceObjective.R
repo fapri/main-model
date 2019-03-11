@@ -15,20 +15,11 @@ isPriceObjective = function(previousDayPercentile, currentDayPercentile) {
     else return(FALSE)
   } 
   # Check all subsequent days
-  else if(previousDayPercentile >= 70 && previousDayPercentile < currentDayPercentile)
+  else if(currentDayPercentile >= 70 && previousDayPercentile < currentDayPercentile)
       return(TRUE)
   
   return(FALSE)
 }
-
-# i = 17
-# date = mdy(Corn_CropYearObjects[[1]]$`Marketing Year`$Date[i])
-# percentile = Corn_CropYearObjects[[1]]$`Marketing Year`$Percentile[i]
-# price = Corn_CropYearObjects[[1]]$`Marketing Year`$Price[i]
-# preInterval = Corn_CropYearObjects[[1]]$`Pre/Post Interval`$intervalPre
-# postInterval = Corn_CropYearObjects[[1]]$`Pre/Post Interval`$intervalPost
-
-
 
 # Checks 5% Drop from Ten Day High
 isTenDayHigh = function(date, price, percentile, preInterval, postInterval) {
@@ -45,9 +36,9 @@ isTenDayHigh = function(date, price, percentile, preInterval, postInterval) {
       }
       else return(F)
     }
-    
+
     # Checks if date is OC
-    if (date %within% postInterval){
+    else if (date %within% postInterval){
       # Checks if the price is in 95 percentile.
       # Checks if the price is > 95%TDH for OC
       if (percentile == 95 && price < Corn_FeaturesObject$`95% of Ten Day High`[which(Corn_FeaturesObject$`95% of Ten Day High`$Date == date),]$OC){
@@ -57,34 +48,32 @@ isTenDayHigh = function(date, price, percentile, preInterval, postInterval) {
     }
 }
 
-
-
-
-
-
-
-######################################################################################
-### BEGINNING OF THE GIANT MESS    
-######################################################################################
-
-# Checks...
-isAllTimeHigh = function(cropYear) {
-  return(FALSE)
+# Checks All Time High
+isAllTimeHigh = function(date, price, percentile, preInterval, postInterval) {
+  
+  #Checks if date is NC
+  if (date %within% preInterval){
+    # Checks if the price is in 95 percentile.
+    # Checks if the price is > 95%TDH for NC
+    if (is.na(Corn_FeaturesObject$`95% of Ten Day High`[which(Corn_FeaturesObject$`95% of Ten Day High`$Date == date),]$NC)){
+      return(F)
+    }
+    else if (((price - Corn_FeaturesObject$`All Time High`[which(Corn_FeaturesObject$`All Time High`$Date == date),]$NC) > (-1)) && price < Corn_FeaturesObject$`95% of Ten Day High`[which(Corn_FeaturesObject$`95% of Ten Day High`$Date == date),]$NC){
+      return(T)
+    }
+    else return(F)
+  }
+  
+  # Checks if date is OC
+  else if (date %within% postInterval){
+    # Checks if the price is in 95 percentile.
+    # Checks if the price is > 95%TDH for OC
+    if (((price - Corn_FeaturesObject$`All Time High`[which(Corn_FeaturesObject$`All Time High`$Date == date),]$OC) > (-1)) && price < Corn_FeaturesObject$`95% of Ten Day High`[which(Corn_FeaturesObject$`95% of Ten Day High`$Date == date),]$OC){
+      return(T)
+    }
+    else return(F)
+  }
 }
-
-
-######################################################################################
-### END OF THE GIANT MESS
-######################################################################################
-
-
-
-
-
-
-
-
-
 
 # Finds all of the price objective triggers for a given crop year
 priceObjectiveTrigger = function(cropYear) {
@@ -99,7 +88,6 @@ priceObjectiveTrigger = function(cropYear) {
                                                                       "Type" = "Price Objective"))
   }
   
-
   for(row in 2:nrow(marketingYear)) {
     if(isPriceObjective(marketingYear$Percentile[row - 1], marketingYear$Percentile[row])) {
       priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
@@ -113,7 +101,11 @@ priceObjectiveTrigger = function(cropYear) {
                                                                         "Type" = "Ten Day High"))
     }
       
-    # else if ath...
+    else if (isAllTimeHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row], cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost)){
+      priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
+                                                                        "Percentile" = marketingYear$Percentile[row],
+                                                                        "Type" = "All Time High"))
+    }
   }
 
   cropYear[['PO Triggers']] = priceObjectiveTriggers
