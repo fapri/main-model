@@ -89,6 +89,16 @@ isEndYearTrailingStop = function(date, previousPercentile, currentPercentile, po
   else return(F)
 }
 
+# Checks cases where the baseline updates
+isPriceObjectiveSpecial = function(pricePreviousPercentileAbove, currentPrice){
+  if (currentPrice >= pricePreviousPercentileAbove){
+    return(T)
+  }
+  
+  else return(F)
+  
+}
+
 # Finds all of the price objective triggers for a given crop year
 priceObjectiveTrigger = function(cropYear) {
   priceObjectiveTriggers = data.frame()
@@ -103,7 +113,43 @@ priceObjectiveTrigger = function(cropYear) {
   }
   
   for(row in 2:nrow(marketingYear)) {
-    if(isPriceObjective(marketingYear$Percentile[row - 1], marketingYear$Percentile[row])) {
+    
+    # Special case for Feb -> March
+    if (month(marketingYear[row]) == 2 && month(marketingYear[row + 1]) == 3 && 
+        marketingYear$Percentile[row - 1] != 95 && marketingYear$Percentile[row - 1] >= 60){
+      
+      if(marketingYear$Percentile[row - 1] == 60) previousPercentileAbove = "70th"
+      if(marketingYear$Percentile[row - 1] == 70) previousPercentileAbove = "80th"
+      if(marketingYear$Percentile[row - 1] == 80) previousPercentileAbove = "90th"
+      if(marketingYear$Percentile[row - 1] == 90) previousPercentileAbove = "95th"
+      
+      pricePreviousPercentileAbove = marketingYear[row, previousPercentileAbove]
+      
+      if(previousPercentileAbove == "70th") previousPercentileAbove = 70
+      if(previousPercentileAbove == "70th") previousPercentileAbove = 80
+      if(previousPercentileAbove == "70th") previousPercentileAbove = 90
+      if(previousPercentileAbove == "70th") previousPercentileAbove = 95
+      
+#########previousPercentileAbove is causing problems
+      
+      # Takes in price for percentile above prevous day, percentile above previous day, current day price
+      if(isPriceObjectiveSpecial(pricePreviousPercentileAbove, marketingYear$Price[row])) {
+        priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
+                                                                          "Percentile" = previousPercentileAbove,
+                                                                          "Type" = "Price Objective Special"))
+
+      }
+    }
+    
+    # Special case for Aug -> Sept
+    # else if (month(marketingYear[row]) == 8 && month(marketingYear[row + 1]) == 9){
+    # 
+    #   
+    #   
+    # }
+    
+    
+    else if(isPriceObjective(marketingYear$Percentile[row - 1], marketingYear$Percentile[row])) {
       priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                         "Percentile" = marketingYear$Percentile[row],
                                                                         "Type" = "Price Objective"))
@@ -125,13 +171,14 @@ priceObjectiveTrigger = function(cropYear) {
                                                                         "Type" = "All Time High"))
     }
     
-    else if (isEndYearTrailingStop(mdy(marketingYear$Date[row]), marketingYear$Percentile[row - 1], marketingYear$Percentile[row], cropYear$`Pre/Post Interval`$intervalPost)){
+    else if (isEndYearTrailingStop(mdy(marketingYear$Date[row]), marketingYear$Percentile[row - 1], marketingYear$Percentile[row],
+                                   cropYear$`Pre/Post Interval`$intervalPost)){
       priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                         "Percentile" = marketingYear$Percentile[row],
                                                                         "Type" = "End of Year Trailing Stop"))
     }
   }
-
+  
   cropYear[['PO Triggers']] = priceObjectiveTriggers
   
   return(cropYear)
