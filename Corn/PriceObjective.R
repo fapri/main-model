@@ -115,7 +115,7 @@ priceObjectiveTrigger = function(cropYear) {
   for(row in 2:nrow(marketingYear)) {
     
     # Special case for Feb -> March
-    if (month(marketingYear[row]) == 2 && month(marketingYear[row + 1]) == 3 && 
+    if (month(mdy(marketingYear$Date[row])) == 3 && month(mdy(marketingYear$Date[row - 1])) == 2 && 
         marketingYear$Percentile[row - 1] != 95 && marketingYear$Percentile[row - 1] >= 60){
       
       if(marketingYear$Percentile[row - 1] == 60) previousPercentileAbove = "70th"
@@ -130,25 +130,39 @@ priceObjectiveTrigger = function(cropYear) {
       if(previousPercentileAbove == "70th") previousPercentileAbove = 90
       if(previousPercentileAbove == "70th") previousPercentileAbove = 95
       
-#########previousPercentileAbove is causing problems
-      
       # Takes in price for percentile above prevous day, percentile above previous day, current day price
       if(isPriceObjectiveSpecial(pricePreviousPercentileAbove, marketingYear$Price[row])) {
         priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                           "Percentile" = previousPercentileAbove,
                                                                           "Type" = "Price Objective Special"))
-
       }
     }
     
-    # Special case for Aug -> Sept
-    # else if (month(marketingYear[row]) == 8 && month(marketingYear[row + 1]) == 9){
-    # 
-    #   
-    #   
-    # }
-    
-    
+    #Special case for Aug -> Sept
+    else if (month(mdy(marketingYear$Date[row])) == 9 && month(mdy(marketingYear$Date[row - 1])) == 8 && 
+            marketingYear$Percentile[row - 1] != 95 && marketingYear$Percentile[row - 1] >= 60){
+        
+      if(marketingYear$Percentile[row - 1] == 60) previousPercentileAbove = "70th"
+      if(marketingYear$Percentile[row - 1] == 70) previousPercentileAbove = "80th"
+      if(marketingYear$Percentile[row - 1] == 80) previousPercentileAbove = "90th"
+      if(marketingYear$Percentile[row - 1] == 90) previousPercentileAbove = "95th"
+        
+      pricePreviousPercentileAbove = marketingYear[row, previousPercentileAbove]
+        
+      if(previousPercentileAbove == "70th") previousPercentileAbove = 70
+      if(previousPercentileAbove == "70th") previousPercentileAbove = 80
+      if(previousPercentileAbove == "70th") previousPercentileAbove = 90
+      if(previousPercentileAbove == "70th") previousPercentileAbove = 95
+        
+      # Takes in price for percentile above prevous day, percentile above previous day, current day price
+      if(isPriceObjectiveSpecial(pricePreviousPercentileAbove, marketingYear$Price[row])) {
+        priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
+                                                                          "Percentile" = previousPercentileAbove,
+                                                                          "Type" = "Price Objective Special"))
+        
+      }
+    }  
+
     else if(isPriceObjective(marketingYear$Percentile[row - 1], marketingYear$Percentile[row])) {
       priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                         "Percentile" = marketingYear$Percentile[row],
