@@ -167,37 +167,41 @@ for(i in 1:nrow(Corn_CropYears)) {
 Corn_FeaturesObject = createFeatures(Corn_FuturesMarket$Date, Corn_FuturesMarket$NearbyOC, Corn_FuturesMarket$DecNC, nrow(Corn_FuturesMarket))
 
 # THIS MAY BE MOVED SOMEWHERE ELSE EVENTUALLY???
-# plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear) {
-#   segment_data = data.frame(
-#     x = c(mdy("1-2-2008"), mdy("2-2-2008")),
-#     xend = c(mdy("4-2-2008"), mdy("5-2-2008")), 
-#     y = c(5, 6),
-#     yend = c(7, 7)
-#   )
-#   
-#   # text_data = data.frame(
-#   #   
-#   # )
-#   
-#   plot = ggplot(marketingYear, aes(x = mdy(Date), y = Price)) +
-#     geom_line(size = 0.5) +
-#     geom_vline(xintercept = as.Date(paste(year(startDate), "09-01", sep = "-")), linetype = 2) +
-#     xlab("Day") + ylab("Price") +
-#     ggtitle(paste(cropYear, "Price Objective w/o Multi-Year", sep = " ")) +
-#     scale_x_date(date_labels = "%b '%y", date_breaks = "1 month", date_minor_breaks = "1 month") +
-#     geom_segment(data = segment_data, aes(x = x, y = y, xend = xend, yend = yend)) +
-#     # geom_segment(x = startDate, y = marketingYear[marketingYear$Date == startDate, "95th"], xend = stopDate, yend = marketingYear[marketingYear$Date == stopDate, "95th"], linetype = 3) +
-#       # geom_text(x = (startDate + months(3)), y = 5.56, label = "95th", color = "#0000FF", size = 4) +
-#     theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = c(0.70, 0.75))
-# 
-#   return(plot)
-# }
-# 
-# for(i in 1:length(Corn_CropYearObjects)) {
-#   Corn_CropYearObjects[[i]]$Plot = plotMarketingYear(Corn_CropYearObjects[[i]]$`Crop Year`,
-#                                                      mdy(Corn_CropYearObjects[[i]]$`Start Date`),
-#                                                      mdy(Corn_CropYearObjects[[i]]$`Stop Date`),
-#                                                      Corn_CropYearObjects[[i]]$`Marketing Year`)
-# }
-# 
-# Corn_CropYearObjects[[1]][["Plot"]]
+plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear) {
+  harvest = mdy(paste("09-01", toString(year(startDate)), sep="-"))
+  marchUpdate1 = mdy(paste("03-01", toString(year(startDate)), sep="-"))
+  marchUpdate2 = mdy(paste("03-01", toString(year(stopDate)), sep="-"))
+  
+  segment_data = data.frame(
+    x = c(startDate, marchUpdate1, harvest, marchUpdate2),
+    xend = c(marchUpdate1, harvest, marchUpdate2, stopDate),
+    y = c(5, 6, 7, 8),
+    yend = c(7, 8, 9, 8)
+  )
+
+  # text_data = data.frame(
+  #
+  # )
+
+  plot = ggplot(marketingYear, aes(x = mdy(Date), y = Price)) +
+    geom_line(size = 0.5) +
+    geom_vline(xintercept = as.Date(paste(year(startDate), "09-01", sep = "-")), linetype = 2) +
+    xlab("Day") + ylab("Price") +
+    ggtitle(paste(cropYear, "Price Objective w/o Multi-Year", sep = " ")) +
+    scale_x_date(date_labels = "%b '%y", date_breaks = "1 month", date_minor_breaks = "1 month") +
+    geom_segment(data = segment_data, aes(x = x, y = y, xend = xend, yend = yend)) +
+    # geom_segment(x = startDate, y = marketingYear[marketingYear$Date == startDate, "95th"], xend = stopDate, yend = marketingYear[marketingYear$Date == stopDate, "95th"], linetype = 3) +
+      # geom_text(x = (startDate + months(3)), y = 5.56, label = "95th", color = "#0000FF", size = 4) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = c(0.70, 0.75))
+
+  return(plot)
+}
+
+for(i in 1:length(Corn_CropYearObjects)) {
+  Corn_CropYearObjects[[i]]$Plot = plotMarketingYear(Corn_CropYearObjects[[i]]$`Crop Year`,
+                                                     mdy(Corn_CropYearObjects[[i]]$`Start Date`),
+                                                     mdy(Corn_CropYearObjects[[i]]$`Stop Date`),
+                                                     Corn_CropYearObjects[[i]]$`Marketing Year`)
+}
+
+Corn_CropYearObjects[[2]][["Plot"]]
