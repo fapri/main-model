@@ -166,4 +166,3 @@ for(i in 1:nrow(Corn_CropYears)) {
 # Create the features object
 Corn_FeaturesObject = createFeatures(Corn_FuturesMarket$Date, Corn_FuturesMarket$NearbyOC, Corn_FuturesMarket$DecNC, nrow(Corn_FuturesMarket))
 
-
