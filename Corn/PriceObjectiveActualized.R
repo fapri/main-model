@@ -1,5 +1,8 @@
+# Corn 
+# Price Objective
+# Actualized
 
-source("Corn/Main.R")
+# Create the corn objects necessary to run the Price Objective actualization strategy
 source("Corn/PriceObjective.R")
 
 # Finds actualized Price Objective sales
@@ -154,22 +157,14 @@ isActualized = function(cropYear){
 }
 
 
-for(i in 1:nrow(Corn_CropYearObjects)) {
+for(i in 1:length(Corn_CropYearObjects)) {
   Corn_CropYearObjects[[i]] = isActualized(Corn_CropYearObjects[[i]])
 }
 
 
-cropYear = Corn_CropYearObjects[[3]]  
 
+cropYear = isActualized(Corn_CropYearObjects[[3]]  )
 
 
 
 #|| triggers$Type[tRow] != "Ten Day High" || triggers$Type[tRow] != "All Time High"
-
-
-
-
-
-
-
-
