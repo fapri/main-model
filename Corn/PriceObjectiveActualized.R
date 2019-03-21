@@ -46,7 +46,7 @@ isActualized = function(cropYear){
             #check if this was the first sale. If so, then there wont be any old percentlies to check
             if(dim(priceObjectiveActualized)[1] != 0) {
               #check if trigger date is in a restricted interval. Also check Ten Day high because they are unrestricted.
-              if(triggers$Date[tRow] %within% interval1) {
+              if(triggers$Date[tRow] %within% interval1 && (triggers$Type[tRow] != "Ten Day High" || triggers$Type[tRow] != "All Time High")) {
                 tempRows = NA
                 #create a list to get the actualized sales rows within an interval. This will be used to ensure 1 sale per percentile
                 tempRows = which(priceObjectiveActualized$Date %within% interval1)
@@ -92,7 +92,7 @@ isActualized = function(cropYear){
             #if >=10% of crop remains
             if(percentSold <= 90) {
               #check if this percentile has had a sale yet. Also Check Ten Day high because they are unrestricted
-              if(triggers$Date[tRow] %within% interval3) {
+              if(triggers$Date[tRow] %within% interval3 && (triggers$Type[tRow] != "Ten Day High" || triggers$Type[tRow] != "All Time High")) {
                 tempRows = NA
                 #create a list to get the actualized sales rows within an interval. This will be used to ensure 1 sale per percentile
                 tempRows = which(priceObjectiveActualized$Date %within% interval3)
