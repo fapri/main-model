@@ -32,26 +32,26 @@ isActualized = function(cropYear){
   
   percentSold = 0
   
-  for(row in 1:nrow(marketingYear)){
+  for(row in 1:nrow(marketingYear)) {
     #check if the day is a trigger date
-    if(marketingYear$Date[row] %in% triggers$Date){
+    if(marketingYear$Date[row] %in% triggers$Date) {
       #find trigger row
       tRow = which(marketingYear$Date[row] == triggers$Date)
       #check if preharvest
-      if(triggers$Date[tRow] %within% intervalPre){
+      if(triggers$Date[tRow] %within% intervalPre) {
         #check if sale was made in last 7 days
-        if(nrow(priceObjectiveActualized) == 0 || difftime(triggers$Date[tRow], priceObjectiveActualized$Date[nrow(priceObjectiveActualized)]) >= 7){
+        if(nrow(priceObjectiveActualized) == 0 || difftime(triggers$Date[tRow], priceObjectiveActualized$Date[nrow(priceObjectiveActualized)]) >= 7) {
           #if < 50% sold preharvest
-          if(percentSold < 50){
+          if(percentSold < 50) {
             #check if this was the first sale. If so, then there wont be any old percentlies to check
-            if(dim(priceObjectiveActualized)[1] != 0){
+            if(dim(priceObjectiveActualized)[1] != 0) {
               #check if trigger date is in a restricted interval. Also check Ten Day high because they are unrestricted.
-              if(triggers$Date[tRow] %within% interval1 ){
+              if(triggers$Date[tRow] %within% interval1) {
                 tempRows = NA
                 #create a list to get the actualized sales rows within an interval. This will be used to ensure 1 sale per percentile
                 tempRows = which(priceObjectiveActualized$Date %within% interval1)
                 #check if a sale was made in that percentile
-                if(!(triggers$Percentile[tRow] %in% priceObjectiveActualized$Percentile[tempRows])){
+                if(!(triggers$Percentile[tRow] %in% priceObjectiveActualized$Percentile[tempRows])) {
                   #PO, ATH, TDH at 10% increments
                   percentSold = percentSold + 10
                   priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
@@ -61,7 +61,7 @@ isActualized = function(cropYear){
                 }
               }
               #if trigger date is in an unrestricted interval we can just make the sale
-              else if(triggers$Date[tRow] %within% interval2){
+              else if(triggers$Date[tRow] %within% interval2) {
                 #PO, ATH, TDH at 10% increments
                 percentSold = percentSold + 10
                 priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
@@ -71,7 +71,7 @@ isActualized = function(cropYear){
               }
             }
             #if trigger is the first one we can just make the sale
-            else{
+            else {
               #PO, ATH, TDH at 10% increments
               percentSold = percentSold + 10
               priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
@@ -84,20 +84,20 @@ isActualized = function(cropYear){
       }
       
       #check if postharvest
-      else if(triggers$Date[tRow] %within% intervalPost){
+      else if(triggers$Date[tRow] %within% intervalPost) {
         #if > 0% of crop remains
-        if(percentSold < 100){
+        if(percentSold < 100) {
           #if day not within 7 days of last sale
-          if(difftime(triggers$Date[tRow], priceObjectiveActualized$Date[nrow(priceObjectiveActualized)]) >= 7){
+          if(difftime(triggers$Date[tRow], priceObjectiveActualized$Date[nrow(priceObjectiveActualized)]) >= 7) {
             #if >=10% of crop remains
-            if(percentSold <= 90){
+            if(percentSold <= 90) {
               #check if this percentile has had a sale yet. Also Check Ten Day high because they are unrestricted
-              if(triggers$Date[tRow] %within% interval3 ){
+              if(triggers$Date[tRow] %within% interval3) {
                 tempRows = NA
                 #create a list to get the actualized sales rows within an interval. This will be used to ensure 1 sale per percentile
                 tempRows = which(priceObjectiveActualized$Date %within% interval3)
                 #check if a sale was made in that percentile. 
-                if((!(triggers$Percentile[tRow] %in% priceObjectiveActualized$Percentile[tempRows]))){
+                if((!(triggers$Percentile[tRow] %in% priceObjectiveActualized$Percentile[tempRows]))) {
                   #PO, ATH, TDH at 10% increments
                   percentSold = percentSold + 10
                   priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
@@ -107,7 +107,7 @@ isActualized = function(cropYear){
                 }
               }
               #if trigger date is in an unrestricted interval we can just make the sale
-              else if(triggers$Date[tRow] %within% interval4){
+              else if(triggers$Date[tRow] %within% interval4) {
                 #PO, ATH, TDH at 10% increments
                 percentSold = percentSold + 10
                 priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
@@ -150,12 +150,10 @@ isActualized = function(cropYear){
     #make EYTS sale
   }
   
-  
   cropYear[['PO Actualized']] = priceObjectiveActualized
   
   return(cropYear)
 }
-
 
 for(i in 1:length(Corn_CropYearObjects)) {
   Corn_CropYearObjects[[i]] = isActualized(Corn_CropYearObjects[[i]])
