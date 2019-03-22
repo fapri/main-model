@@ -46,10 +46,10 @@ isActualized = function(cropYear){
             #check if this was the first sale. If so, then there wont be any old percentlies to check
             if(dim(priceObjectiveActualized)[1] != 0) {
               #check if trigger date is in a restricted interval. Also check Ten Day high because they are unrestricted.
-              if(triggers$Date[tRow] %within% interval1 && (triggers$Type[tRow] != "Ten Day High" || triggers$Type[tRow] != "All Time High")) {
+              if(triggers$Date[tRow] %within% interval1 && triggers$Type[tRow] != "Ten Day High" && triggers$Type[tRow] != "All Time High") {
                 tempRows = NA
                 #create a list to get the actualized sales rows within an interval. This will be used to ensure 1 sale per percentile
-                tempRows = which(priceObjectiveActualized$Date %within% interval1)
+                tempRows = which(priceObjectiveActualized$Date %within% interval1 & priceObjectiveActualized$Type == "Price Objective")
                 #check if a sale was made in that percentile
                 if(!(triggers$Percentile[tRow] %in% priceObjectiveActualized$Percentile[tempRows])) {
                   #PO, ATH, TDH at 10% increments
@@ -60,8 +60,8 @@ isActualized = function(cropYear){
                                                                                         "Percent Sold" = percentSold))
                 }
               }
-              #if trigger date is in an unrestricted interval we can just make the sale
-              else if(triggers$Date[tRow] %within% interval2) {
+              #if trigger date is in an unrestricted interval or ATH/TDH we can just make the sale
+              else {
                 #PO, ATH, TDH at 10% increments
                 percentSold = percentSold + 10
                 priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
@@ -92,12 +92,12 @@ isActualized = function(cropYear){
             #if >=10% of crop remains
             if(percentSold <= 90) {
               #check if this percentile has had a sale yet. Also Check Ten Day high because they are unrestricted
-              if(triggers$Date[tRow] %within% interval3 && (triggers$Type[tRow] != "Ten Day High" || triggers$Type[tRow] != "All Time High")) {
+              if(triggers$Date[tRow] %within% interval3 && triggers$Type[tRow] != "Ten Day High" && triggers$Type[tRow] != "All Time High") {
                 tempRows = NA
                 #create a list to get the actualized sales rows within an interval. This will be used to ensure 1 sale per percentile
-                tempRows = which(priceObjectiveActualized$Date %within% interval3)
+                tempRows = which(priceObjectiveActualized$Date %within% interval3 & priceObjectiveActualized$Type == "Price Objective")
                 #check if a sale was made in that percentile. 
-                if((!(triggers$Percentile[tRow] %in% priceObjectiveActualized$Percentile[tempRows]))) {
+                if(!(triggers$Percentile[tRow] %in% priceObjectiveActualized$Percentile[tempRows])) {
                   #PO, ATH, TDH at 10% increments
                   percentSold = percentSold + 10
                   priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
@@ -106,8 +106,8 @@ isActualized = function(cropYear){
                                                                                         "Percent Sold" = percentSold))
                 }
               }
-              #if trigger date is in an unrestricted interval we can just make the sale
-              else if(triggers$Date[tRow] %within% interval4) {
+              #if trigger date is in an unrestricted interval or ATH/TDH we can just make the sale
+              else {
                 #PO, ATH, TDH at 10% increments
                 percentSold = percentSold + 10
                 priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
@@ -161,7 +161,7 @@ for(i in 1:length(Corn_CropYearObjects)) {
 
 
 
-cropYear = isActualized(Corn_CropYearObjects[[3]]  )
+cropYear = isActualized(Corn_CropYearObjects[[1]]  )
 
 
 
