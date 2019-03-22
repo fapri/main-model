@@ -1,7 +1,7 @@
 
 source('Corn/Main.R')
 
-plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear) {
+plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actualizedSales) {
   harvest = mdy(paste("09-01", toString(year(startDate)), sep="-"))
   marchUpdate1 = mdy(paste("03-01", toString(year(startDate)), sep="-"))
   marchUpdate2 = mdy(paste("03-01", toString(year(stopDate)), sep="-"))
@@ -36,8 +36,9 @@ plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear) {
                             xend = c(marchUpdate1, harvest, marchUpdate2, stopDate), 
                             baselineLines)
   
-  plot = ggplot(marketingYear, aes(x = mdy(Date), y = Price)) +
+  ggplot(marketingYear, aes(x = mdy(Date), y = Price)) +
     geom_line(size = 0.5) +
+    #geom_point(data = marketingYear$Date[actualizedSales$Date], aes(fill = actualizedSales$Type), shape = 21, size = 3, alpha = .60) +
     geom_vline(xintercept = as.Date(paste(year(startDate), "09-01", sep = "-")), linetype = 2) +
     xlab("Day") + ylab("Price") +
     ggtitle(paste(cropYear, "Price Objective w/o Multi-Year", sep = " ")) +
@@ -74,10 +75,24 @@ for(i in 1:length(Corn_CropYearObjects)) {
   Corn_CropYearObjects[[i]]$Plot = plotMarketingYear(Corn_CropYearObjects[[i]]$`Crop Year`,
                                                      mdy(Corn_CropYearObjects[[i]]$`Start Date`),
                                                      mdy(Corn_CropYearObjects[[i]]$`Stop Date`),
-                                                     Corn_CropYearObjects[[i]]$`Marketing Year`)
+                                                     Corn_CropYearObjects[[i]]$`Marketing Year`,
+                                                     Corn_CropYearObjects[[i]]$`PO Actualized`)
   print(Corn_CropYearObjects[[i]]$Plot)
   
 }
 
+
+# i = 1
+# cropYear = Corn_CropYearObjects[[i]]$`Crop Year`
+# startDate = mdy(Corn_CropYearObjects[[i]]$`Start Date`)
+# stopDate = mdy(Corn_CropYearObjects[[i]]$`Stop Date`)
+# marketingYear = Corn_CropYearObjects[[i]]$`Marketing Year`
+# actualizedSales = Corn_CropYearObjects[[i]]$`PO Actualized`
+
+marketingYear$Type = NA
+
+for(i in 1:nrow(marketingYear)){
+  marketingYear$Type[i] = actualizedSales[which(mdy(marketingYear$Date)[i] == actualizedSales$Date)]$Type
+}
 
 
