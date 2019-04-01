@@ -1,6 +1,26 @@
 
 source('Corn/Main.R')
 
+
+#Initalize Variable
+for (i in 1:length(Corn_CropYearObjects)){
+  Corn_CropYearObjects[[i]]$`PO Actualized`$Price = NA
+}
+
+#Extract Price data into the PO Actualized Data Frame
+for (i in 1:length(Corn_CropYearObjects)){
+  for(j in 1:nrow(Corn_CropYearObjects[[i]]$`PO Actualized`)){
+    Corn_CropYearObjects[[i]]$`PO Actualized`$Price[j] = Corn_CropYearObjects[[i]]$`Marketing Year`$Price[which(mdy(Corn_CropYearObjects[[i]]$`Marketing Year`$Date) == Corn_CropYearObjects[[i]]$`PO Actualized`$Date[j])]
+  }
+}
+
+
+#Set Color Palette
+myColors = c("#ffff00", "#ffff00", "#ed7d31", "#ffff00", "#ffd700", "#FF69B4")
+colorLabels = c("Price Objective", "Price Objective Special", "Seasonal", "Ten Day High", "All Time High", "End of Year Trailing Stop")
+names(myColors) = colorLabels 
+
+
 plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actualizedSales) {
   harvest = mdy(paste("09-01", toString(year(startDate)), sep="-"))
   marchUpdate1 = mdy(paste("03-01", toString(year(startDate)), sep="-"))
@@ -36,9 +56,9 @@ plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actua
                             xend = c(marchUpdate1, harvest, marchUpdate2, stopDate), 
                             baselineLines)
   
-  ggplot(marketingYear, aes(x = mdy(Date), y = Price)) +
+  plot = ggplot(marketingYear, aes(x = mdy(Date), y = Price)) +
     geom_line(size = 0.5) +
-    #geom_point(data = marketingYear$Date[actualizedSales$Date], aes(fill = actualizedSales$Type), shape = 21, size = 3, alpha = .60) +
+    geom_point(data = actualizedSales, aes(x = Date, y = Price, fill = Type), shape = 21, size = 3, alpha = .75) +
     geom_vline(xintercept = as.Date(paste(year(startDate), "09-01", sep = "-")), linetype = 2) +
     xlab("Day") + ylab("Price") +
     ggtitle(paste(cropYear, "Price Objective w/o Multi-Year", sep = " ")) +
@@ -64,11 +84,11 @@ plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actua
     geom_text(data = segment_data[3:4,], aes(x = xcenter, y = ninety, fontface = "bold"), label = "90th", color = "#04dd04", size = 4) +
     geom_segment(data = segment_data[3:4,], aes(x = x, y = ninetyFive, xend = xend, yend = ninetyFive), linetype = 5) +
     geom_text(data = segment_data[3:4,], aes(x = xcenter, y = ninetyFive, fontface = "bold"), label = "95th", color = "#04dd04", size = 4) +
-    
-    
-    theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = c(0.70, 0.75))
+    theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = c(0.70, 0.75)) + 
+    scale_fill_manual(name = "Sale", values = myColors)
   
   return(plot)
+  
 }
 
 for(i in 1:length(Corn_CropYearObjects)) {
@@ -82,17 +102,13 @@ for(i in 1:length(Corn_CropYearObjects)) {
 }
 
 
-# i = 1
+# i = 2
 # cropYear = Corn_CropYearObjects[[i]]$`Crop Year`
 # startDate = mdy(Corn_CropYearObjects[[i]]$`Start Date`)
 # stopDate = mdy(Corn_CropYearObjects[[i]]$`Stop Date`)
 # marketingYear = Corn_CropYearObjects[[i]]$`Marketing Year`
 # actualizedSales = Corn_CropYearObjects[[i]]$`PO Actualized`
 
-marketingYear$Type = NA
 
-for(i in 1:nrow(marketingYear)){
-  marketingYear$Type[i] = actualizedSales[which(mdy(marketingYear$Date)[i] == actualizedSales$Date)]$Type
-}
 
 
