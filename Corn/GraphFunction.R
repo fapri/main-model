@@ -5,19 +5,6 @@
 source('Corn/PriceObjectiveActualized.R')
 
 
-#Initalize Variable
-for (i in 1:length(Corn_CropYearObjects)){
-  Corn_CropYearObjects[[i]]$`PO Actualized`$Price = NA
-}
-
-#Extract Price data into the PO Actualized Data Frame
-for (i in 1:length(Corn_CropYearObjects)){
-  for(j in 1:nrow(Corn_CropYearObjects[[i]]$`PO Actualized`)){
-    Corn_CropYearObjects[[i]]$`PO Actualized`$Price[j] = Corn_CropYearObjects[[i]]$`Marketing Year`$Price[which(mdy(Corn_CropYearObjects[[i]]$`Marketing Year`$Date) == Corn_CropYearObjects[[i]]$`PO Actualized`$Date[j])]
-  }
-}
-
-
 #Set Color Palette
 myColors = c("#ffff00", "#ffff00", "#ed7d31", "#ffff00", "#ffd700", "#FF69B4")
 colorLabels = c("Price Objective", "Price Objective Special", "Seasonal", "Ten Day High", "All Time High", "End of Year Trailing Stop")
