@@ -72,17 +72,17 @@ getStorageCost = function(actualizedSales, marketingYear, intervalPost){
     }
   }
   
-  for (i in 1:nrow(actualizedSales)){
-    #Check that date is in post harvest
-    if (actualizedSales$Date[i] %within% intervalPost){
-      A = salePrice[i] * ((1 + (interestRate/12)) ^ (monthsSinceOct[i])) + binStorage1 + (binStorageAfter*(monthsSinceOct[i] - 1))
-    }
-    #Comute on farm storage cost
-    onFarmStorage[i] = A - salePrice[i]
-  }
+  # for (i in 1:nrow(actualizedSales)){
+  #   #Check that date is in post harvest
+  #   if (actualizedSales$Date[i] %within% intervalPost){
+  #     A = salePrice[i] * ((1 + (interestRate/12)) ^ (monthsSinceOct[i])) + binStorage1 + (binStorageAfter*(monthsSinceOct[i] - 1))
+  #   }
+  #   #Comute on farm storage cost
+  #   onFarmStorage[i] = A - salePrice[i]
+  # }
       
-  return(onFarmStorage)  
-  #return(CommercialStorage)
+  #return(onFarmStorage)  
+  return(CommercialStorage)
   
   
 }
@@ -91,7 +91,7 @@ getStorageCost = function(actualizedSales, marketingYear, intervalPost){
 
 for (i in 1:length(Corn_CropYearObjects)){
   #Initialize Variable
-  Corn_CropYearObjects[[i]]$`PO Actualized`$Storage = NA
+  Corn_CropYearObjects[[i]]$`PO Actualized`$CommercialStorage = NA
   #Call storage function. This will return the base cost of storage and the crop price less storage
   Corn_CropYearObjects[[i]]$`PO Actualized`$CommercialStorage = getStorageCost(Corn_CropYearObjects[[i]][["PO Actualized"]],
                                                                                Corn_CropYearObjects[[i]][["Marketing Year"]],
