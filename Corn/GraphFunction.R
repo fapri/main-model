@@ -1,5 +1,8 @@
+# Corn 
+# Graphing
 
-source('Corn/Main.R')
+
+source('Corn/PriceObjectiveActualized.R')
 
 
 #Initalize Variable
