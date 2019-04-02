@@ -4,44 +4,38 @@
 
 source("Corn/PriceObjectiveActualized.R")
 
-#Extract Price data into the PO Actualized Data Frame
+# Extract Price data into the PO Actualized Data Frame
 for (i in 1:length(Corn_CropYearObjects)){
   for(j in 1:nrow(Corn_CropYearObjects[[i]]$`PO Actualized`)){
     Corn_CropYearObjects[[i]]$`PO Actualized`$Price[j] = Corn_CropYearObjects[[i]]$`Marketing Year`$Price[which(mdy(Corn_CropYearObjects[[i]]$`Marketing Year`$Date) == Corn_CropYearObjects[[i]]$`PO Actualized`$Date[j])]
   }
 }
 
-
-#Interest Rate
+# Interest Rate
 interestRate = 0.055
-#Monthly Commercial Storage Cost
+# Monthly Commercial Storage Cost
 monthlyCommCost = 0.05
-#Three Month Minimum Storage Charge
+# Three Month Minimum Storage Charge
 TMMStorageCharge = 0.15
-#Total cost of bin storage, 1st month
+# Total cost of bin storage, 1st month
 binStorage1 = 0.247
-#Total cost of bin storage(exlcuding interest), 2nd month forward
+# Total cost of bin storage(exlcuding interest), 2nd month forward
 binStorageAfter = 0.003
 
-
-
-
-
-getStorageCost = function(actualizedSales, marketingYear, intervalPost){
-  
+getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
   salePrice = actualizedSales$Price
   CommercialStorage = NA
   onFarmStorage = NA
   actualizedSales$monthsSinceOct = NA
   
-  #Calculate months since October for post harvest dates only
-  for (i in 1:nrow(actualizedSales)){
-    if (actualizedSales$Date[i] %within% intervalPost){
-      if (month(actualizedSales$Date[i]) == 9){
+  # Calculate months since October for post harvest dates only
+  for(i in 1:nrow(actualizedSales)) {
+    if(actualizedSales$Date[i] %within% intervalPost) {
+      if(month(actualizedSales$Date[i]) == 9) {
         #Special case for September
         actualizedSales$monthsSinceOct[i] = 0
       }
-      else{
+      else {
         #Create interval from the date to post harvest October
         tempInt = interval(actualizedSales$Date[i], mdy(paste("10-01", toString(year(int_start(intervalPost))), sep="-")))
         #Calculate months since October
@@ -52,22 +46,21 @@ getStorageCost = function(actualizedSales, marketingYear, intervalPost){
   
   monthsSinceOct = actualizedSales$monthsSinceOct
   
-  #Commercial Storage
-  for (i in 1:nrow(actualizedSales)){
-    #Check that date is in post harvest
-    if (actualizedSales$Date[i] %within% intervalPost){
+  # Commercial Storage
+  for(i in 1:nrow(actualizedSales)) {
+    # Check that date is in post harvest
+    if(actualizedSales$Date[i] %within% intervalPost) {
       #Calculate first part of storage function
       A = salePrice[i] * (1 + (interestRate/12)) ^ (monthsSinceOct[i])
       #Check if cost is less than three month minimum storage cost
-      if ((monthlyCommCost * monthsSinceOct[i]) < TMMStorageCharge){
+      if((monthlyCommCost * monthsSinceOct[i]) < TMMStorageCharge) {
         B = TMMStorageCharge
       }
-      
-      else{
+      else {
         B = monthlyCommCost * (monthsSinceOct[i])
       }
       
-      #Comute commercial storage cost
+      # Compute commercial storage cost
       CommercialStorage[i] = (A + B) - salePrice[i]
     }
   }
@@ -83,16 +76,12 @@ getStorageCost = function(actualizedSales, marketingYear, intervalPost){
       
   #return(onFarmStorage)  
   return(CommercialStorage)
-  
-  
 }
 
-
-
 for (i in 1:length(Corn_CropYearObjects)){
-  #Initialize Variable
+  # Initialize Variable
   Corn_CropYearObjects[[i]]$`PO Actualized`$CommercialStorage = NA
-  #Call storage function. This will return the base cost of storage and the crop price less storage
+  # Call storage function. This will return the base cost of storage and the crop price less storage
   Corn_CropYearObjects[[i]]$`PO Actualized`$CommercialStorage = getStorageCost(Corn_CropYearObjects[[i]][["PO Actualized"]],
                                                                                Corn_CropYearObjects[[i]][["Marketing Year"]],
                                                                                Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
@@ -102,4 +91,3 @@ for (i in 1:length(Corn_CropYearObjects)){
 # actualizedSales = Corn_CropYearObjects[[i]][["PO Actualized"]]
 # marketingYear = Corn_CropYearObjects[[i]][["Marketing Year"]]
 # intervalPost = Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]]
-
