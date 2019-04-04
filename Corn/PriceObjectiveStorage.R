@@ -23,6 +23,7 @@ binStorage1 = 0.247
 binStorageAfter = 0.003
 
 getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
+  storageInterval = interval(mdy(paste("11-01", toString(year(int_start(intervalPost))), sep="-")), int_end(intervalPost))
   salePrice = actualizedSales$Price
   CommercialStorage = NA
   onFarmStorage = NA
@@ -30,7 +31,8 @@ getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
   
   # Calculate months since October for post harvest dates only
   for(i in 1:nrow(actualizedSales)) {
-    if(actualizedSales$Date[i] %within% intervalPost) {
+    #Check if date is in storage interval
+    if(actualizedSales$Date[i] %within% storageInterval) {
       if(month(actualizedSales$Date[i]) == 9) {
         #Special case for September
         actualizedSales$monthsSinceOct[i] = 0
@@ -48,8 +50,8 @@ getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
   
   # Commercial Storage
   for(i in 1:nrow(actualizedSales)) {
-    # Check that date is in post harvest
-    if(actualizedSales$Date[i] %within% intervalPost) {
+    # Check that date is in storage interval
+    if(actualizedSales$Date[i] %within% storageInterval) {
       #Calculate first part of storage function
       A = salePrice[i] * (1 + (interestRate/12)) ^ (monthsSinceOct[i])
       #Check if cost is less than three month minimum storage cost
@@ -67,7 +69,7 @@ getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
   
   # for (i in 1:nrow(actualizedSales)){
   #   #Check that date is in post harvest
-  #   if (actualizedSales$Date[i] %within% intervalPost){
+  #   if (actualizedSales$Date[i] %within% storageInterval){
   #     A = salePrice[i] * ((1 + (interestRate/12)) ^ (monthsSinceOct[i])) + binStorage1 + (binStorageAfter*(monthsSinceOct[i] - 1))
   #   }
   #   #Comute on farm storage cost
