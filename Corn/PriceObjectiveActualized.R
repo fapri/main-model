@@ -30,6 +30,7 @@ isActualized = function(cropYear){
   interval4 = interval(mdy(jan1OC), mdy(aug31OC))
   
   percentSold = 0
+  percentSoldSeasonal = 0
   
   for(row in 1:nrow(marketingYear)) {
     #check if the day is a trigger date
@@ -56,7 +57,7 @@ isActualized = function(cropYear){
                   priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                         "Percentile" = triggers$Percentile[tRow],
                                                                                         "Type" = triggers$Type[tRow],
-                                                                                        "Percent Sold" = percentSold))
+                                                                                        "Percent Sold" = 10))
                 }
               }
               #if trigger date is in an unrestricted interval or ATH/TDH we can just make the sale
@@ -66,7 +67,7 @@ isActualized = function(cropYear){
                 priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                       "Percentile" = triggers$Percentile[tRow],
                                                                                       "Type" = triggers$Type[tRow],
-                                                                                      "Percent Sold" = percentSold))
+                                                                                      "Percent Sold" = 10))
               }
             }
             #if trigger is the first one we can just make the sale
@@ -76,7 +77,7 @@ isActualized = function(cropYear){
               priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                     "Percentile" = triggers$Percentile[tRow],
                                                                                     "Type" = triggers$Type[tRow],
-                                                                                    "Percent Sold" = percentSold))
+                                                                                    "Percent Sold" = 10))
             }
           }
         }
@@ -102,7 +103,7 @@ isActualized = function(cropYear){
                   priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                         "Percentile" = triggers$Percentile[tRow],
                                                                                         "Type" = triggers$Type[tRow],
-                                                                                        "Percent Sold" = percentSold))
+                                                                                        "Percent Sold" = 10))
                 }
               }
               #if trigger date is in an unrestricted interval or ATH/TDH we can just make the sale
@@ -112,7 +113,7 @@ isActualized = function(cropYear){
                 priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                       "Percentile" = triggers$Percentile[tRow],
                                                                                       "Type" = triggers$Type[tRow],
-                                                                                      "Percent Sold" = percentSold))
+                                                                                      "Percent Sold" = 10))
               }
             }
           }
@@ -134,21 +135,23 @@ isActualized = function(cropYear){
             if(day == 10 || day == 11 || day == 12 || day == 13){ 
               if (percentSold <= 60) {
                 # seasonal sales must be at least 10%
+                percentSoldSeasonal = ((100 - percentSold) / 4)
                 percentSold = percentSold + ((100 - percentSold) / 4)
                 priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = marketingYear$Date[row],
                                                                                       "Percentile" = marketingYear$Percentile[row],
                                                                                       "Type" = "Seasonal",
-                                                                                      "Percent Sold" = percentSold))
+                                                                                      "Percent Sold" = percentSoldSeasonal))
               }
             }
             else if(day == 20 || day == 21 || day == 22 || day == 23) {
               if (percentSold <= 70) {
                 # seasonal sales must be at least 10%
+                percentSoldSeasonal = ((100 - percentSold) / 3)
                 percentSold = percentSold + ((100 - percentSold) / 3)
                 priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = marketingYear$Date[row],
                                                                                       "Percentile" = marketingYear$Percentile[row],
                                                                                       "Type" = "Seasonal",
-                                                                                      "Percent Sold" = percentSold))
+                                                                                      "Percent Sold" = percentSoldSeasonal))
               }
             }
           }
@@ -158,21 +161,23 @@ isActualized = function(cropYear){
             if(day == 10 || day == 11 || day == 12 || day == 13) {
               if (percentSold <= 80) {
                 #seasonal sales must be at least 10%
+                percentSoldSeasonal = ((100 - percentSold) / 2)
                 percentSold = percentSold + ((100 - percentSold) / 2)
                 priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = marketingYear$Date[row],
                                                                                       "Percentile" = marketingYear$Percentile[row],
                                                                                       "Type" = "Seasonal",
-                                                                                      "Percent Sold" = percentSold))
+                                                                                      "Percent Sold" = percentSoldSeasonal))
               }
             }
             else if(day == 20 || day == 21 || day == 22 || day == 23) {
               if(percentSold <= 90) {
                 #seasonal sales must be at least 10%
+                percentSoldSeasonal = ((100 - percentSold) / 1)
                 percentSold = percentSold + ((100 - percentSold) / 1)
                 priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = marketingYear$Date[row],
                                                                                       "Percentile" = marketingYear$Percentile[row],
                                                                                       "Type" = "Seasonal",
-                                                                                      "Percent Sold" = percentSold))
+                                                                                      "Percent Sold" = percentSoldSeasonal))
               }
             }
           }
