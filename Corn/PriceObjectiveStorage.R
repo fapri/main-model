@@ -11,6 +11,7 @@ for (i in 1:length(Corn_CropYearObjects)){
   }
 }
 
+
 # Interest Rate
 interestRate = 0.055
 # Monthly Commercial Storage Cost
@@ -25,12 +26,14 @@ binStorageAfter = 0.003
 getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
   storageInterval = interval(mdy(paste("11-01", toString(year(int_start(intervalPost))), sep="-")), int_end(intervalPost))
   salePrice = actualizedSales$Price
-  commercialStorage = NA
-  onFarmStorage = NA
   actualizedSales$monthsSinceOct = NA
   
   # Calculate months since October for post harvest dates only
   for(i in 1:nrow(actualizedSales)) {
+    commercialStorage = rep(0, nrow(actualizedSales))
+    onFarmStorage = rep(0, nrow(actualizedSales))
+    commercialPrice = rep(0, nrow(actualizedSales))
+    onFarmPrice = rep(0, nrow(actualizedSales))
     #Check if date is in storage interval
     if(actualizedSales$Date[i] %within% storageInterval) {
       if(month(actualizedSales$Date[i]) == 9) {
@@ -64,6 +67,7 @@ getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
       
       # Compute commercial storage cost
       commercialStorage[i] = (A + B) - salePrice[i]
+     
     }
   }
   
@@ -75,26 +79,79 @@ getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
       A = salePrice[i] * ((1 + (interestRate/12)) ^ (monthsSinceOct[i])) + binStorage1 + (binStorageAfter*(monthsSinceOct[i] - 1))
       #Comute on farm storage cost
       onFarmStorage[i] = A - salePrice[i]
+      
     }
   }
   
-  storage = cbind(commercialStorage, onFarmStorage)
+  #Get new prices
+  for (i in 1:nrow(actualizedSales)){
+    commercialPrice[i] = salePrice[i] - commercialStorage[i]
+    onFarmPrice[i] = salePrice[i] - onFarmStorage[i]
+  }
+  
+  
+  storage = cbind(commercialStorage, onFarmStorage, commercialPrice, onFarmPrice)
   
   return(storage)
 }
 
 for (i in 1:length(Corn_CropYearObjects)){
-  # Initialize Variable
-  Corn_CropYearObjects[[i]]$`PO Actualized`$CommercialStorage = NA
-  Corn_CropYearObjects[[i]]$`PO Actualized`$onFarmStorage = NA
-  # Call storage function. This will return the base cost of storage and the crop price less storage
-  Corn_CropYearObjects[[i]]$`PO Actualized`$CommercialStorage = subset(getStorageCost(Corn_CropYearObjects[[i]][["PO Actualized"]],
-                                                                                      Corn_CropYearObjects[[i]][["Marketing Year"]],
-                                                                                      Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]]), select = 1)
-  Corn_CropYearObjects[[i]]$`PO Actualized`$onFarmStorage = subset(getStorageCost(Corn_CropYearObjects[[i]][["PO Actualized"]],
-                                                                                  Corn_CropYearObjects[[i]][["Marketing Year"]],
-                                                                                  Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]]), select = 2)
+  # Initialize Variables
+  Corn_CropYearObjects[[i]]$`PO Actualized`$CommercialStorage = 0
+  Corn_CropYearObjects[[i]]$`PO Actualized`$onFarmStorage = 0
+  # Call storage function. This will return the base cost of storage
+  temp = getStorageCost(Corn_CropYearObjects[[i]][["PO Actualized"]],
+                        Corn_CropYearObjects[[i]][["Marketing Year"]],
+                        Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
+  
+  Corn_CropYearObjects[[i]]$`PO Actualized`$CommercialStorage = temp[,1]
+  Corn_CropYearObjects[[i]]$`PO Actualized`$onFarmStorage = temp[,2]
+  Corn_CropYearObjects[[i]]$`PO Actualized`$commercialPrice = temp[,3]
+  Corn_CropYearObjects[[i]]$`PO Actualized`$onFarmPrice = temp[,4]
+    
 }
+
+
+
+# i = 1
+# actualizedSales = Corn_CropYearObjects[[i]][["PO Actualized"]]
+# marketingYear = Corn_CropYearObjects[[i]][["Marketing Year"]]
+# intervalPost = Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]]
+
+
+
+
+getStorageActualized = function(actualizedSales, marketingYear, intervalPost) {
+  #initialize variables
+  storageInterval = interval(mdy(paste("11-01", toString(year(int_start(intervalPost))), sep="-")), int_end(intervalPost))
+  
+  for (i in 1:nrow(actualizedSales)){
+    #Check that date is in post harvest
+    if (actualizedSales$Date[i] %within% storageInterval){
+      firstDate = actualizedSales$Date[i]
+      break
+    }
+  }
+  
+  #IF THE FIRST POST HARVEST DATE HAS >=50% "TOTAL.SOLD"
+  if(actualizedSales[firstDate] >= 50){
+    #AVERAGE SALES BEFORE STORAGE + STRICTLY ON FARM STORAGE
+    
+  }
+  #ELSE
+  #AVERAGE SALES BEFORE STORAGE + 50% OF CROP IN ON-FARM STORAGE + REMAINING CROP IN COMMERCIAL STORAGE
+  
+  
+  
+  
+  
+}
+
+
+
+
+
+
 
 
 
