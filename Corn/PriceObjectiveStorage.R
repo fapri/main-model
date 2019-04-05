@@ -19,9 +19,9 @@ monthlyCommCost = 0.05
 # Three Month Minimum Storage Charge
 TMMStorageCharge = 0.15
 # Total cost of bin storage, 1st month
-binStorage1 = 0.247
+binStorage1 = 0.2469625
 # Total cost of bin storage(exlcuding interest), 2nd month forward
-binStorageAfter = 0.003
+binStorageAfter = 0.0032009009009009
 
 getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
   storageInterval = interval(mdy(paste("11-01", toString(year(int_start(intervalPost))), sep="-")), int_end(intervalPost))
