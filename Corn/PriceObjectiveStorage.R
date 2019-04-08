@@ -116,7 +116,7 @@ for (i in 1:length(Corn_CropYearObjects)){
 
 
 
-# i = 6
+# i = 9
 # actualizedSales = Corn_CropYearObjects[[i]][["PO Actualized"]]
 # marketingYear = Corn_CropYearObjects[[i]][["Marketing Year"]]
 # intervalPost = Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]]
@@ -129,7 +129,7 @@ for (i in 1:length(Corn_CropYearObjects)){
 
 #Returns storage adjusted averages
 #Contains logic that figures commercial/on-farm splits
-getStorageActualized = function(actualizedSales, intervalPost) {
+getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   preRows = rep(0, 9)
   postRows = rep(0, 9)
   commercialRows = NA
@@ -187,7 +187,7 @@ getStorageActualized = function(actualizedSales, intervalPost) {
         break
       }
       
-      else{
+      else if (commercialCrop == 0){
         break
       }
     }
@@ -231,6 +231,7 @@ for (i in 1:length(Corn_CropYearObjects)){
   
   #Calculates total average price, accounting for storage
   storageAdjAvg[i] = getStorageActualized(Corn_CropYearObjects[[i]][["PO Actualized"]],
+                                          Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPre"]],
                                           Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])[1]
   
   #Calculates total average price, without storage
@@ -251,6 +252,7 @@ for (i in 1:length(Corn_CropYearObjects)){
   
   #Calculates post harvest average with storage
   postharvestAverageStorage[i] = getStorageActualized(Corn_CropYearObjects[[i]][["PO Actualized"]],
+                                                      Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPre"]],
                                                       Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])[2]
   
 }
