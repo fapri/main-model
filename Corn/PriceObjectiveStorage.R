@@ -130,6 +130,7 @@ for (i in 1:length(Corn_CropYearObjects)){
 #Returns storage adjusted averages
 #Contains logic that figures commercial/on-farm splits
 getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
+  #Initialize variables
   preRows = rep(0, 9)
   postRows = rep(0, 9)
   commercialRows = NA
@@ -168,8 +169,11 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
     commercialCrop = remainingCrop - 50
     
     for (j in firstDateRow:nrow(actualizedSales)){
+      #Check if the sale can be made without splitting
       if(actualizedSales$Percent.Sold[j] <= commercialCrop && commercialCrop != 0){
+        #Stores sales that are commercial
         commercialRows = c(commercialRows,j)
+        #Calculates remaining crop that needs commercial storage
         commercialCrop = commercialCrop - actualizedSales$Percent.Sold[j]
       }
       
@@ -193,13 +197,23 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
     }
     
     preRowsNew = which(actualizedSales$Date %within% intervalPre)
-    postRowsNew = which(actualizedSales$Date %within% intervalPost)
+    commercialRows = commercialRows
+    onfarmRows = (last(commercialRows) + 1):nrow(actualizedSales)
     
-    #AVERAGE SALES BEFORE STORAGE + STRICTLY ON FARM STORAGE
+    #Average prearvest sales
     storagePreharvestAvg = weighted.mean(actualizedSales$onFarmPrice[preRowsNew], actualizedSales$Percent.Sold[preRowsNew])
+    
+    
+    
+    #################################################################
+    #THIS IS NOT CORRECT OR WORKING. NEED TO ACCOUNT FOR COMMERCIAL/ON FARM ROWS
+    #################################################################
+    
     #Average storage-adjusted sales in the post harvest
     #No need for pre harvest since storage begins in the post harvest
-    storagePostharvestAvg = weighted.mean(actualizedSales$onFarmPrice[postRowsNew], actualizedSales$Percent.Sold[postRowsNew])
+    commercialPostharvestAvg = weighted.mean(actualizedSales$onFarmPrice[commercialRows], actualizedSales$Percent.Sold[commercialRows])
+    onfarmPostharvestAvg = weighted.mean(actualizedSales$onFarmPrice[onfarmRows], actualizedSales$Percent.Sold[onfarmRows])
+    storagePostharvestAvg = 
     
     preharvestPercent = actualizedSales$Total.Sold[firstDateRow - 1] * 0.01
     postharvestPercent = 1 - preharvestPercent
