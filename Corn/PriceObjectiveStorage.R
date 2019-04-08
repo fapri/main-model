@@ -113,16 +113,22 @@ for (i in 1:length(Corn_CropYearObjects)){
 
 
 
-# i = 9
+# i = 2
 # actualizedSales = Corn_CropYearObjects[[i]][["PO Actualized"]]
 # marketingYear = Corn_CropYearObjects[[i]][["Marketing Year"]]
 # intervalPost = Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]]
+# intervalPre = Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPre"]]
 
 
-
-
+#Returns storage adjusted averages
 getStorageActualized = function(actualizedSales, intervalPost) {
   storageInterval = interval(mdy(paste("11-01", toString(year(int_start(intervalPost))), sep="-")), int_end(intervalPost))
+  preRows = rep(0, 9)
+  postRows = rep(0, 9)
+
+    
+  preRows = which(actualizedSales$Date %within% intervalPre)
+  postRows = which(actualizedSales$Date %within% intervalPost)
   
   for (i in 1:nrow(actualizedSales)){
     #Check that date is in post harvest
@@ -136,48 +142,67 @@ getStorageActualized = function(actualizedSales, intervalPost) {
   if(actualizedSales$Total.Sold[firstDateRow] >= 50){
     #AVERAGE SALES BEFORE STORAGE + STRICTLY ON FARM STORAGE
     storageAdjAvg = weighted.mean(actualizedSales$onFarmPrice, actualizedSales$Percent.Sold)
+    #Average storage-adjusted sales in the post harvest
+    #No need for pre harvest since storage begins in the post harvest
+    storagePostharvestAvg = weighted.mean(actualizedSales$onFarmPrice[postRows], actualizedSales$Percent.Sold[postRows])
+    
   }
   #ELSE
   #AVERAGE SALES BEFORE STORAGE + 50% OF CROP IN ON-FARM STORAGE + REMAINING CROP IN COMMERCIAL STORAGE
   else{
     remainingCrop = 100 - actualizedSales$Total.Sold[firstDateRow]
     commercialCrop = remainingCrop - 50
-    
-    
-    
+
+
+
     storageAdjAvg = weighted.mean(0)
+    storagePostharvestAvg = 0
   }
+  
+  storageAdjustments = cbind(storageAdjAvg, storagePostharvestAvg)
+  
+  return(storageAdjustments)
 }
 
-storageAdjAvg = NA
-noStorageAvg = NA
+storageAdjAvg = rep(0, 9)
+noStorageAvg = rep(0, 9)
+preharvestAverage = rep(0, 9)
+postharvestAverage = rep(0, 9)
+preharvestAverageStorage = rep(0, 9)
+postharvestAverageStorage = rep(0, 9)
 for (i in 1:length(Corn_CropYearObjects)){
-  preRows = 0
-  postRows = 0
-  preharvestAverage = 0
-  postharvestAverage = 0
+  preRows = rep(0, 9)
+  postRows = rep(0, 9)
   
   #Calculates total average price, accounting for storage
   storageAdjAvg[i] = getStorageActualized(Corn_CropYearObjects[[i]][["PO Actualized"]],
-                                          Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
+                                          Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])[1]
+  
   #Calculates total average price, without storage
   noStorageAvg[i] = weighted.mean(Corn_CropYearObjects[[i]][["PO Actualized"]][["Price"]], 
                                   Corn_CropYearObjects[[i]][["PO Actualized"]][["Percent.Sold"]])
   
+  #Finds pre harvest and post harvest rows
   preRows = which(Corn_CropYearObjects[[i]][["PO Actualized"]][["Date"]] %within% Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPre"]])
   postRows = which(Corn_CropYearObjects[[i]][["PO Actualized"]][["Date"]] %within% Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
   
+  #Calculates pre harvest average without storage
   preharvestAverage[i] = weighted.mean(Corn_CropYearObjects[[i]][["PO Actualized"]][["Price"]][preRows], 
-                                       Corn_CropYearObjects[[i]][["PO Actualized"]][["Percent.Sold"]][preRows]) 
+                                       Corn_CropYearObjects[[i]][["PO Actualized"]][["Percent.Sold"]][preRows])
+  
+  #Calculates post harvest average without storage
+  postharvestAverage[i] = weighted.mean(Corn_CropYearObjects[[i]][["PO Actualized"]][["Price"]][postRows], 
+                                        Corn_CropYearObjects[[i]][["PO Actualized"]][["Percent.Sold"]][postRows])
+  
+  #Calculates post harvest average with storage
+  postharvestAverageStorage[i] = getStorageActualized(Corn_CropYearObjects[[i]][["PO Actualized"]],
+                                                      Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])[2]
   
 }
 
-#Pre-harvest averages
-
-
-
-
-finalizedPrices = data.frame("CropYear" = Corn_CropYears$CropYear, noStorageAvg, storageAdjAvg, preharvestAverage)
+#Aggregates all adjusted prices by crop year
+finalizedPrices = data.frame("CropYear" = Corn_CropYears$CropYear, noStorageAvg, storageAdjAvg, preharvestAverage,
+                             postharvestAverage, postharvestAverageStorage)
 
 
 
