@@ -118,30 +118,10 @@ priceObjectiveTrigger = function(cropYear) {
     }
     
     #Special case for Aug -> Sept
-    else if (month(mdy(marketingYear$Date[row])) == 9 && month(mdy(marketingYear$Date[row - 1])) == 8 && 
-             marketingYear$Percentile[row - 1] != 95 && marketingYear$Percentile[row - 1] >= 60) {
-      
-      if(marketingYear$Percentile[row - 1] == 60) previousPercentileAbove = "70th"
-      if(marketingYear$Percentile[row - 1] == 70) previousPercentileAbove = "80th"
-      if(marketingYear$Percentile[row - 1] == 80) previousPercentileAbove = "90th"
-      if(marketingYear$Percentile[row - 1] == 90) previousPercentileAbove = "95th"
-      
-      pricePreviousPercentileAbove = marketingYear[row, previousPercentileAbove]
-      
-      if(previousPercentileAbove == "70th") previousPercentileAbove = 70
-      if(previousPercentileAbove == "70th") previousPercentileAbove = 80
-      if(previousPercentileAbove == "70th") previousPercentileAbove = 90
-      if(previousPercentileAbove == "70th") previousPercentileAbove = 95
-      
-      # Takes in price for percentile above prevous day, percentile above previous day, current day price
-      if(isPriceObjectiveSpecial(pricePreviousPercentileAbove, marketingYear$Price[row])) {
-        priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
-                                                                          "Percentile" = previousPercentileAbove,
-                                                                          "Type" = "Price Objective Special"))
-        
-      }
+    else if (month(mdy(marketingYear$Date[row])) == 9 && month(mdy(marketingYear$Date[row - 1])) == 8){
+      next
     }
- 
+    
     else if(isPriceObjective(marketingYear$Percentile[row - 1], marketingYear$Percentile[row])) {
       priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                         "Percentile" = marketingYear$Percentile[row],
