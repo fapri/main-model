@@ -91,8 +91,9 @@ isActualized = function(cropYear){
       else if(triggers$Date[tRow] %within% intervalPost) {
         #if > 0% of crop remains
         if(totalSold < 100) {
-          #if day not within 7 days of last sale
+          #Check if any sales have been made yet
           if(nrow(priceObjectiveActualized) != 0) {
+            #if day not within 7 days of last sale
             if(difftime(triggers$Date[tRow], priceObjectiveActualized$Date[nrow(priceObjectiveActualized)]) >= 7){
               #if >=10% of crop remains
               if(totalSold <= 90) {
@@ -124,7 +125,14 @@ isActualized = function(cropYear){
                 }
               }
             }
+            
+            else if(triggers$Type[tRow] == "End of Year Trailing Stop"){
+              NULL
+            }
           }
+          
+          
+          
           #if trigger is the first one we can just make the sale
           else {
             #PO, ATH, TDH at 10% increments
