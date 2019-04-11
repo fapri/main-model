@@ -241,7 +241,9 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   #Creates object to return
   storageAdjustments = cbind(storageAdjAvg, storagePostharvestAvg)
   
-  return(storageAdjustments)
+  listReturn = list(storageAdjustments, actualizedSales)
+  
+  return(listReturn)
 }
 
 #Initialize variables
@@ -259,7 +261,7 @@ for (i in 1:length(Corn_CropYearObjects)){
   #Calculates total average price, accounting for storage
   storageAdjAvg[i] = getStorageActualized(Corn_CropYearObjects[[i]][["PO Actualized"]],
                                           Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPre"]],
-                                          Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])[1]
+                                          Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])[[1]][1]
   
   #Calculates total average price, without storage
   noStorageAvg[i] = weighted.mean(Corn_CropYearObjects[[i]][["PO Actualized"]][["Price"]], 
@@ -280,8 +282,11 @@ for (i in 1:length(Corn_CropYearObjects)){
   #Calculates post harvest average with storage
   postharvestAverageStorage[i] = getStorageActualized(Corn_CropYearObjects[[i]][["PO Actualized"]],
                                                       Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPre"]],
-                                                      Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])[2]
+                                                      Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])[[1]][2]
   
+  Corn_CropYearObjects[[i]][["PO Actualized"]] = getStorageActualized(Corn_CropYearObjects[[i]][["PO Actualized"]],
+                                                                      Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPre"]],
+                                                                      Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])[[2]]
 }
 
 #Aggregates all adjusted prices by crop year
