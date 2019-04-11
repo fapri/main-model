@@ -23,16 +23,19 @@ binStorage1 = 0.2469625
 binStorageAfter = 0.0032009009009009
 
 getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
+  #Initialize variables
   storageInterval = interval(mdy(paste("11-01", toString(year(int_start(intervalPost))), sep="-")), int_end(intervalPost))
   salePrice = actualizedSales$Price
   actualizedSales$monthsSinceOct = NA
   
   # Calculate months since October for post harvest dates only
   for(i in 1:nrow(actualizedSales)) {
+    #Initialize variables
     commercialStorage = rep(0, nrow(actualizedSales))
     onFarmStorage = rep(0, nrow(actualizedSales))
     commercialPrice = rep(0, nrow(actualizedSales))
     onFarmPrice = rep(0, nrow(actualizedSales))
+    
     #Check if date is in storage interval
     if(actualizedSales$Date[i] %within% storageInterval) {
       if(month(actualizedSales$Date[i]) == 9) {
@@ -82,20 +85,20 @@ getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
     }
   }
   
-  #Get new prices
+  #Get new prices that factor storage
   for (i in 1:nrow(actualizedSales)){
     commercialPrice[i] = salePrice[i] - commercialStorage[i]
     onFarmPrice[i] = salePrice[i] - onFarmStorage[i]
   }
   
-  
+  #Create object to return
   storage = cbind(commercialStorage, onFarmStorage, commercialPrice, onFarmPrice)
   
   return(storage)
 }
 
 
-#Fills storage values into the Corn Crop Year object under Price Actualized
+# Fills storage values into the Corn Crop Year object under Price Actualized
 for (i in 1:length(Corn_CropYearObjects)){
   # Initialize Variables
   Corn_CropYearObjects[[i]]$`PO Actualized`$CommercialStorage = 0
@@ -105,6 +108,7 @@ for (i in 1:length(Corn_CropYearObjects)){
                         Corn_CropYearObjects[[i]][["Marketing Year"]],
                         Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
   
+  # Write values into Corn_CropYearObjects
   Corn_CropYearObjects[[i]]$`PO Actualized`$CommercialStorage = temp[,1]
   Corn_CropYearObjects[[i]]$`PO Actualized`$onFarmStorage = temp[,2]
   Corn_CropYearObjects[[i]]$`PO Actualized`$commercialPrice = temp[,3]
@@ -132,6 +136,7 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   for (i in 1:nrow(actualizedSales)){
     #Check that date is in post harvest
     if (actualizedSales$Date[i] %within% storageInterval){
+      #Store the first date which storage needs to be utilized
       firstDateRow = i
       break
     }
@@ -146,7 +151,6 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
     storagePostharvestAvg = weighted.mean(actualizedSales$onFarmPrice[postRows], actualizedSales$Percent.Sold[postRows])
     
   }
-  #ELSE
   #AVERAGE SALES BEFORE STORAGE + 50% OF CROP IN ON-FARM STORAGE + REMAINING CROP IN COMMERCIAL STORAGE
   else{
     #Calculates remaining crop that needs storage
@@ -164,27 +168,42 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
       }
       
       else if (commercialCrop != 0){
+        #Takes in column names. This will be used to reassign column names in new frame
         cols = match(c("Percent.Sold","Total.Sold"),names(actualizedSales))
+        #Calculates the percent of a single sale that needs to be stored on farm
+        #ex. (16-17 year) a 17.5% sale on 2017-03-20 had a 15% on farm split 
         onfarmSplit = actualizedSales$Percent.Sold[j] - commercialCrop
+        #Calculates the percent of a single sale that needs to be stored on farm
+        #ex. (16-17 year) a 17.5% sale on 2017-03-20 had a 2.5% commercial split
         commercialSplit = actualizedSales$Percent.Sold[j] - onfarmSplit
+        #Calculates the new "Total.Sold" column since the sales were just split
         commercialSplitTotal = actualizedSales$Total.Sold[j - 1] + commercialSplit
         onfarmSplitTotal = onfarmSplit + commercialSplitTotal
         
+        #Changes local actualizedSales to duplicate the row that needs to be split
         actualizedSales = data.frame(rbind(actualizedSales[1:j,], actualizedSales[j:nrow(actualizedSales),]))
+        #Reassigns row names after spliiting
         row.names(actualizedSales) = 1:nrow(actualizedSales)
+        #Loads in new values for Percent.Sold and Total.Sold
         actualizedSales[j, cols] = cbind(Percent.Sold = commercialSplit, Total.Sold = commercialSplitTotal)
         actualizedSales[j + 1, cols] = cbind(Percent.Sold = onfarmSplit, Total.Sold = onfarmSplitTotal)
+        #Vector of rows that are commercial
         commercialRows = c(commercialRows, (last(commercialRows) + 1))
         break
       }
       
+      #Added to ensure proper functionality when commerical and on-farm 
+      #storage is utilized but splitting a sale is not neccessary
       else if (commercialCrop == 0){
         break
       }
     }
     
+    #Updates the rows in which preharvest sales were made
     preRowsNew = which(actualizedSales$Date %within% intervalPre)
+    #Removes NA value
     commercialRows = commercialRows[!is.na(commercialRows)]
+    #Finds rows in which onfarm storage was utilized
     onfarmRows = (last(commercialRows) + 1):nrow(actualizedSales)
     
     #Average prearvest sales
@@ -195,29 +214,37 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
     commercialPostharvestAvg = weighted.mean(actualizedSales$commercialPrice[commercialRows], actualizedSales$Percent.Sold[commercialRows])
     onfarmPostharvestAvg = weighted.mean(actualizedSales$onFarmPrice[onfarmRows], actualizedSales$Percent.Sold[onfarmRows])
     
+    #Finds percent sold in commercial and onfarm storage cases
     commercialPercent = sum(actualizedSales$Percent.Sold[commercialRows]) * 0.01
     onfarmPercent = sum(actualizedSales$Percent.Sold[onfarmRows]) * 0.01
     
+    #Finds the weighted commercial and onfarm average price, weighted to the percent sold respectively
     storageCommercialPostharvestAvg = commercialPostharvestAvg * commercialPercent
     storageOnfarmPostharvestAvg = onfarmPostharvestAvg * onfarmPercent
     
+    #Calculates percent sold in the preharvest and postharvest
     preharvestPercent = actualizedSales$Total.Sold[firstDateRow - 1] * 0.01
     postharvestPercent = 1 - preharvestPercent
     
+    #Calculates postharvest average price, accounting for storage
     storagePostharvestAvg = (storageCommercialPostharvestAvg + storageOnfarmPostharvestAvg) / postharvestPercent
     
+    #Finds the weighted preharvest and postharvest average price, weighted to the percent sold respectively
     storagePreharvestAvg2 = (storagePreharvestAvg * preharvestPercent)
     storagePostharvestAvg2 = (storagePostharvestAvg * postharvestPercent)
     
+    #Finds the total average price
     storageAdjAvg = mean(storagePreharvestAvg2 + storagePostharvestAvg2)
     
   }
   
+  #Creates object to return
   storageAdjustments = cbind(storageAdjAvg, storagePostharvestAvg)
   
   return(storageAdjustments)
 }
 
+#Initialize variables
 storageAdjAvg = rep(0, 9)
 noStorageAvg = rep(0, 9)
 preharvestAverage = rep(0, 9)
@@ -225,6 +252,7 @@ postharvestAverage = rep(0, 9)
 preharvestAverageStorage = rep(0, 9)
 postharvestAverageStorage = rep(0, 9)
 for (i in 1:length(Corn_CropYearObjects)){
+  #Initialize variables
   preRows = rep(0, 9)
   postRows = rep(0, 9)
   
