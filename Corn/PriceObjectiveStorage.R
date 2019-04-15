@@ -317,6 +317,25 @@ for (i in 1:length(Corn_CropYearObjects)){
   }
 }
 
+#TODO NEEDS TO BE ADAPTED SUCH THAT STORAGE COSTS ARE ONLY PRINTED WHEN NEEDED. EX. ONLY ON FARM OR COMMERCIAL
+for (i in 1:length(Corn_CropYearObjects)){
+  dates = Corn_CropYearObjects[[i]]$`PO Actualized`$Date
+  
+  Corn_CropYearObjects[[i]]$`Sales Summary` = data.frame(matrix(nrow = 6, ncol = length(dates)))
+  
+  colnames(Corn_CropYearObjects[[i]]$`Sales Summary`) = dates
+  
+  Corn_CropYearObjects[[i]]$`Sales Summary` = cbind("Date" = NA, Corn_CropYearObjects[[i]]$`Sales Summary`)
+  
+  Corn_CropYearObjects[[i]]$`Sales Summary`$`Date` =  c("Price", "Percentage", "Trigger", "On Farm", "Commercial", "Price - Storage")
+  
+  Corn_CropYearObjects[[i]]$`Sales Summary`[4,2:(length(dates) + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`PO Actualized`$onFarmStorage, digits = 2), format = 'f', digits = 2)
+  Corn_CropYearObjects[[i]]$`Sales Summary`[5,2:(length(dates) + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`PO Actualized`$CommercialStorage, digits = 2), format = 'f', digits = 2)
+  Corn_CropYearObjects[[i]]$`Sales Summary`[6,2:(length(dates) + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`PO Actualized`$finalPrice, digits = 2), format = 'f', digits = 2)
+}
+
+
+
 # Aggregates all adjusted prices by crop year
 finalizedPrices = data.frame("CropYear" = Corn_CropYears$CropYear, noStorageAvg, storageAdjAvg, preharvestAverage,
                              postharvestAverage, postharvestAverageStorage)
