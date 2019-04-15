@@ -8,7 +8,7 @@ library(formattable)
 
 tables = list()
 getTables = function(data) {
-  data = cbind(" " = data[,1], round(data[, 2:4], digits = 2))
+  data = cbind(" " = data[,1], round(data[, 2:3], digits = 2))
   table = formattable(data, 
                       align = "c",
                       list(~ formatter("span",
