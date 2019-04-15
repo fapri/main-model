@@ -296,17 +296,17 @@ finalizedPrices = data.frame("CropYear" = Corn_CropYears$CropYear, noStorageAvg,
 
 # Loads all prices into corn crop year object in a format ready for tables
 for (i in 1:length(Corn_CropYearObjects)){
-  Corn_CropYearObjects[[i]][["Storage"]] = data.frame(matrix(nrow = 2, ncol = 4))
+  Corn_CropYearObjects[[i]][["Storage"]] = data.frame(matrix(nrow = 3, ncol = 3))
 
-  colnames(Corn_CropYearObjects[[i]][["Storage"]]) = c(" ", "Total Avg Price", "Pre-Harvest Avg Price", "Post-Harvest Avg Price")
+  colnames(Corn_CropYearObjects[[i]][["Storage"]]) = c(" ", "No Storage", "Storage")
   
-  Corn_CropYearObjects[[i]][["Storage"]]$` ` = c("No Storage", "Storage")
-  Corn_CropYearObjects[[i]][["Storage"]]$`Total Avg Price`[1] = finalizedPrices$noStorageAvg[i]
-  Corn_CropYearObjects[[i]][["Storage"]]$`Pre-Harvest Avg Price`[1] = finalizedPrices$preharvestAverage[i]
-  Corn_CropYearObjects[[i]][["Storage"]]$`Post-Harvest Avg Price`[1] = finalizedPrices$postharvestAverage[i]
-  Corn_CropYearObjects[[i]][["Storage"]]$`Total Avg Price`[2] = finalizedPrices$storageAdjAvg[i]
-  Corn_CropYearObjects[[i]][["Storage"]]$`Pre-Harvest Avg Price`[2] = finalizedPrices$preharvestAverage[i]
-  Corn_CropYearObjects[[i]][["Storage"]]$`Post-Harvest Avg Price`[2] = finalizedPrices$postharvestAverageStorage[i]
+  Corn_CropYearObjects[[i]][["Storage"]]$` ` =  c("Total Avg Price", "Pre-Harvest Avg Price", "Post-Harvest Avg Price")
+  Corn_CropYearObjects[[i]][["Storage"]]$`No Storage`[1] = finalizedPrices$noStorageAvg[i]
+  Corn_CropYearObjects[[i]][["Storage"]]$`No Storage`[2] = finalizedPrices$preharvestAverage[i]
+  Corn_CropYearObjects[[i]][["Storage"]]$`No Storage`[3] = finalizedPrices$postharvestAverage[i]
+  Corn_CropYearObjects[[i]][["Storage"]]$`Storage`[1] = finalizedPrices$storageAdjAvg[i]
+  Corn_CropYearObjects[[i]][["Storage"]]$`Storage`[2] = finalizedPrices$preharvestAverage[i]
+  Corn_CropYearObjects[[i]][["Storage"]]$`Storage`[3] = finalizedPrices$postharvestAverageStorage[i]
   
 }
 
