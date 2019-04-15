@@ -2,8 +2,7 @@
 # Graphing
 
 
-source('Corn/PriceObjectiveActualized.R')
-
+source('Corn/PriceObjectiveStorage.R')
 
 #Set Color Palette
 myColors = c("#ffff00", "#ffff00", "#ed7d31", "#ffff00", "#ffd700", "#FF69B4")
@@ -75,7 +74,9 @@ plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actua
     geom_segment(data = segment_data[3:4,], aes(x = x, y = ninetyFive, xend = xend, yend = ninetyFive), linetype = 5) +
     geom_text(data = segment_data[3:4,], aes(x = xcenter, y = ninetyFive, fontface = "bold"), label = "95th", color = "#04dd04", size = 4) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = c(0.70, 0.75)) + 
-    scale_fill_manual(name = "Sale", values = myColors)
+    scale_fill_manual(name = "Sale", values = myColors) + 
+    theme(legend.position="bottom")
+    
   
   return(plot)
   
