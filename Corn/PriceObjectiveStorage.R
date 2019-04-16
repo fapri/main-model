@@ -144,7 +144,7 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   }
   
   # IF THE FIRST POST HARVEST DATE HAS >=50% "TOTAL.SOLD"
-  if(actualizedSales$Total.Sold[firstDateRow] >= 50){
+  if(actualizedSales$Total.Sold[firstDateRow - 1] >= 50){
     # AVERAGE SALES BEFORE STORAGE + STRICTLY ON FARM STORAGE
     storageAdjAvg = weighted.mean(actualizedSales$onFarmPrice, actualizedSales$Percent.Sold)
     # Average storage-adjusted sales in the post harvest
@@ -190,13 +190,14 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
         actualizedSales[j, cols] = cbind(Percent.Sold = commercialSplit, Total.Sold = commercialSplitTotal)
         actualizedSales[j + 1, cols] = cbind(Percent.Sold = onfarmSplit, Total.Sold = onfarmSplitTotal)
         # Vector of rows that are commercial
-        commercialRows = c(commercialRows, (last(commercialRows) + 1))
+        commercialRows = c(commercialRows, (last(cols) + 1))
         break
       }
       
       # Added to ensure proper functionality when commerical and on-farm 
       # storage is utilized but splitting a sale is not neccessary
       else if (commercialCrop == 0){
+        commercialRows = c(commercialRows,j)
         break
       }
     }
@@ -248,7 +249,7 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   return(listReturn)
 }
 
-# i = 2
+# i = 7
 # actualizedSales = Corn_CropYearObjects[[i]][["PO Actualized"]]
 # intervalPre = Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPre"]]
 # intervalPost = Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]]
@@ -304,7 +305,7 @@ for (i in 1:length(Corn_CropYearObjects)){
                                     Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPre"]],
                                     Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])[[4]]
   
-  if (is.na(commercialRows)){
+  if (is.na(commercialRows[1])){
     Corn_CropYearObjects[[i]][["PO Actualized"]]$finalPrice = Corn_CropYearObjects[[i]][["PO Actualized"]]$onFarmPrice
   }
   
@@ -315,11 +316,14 @@ for (i in 1:length(Corn_CropYearObjects)){
     
     Corn_CropYearObjects[[i]][["PO Actualized"]]$finalPrice[onfarmRows] = Corn_CropYearObjects[[i]][["PO Actualized"]]$onFarmPrice[onfarmRows]
   }
-}
-
-#TODO NEEDS TO BE ADAPTED SUCH THAT STORAGE COSTS ARE ONLY PRINTED WHEN NEEDED. EX. ONLY ON FARM OR COMMERCIAL
-for (i in 1:length(Corn_CropYearObjects)){
+  # }
+  
+  #TODO NEEDS TO BE ADAPTED SUCH THAT STORAGE COSTS ARE ONLY PRINTED WHEN NEEDED. EX. ONLY ON FARM OR COMMERCIAL
+  # for (i in 1:length(Corn_CropYearObjects)){
   dates = Corn_CropYearObjects[[i]]$`PO Actualized`$Date
+  dates = format(dates, "%b-%d-%y")
+  dates = make.unique(dates, sep = "Split")
+  
   
   Corn_CropYearObjects[[i]]$`Sales Summary` = data.frame(matrix(nrow = 6, ncol = length(dates)))
   
@@ -329,8 +333,27 @@ for (i in 1:length(Corn_CropYearObjects)){
   
   Corn_CropYearObjects[[i]]$`Sales Summary`$`Date` =  c("Price", "Percentage", "Trigger", "On Farm", "Commercial", "Price - Storage")
   
-  Corn_CropYearObjects[[i]]$`Sales Summary`[4,2:(length(dates) + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`PO Actualized`$onFarmStorage, digits = 2), format = 'f', digits = 2)
-  Corn_CropYearObjects[[i]]$`Sales Summary`[5,2:(length(dates) + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`PO Actualized`$CommercialStorage, digits = 2), format = 'f', digits = 2)
+  Corn_CropYearObjects[[i]]$`Sales Summary`[1,2:(length(dates) + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`PO Actualized`$Price, digits = 2), format = 'f', digits = 2)
+  Corn_CropYearObjects[[i]]$`Sales Summary`[2,2:(length(dates) + 1)] = Corn_CropYearObjects[[i]]$`PO Actualized`$Percent.Sold
+  Corn_CropYearObjects[[i]]$`Sales Summary`[3,2:(length(dates) + 1)] = Corn_CropYearObjects[[i]]$`PO Actualized`$Type
+  
+  
+  if (is.na(commercialRows[1])){
+    Corn_CropYearObjects[[i]]$`Sales Summary`[4,2:(length(dates) + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`PO Actualized`$onFarmStorage, digits = 2), format = 'f', digits = 2)
+    Corn_CropYearObjects[[i]]$`Sales Summary`[5,2:(length(dates) + 1)] = 0.00
+  }
+  
+  else{
+    for (k in 1:tail(commercialRows, n=1)){
+      Corn_CropYearObjects[[i]]$`Sales Summary`[4,(k + 1)] = 0.00
+      Corn_CropYearObjects[[i]]$`Sales Summary`[5,(k + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`PO Actualized`$CommercialStorage[k], digits = 2), format = 'f', digits = 2)
+    }
+    
+    Corn_CropYearObjects[[i]]$`Sales Summary`[4,(onfarmRows + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`PO Actualized`$onFarmStorage[onfarmRows], digits = 2), format = 'f', digits = 2)
+    Corn_CropYearObjects[[i]]$`Sales Summary`[5,(onfarmRows + 1)] = 0.00
+    
+  }
+  
   Corn_CropYearObjects[[i]]$`Sales Summary`[6,2:(length(dates) + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`PO Actualized`$finalPrice, digits = 2), format = 'f', digits = 2)
 }
 
