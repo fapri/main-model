@@ -1,6 +1,8 @@
 library(shiny)
 library(DT)
 library(htmltools)
+library(formattable)
+
 
 u.n <-  Corn_CropYears$CropYear
 names(u.n) <- u.n
