@@ -83,7 +83,7 @@ for(i in 1:length(Corn_CropYearObjects)) {
                                                      mdy(Corn_CropYearObjects[[i]]$`Stop Date`),
                                                      Corn_CropYearObjects[[i]]$`Marketing Year`,
                                                      Corn_CropYearObjects[[i]]$`PO Actualized`)
-  print(Corn_CropYearObjects[[i]]$Plot)
+  # print(Corn_CropYearObjects[[i]]$Plot)
   
 }
 
