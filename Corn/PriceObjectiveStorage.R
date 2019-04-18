@@ -197,7 +197,6 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
       # Added to ensure proper functionality when commerical and on-farm 
       # storage is utilized but splitting a sale is not neccessary
       else if (commercialCrop == 0){
-        commercialRows = c(commercialRows,j)
         break
       }
     }
