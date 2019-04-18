@@ -1,7 +1,6 @@
 # Corn 
 # Graphing
 
-
 source('Corn/PriceObjectiveStorage.R')
 
 #Set Color Palette
@@ -9,14 +8,12 @@ myColors = c("#ffff00", "#ffff00", "#ed7d31", "#ffff00", "#ffd700", "#FF69B4")
 colorLabels = c("Price Objective", "Price Objective Special", "Seasonal", "Ten Day High", "All Time High", "End of Year Trailing Stop")
 names(myColors) = colorLabels 
 
-
 plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actualizedSales) {
   harvest = mdy(paste("09-01", toString(year(startDate)), sep="-"))
   marchUpdate1 = mdy(paste("03-01", toString(year(startDate)), sep="-"))
   marchUpdate2 = mdy(paste("03-01", toString(year(stopDate)), sep="-"))
   xcenter = c((startDate + floor((marchUpdate1 - startDate)/2)), (marchUpdate1 + floor((harvest - marchUpdate1)/2)), 
               (harvest + floor((marchUpdate2 - harvest)/2)), (marchUpdate2 + floor((stopDate - marchUpdate2)/2)))
-  
   
   # initialize variables
   baseline = NA
@@ -77,9 +74,7 @@ plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actua
     scale_fill_manual(name = "Sale", values = myColors) + 
     theme(legend.position="bottom")
     
-  
   return(plot)
-  
 }
 
 for(i in 1:length(Corn_CropYearObjects)) {
@@ -92,14 +87,9 @@ for(i in 1:length(Corn_CropYearObjects)) {
   
 }
 
-
 # i = 2
 # cropYear = Corn_CropYearObjects[[i]]$`Crop Year`
 # startDate = mdy(Corn_CropYearObjects[[i]]$`Start Date`)
 # stopDate = mdy(Corn_CropYearObjects[[i]]$`Stop Date`)
 # marketingYear = Corn_CropYearObjects[[i]]$`Marketing Year`
 # actualizedSales = Corn_CropYearObjects[[i]]$`PO Actualized`
-
-
-
-

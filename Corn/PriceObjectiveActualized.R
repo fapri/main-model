@@ -254,20 +254,16 @@ isActualized = function(cropYear){
           }
         }
       }
-      
-      
-      #else if price >= 70 percentile
-      #make EYTS sale
+      # else if price >= 70 percentile
+      # make EYTS sale
     }
   }
   
   cropYear[['PO Actualized']] = priceObjectiveActualized
   
   return(cropYear)
-  
 }
 
 for(i in 1:length(Corn_CropYearObjects)) {
   Corn_CropYearObjects[[i]] = isActualized(Corn_CropYearObjects[[i]])
 }
-

@@ -378,8 +378,3 @@ for (i in 1:length(Corn_CropYearObjects)){
   Corn_CropYearObjects[[i]][["Storage"]]$`Storage`[3] = finalizedPrices$postharvestAverageStorage[i]
   
 }
-
-
-
-
-

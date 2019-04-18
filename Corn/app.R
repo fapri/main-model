@@ -3,7 +3,6 @@ library(DT)
 library(htmltools)
 library(formattable)
 
-
 u.n <-  Corn_CropYears$CropYear
 names(u.n) <- u.n
 
@@ -31,7 +30,6 @@ getTables = function(data) {
                                                                                   padding.left = "10px",
                                                                                   padding.right = "10px",
                                                                                   border.radius = "5px")),
-                           
                            ` ` = formatter("span", style = ~ style(display = "block",
                                                                    "border-radius" = "2px",
                                                                    "padding" = "5px",
@@ -48,7 +46,6 @@ getSalesTable = function(data) {
                                                          "border-radius" = "2px",
                                                          "padding" = "5px",
                                                          "text-align" = "center")),
-                           
                            `Date` = formatter("span", style = ~ style(display = "block",
                                                                       "border-radius" = "2px",
                                                                       "padding" = "5px",
@@ -56,7 +53,6 @@ getSalesTable = function(data) {
                                                                       "text-align" = "left"))))
   return(table)
 }
-
 
 ui <- shinyUI(
   navbarPage("Corn Marketing Strategies",
@@ -75,36 +71,28 @@ ui <- shinyUI(
                                      tags$style(type="text/css", '#storageTables tfoot {display:none;}'))
                             
                           ),
-                          
                           mainPanel(
                             plotOutput('distPlot')
                           )
                           
                         )
                       )
-                      
              ),
              tabPanel("Trailing Stop",         
                       fluidPage(
                         titlePanel("Future Work")
                       )
-                        
              ),
              tabPanel("Seasonal Sales",         
                       fluidPage(
                         titlePanel("Future Work")
                       )
-                      
              )
-             
+      )
   )
-)
-
 
 server <- shinyServer(function(input,output,session){
-  
   output$distPlot <- renderPlot({
-    
     if (input$year == "2008-09") {
       Corn_CropYearObjects[[1]]$Plot
     }
@@ -140,12 +128,9 @@ server <- shinyServer(function(input,output,session){
     else if (input$year == "2016-17" ) {
       Corn_CropYearObjects[[9]]$Plot
     }
-    
-    
   })
   
   output$storageTables = renderDataTable({
-    
     if (input$year == "2008-09") {
       as.datatable(getTables(Corn_CropYearObjects[[1]]$Storage), rownames = FALSE, 
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -190,11 +175,9 @@ server <- shinyServer(function(input,output,session){
       as.datatable(getTables(Corn_CropYearObjects[[9]]$Storage), rownames = FALSE, 
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
-    
   })
   
   output$summaryTables = renderDataTable({
-    
     if (input$year == "2008-09") {
       as.datatable(getSalesTable(Corn_CropYearObjects[[1]]$`Sales Summary`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -239,11 +222,7 @@ server <- shinyServer(function(input,output,session){
       as.datatable(getSalesTable(Corn_CropYearObjects[[9]]$`Sales Summary`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
-    
   })
 })
 
-
 shinyApp(ui=ui,server = server)
-
-
