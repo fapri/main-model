@@ -58,29 +58,48 @@ getSalesTable = function(data) {
 }
 
 
-ui <- shinyUI(fluidPage(
-  titlePanel("Corn: Price Objective"),
-  
-  dataTableOutput('summaryTables'),
-  
-  tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
-  
-  sidebarLayout(
-    sidebarPanel(
-      fluidRow(selectInput('year','Crop Year', choices = u.n),
-               column(12, dataTableOutput('storageTables')),
-               tags$style(type="text/css", '#storageTables tfoot {display:none;}'))
-      
-    ),
-    
-    mainPanel(
-      plotOutput('distPlot')
-    )
-    
-
-    
+ui <- shinyUI(
+  navbarPage("Corn Marketing Strategies",
+             tabPanel("Price Objective",         
+                      fluidPage(
+                        # titlePanel("Corn: Price Objective"),
+                        
+                        dataTableOutput('summaryTables'),
+                        
+                        tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                        
+                        sidebarLayout(
+                          sidebarPanel(
+                            fluidRow(selectInput('year','Crop Year', choices = u.n),
+                                     column(12, dataTableOutput('storageTables')),
+                                     tags$style(type="text/css", '#storageTables tfoot {display:none;}'))
+                            
+                          ),
+                          
+                          mainPanel(
+                            plotOutput('distPlot')
+                          )
+                          
+                        )
+                      )
+                      
+             ),
+             tabPanel("Trailing Stop",         
+                      fluidPage(
+                        titlePanel("Future Work")
+                      )
+                        
+             ),
+             tabPanel("Seasonal Sales",         
+                      fluidPage(
+                        titlePanel("Future Work")
+                      )
+                      
+             )
+             
   )
-))
+)
+
 
 server <- shinyServer(function(input,output,session){
   
