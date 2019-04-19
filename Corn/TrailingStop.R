@@ -69,7 +69,7 @@ isEndYearTrailingStop = function(date, previousPercentile, currentPercentile, po
   # checks if date is in June
   if (month(date) >= 6 && year(date) == year(int_end(postInterval))) {
     # Checks if Market passes down a percentile
-    if (currentPercentile < previousPercentile && currentPercentile >= 60) {
+    if (currentPercentile < previousPercentile && currentPercentile >= 70) {
       return(T)
     } else 
       return(F)
@@ -90,6 +90,10 @@ trailingStopTrigger = function(cropYear) {
   trailingStopTriggers = data.frame()
   
   marketingYear = cropYear[['Marketing Year']]
+  june = which(month(mdy(marketingYear$Date)) == 6)
+  juneOC = which(year(mdy(marketingYear$Date[june])) == year(mdy(marketingYear$Date[nrow(marketingYear)])))
+  
+  EYTSInterval = interval(head(mdy(marketingYear$Date[june[juneOC]]), 1), mdy(marketingYear$Date[nrow(marketingYear)]))
   
   for(row in 2:nrow(marketingYear)) {
     # Special case for Feb -> March
@@ -123,9 +127,17 @@ trailingStopTrigger = function(cropYear) {
     }
     
     else if(isTrailingStop(marketingYear$Percentile[row - 1], marketingYear$Percentile[row])) {
-      trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
-                                                                    "Percentile" = marketingYear$Percentile[row],
-                                                                    "Type" = "Trailing Stop"))
+      if(nrow(trailingStopTriggers) == 0 || difftime((mdy(marketingYear$Date[row])), mdy(trailingStopTriggers$Date[nrow(trailingStopTriggers)])) >= 7){ 
+        trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
+                                                                      "Percentile" = marketingYear$Percentile[row],
+                                                                      "Type" = "Trailing Stop"))
+      }
+      
+      else if ((mdy(marketingYear$Date[row]) %within% EYTSInterval)){ 
+        trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
+                                                                      "Percentile" = marketingYear$Percentile[row],
+                                                                      "Type" = "End of Year Trailing Stop"))
+      }
     }
     
     else if (isTenDayHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row], 
@@ -142,13 +154,6 @@ trailingStopTrigger = function(cropYear) {
       trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                     "Percentile" = marketingYear$Percentile[row],
                                                                     "Type" = "All Time High"))
-    }
-    
-    else if (isEndYearTrailingStop(mdy(marketingYear$Date[row]), marketingYear$Percentile[row - 1], marketingYear$Percentile[row],
-                                   cropYear$`Pre/Post Interval`$intervalPost)) {
-      trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
-                                                                    "Percentile" = marketingYear$Percentile[row],
-                                                                    "Type" = "End of Year Trailing Stop"))
     }
   }
   
