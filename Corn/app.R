@@ -60,8 +60,12 @@ ui <- shinyUI(
                       fluidPage(
                         # titlePanel("Corn: Price Objective"),
                         
-                        plotOutput('distPlot'),
-                        
+                        fluidRow(
+                          plotOutput('distPlot'),
+                          style = "padding-bottom:50px"
+                        ),
+                          
+                          
                         tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
                         
                         sidebarLayout(
@@ -72,16 +76,21 @@ ui <- shinyUI(
                             
                           ),
                           mainPanel(
-                            dataTableOutput('summaryTables')
+                            fluidRow(
+                              dataTableOutput('summaryTables'),
+                              style = "padding-bottom:100px")
+                            
                           )
-                          
                         )
                       )
              ),
              tabPanel("Trailing Stop",         
                       fluidPage(
                        
-                        plotOutput('TSdistPlot'),
+                        fluidRow(
+                          plotOutput('TSdistPlot'),
+                          style = "padding-bottom:50px"
+                        ),
                         
                         tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
                         
@@ -92,7 +101,10 @@ ui <- shinyUI(
                                      tags$style(type="text/css", '#TSstorageTables tfoot {display:none;}'))
                           ),
                           mainPanel(
-                            dataTableOutput('TSsummaryTables')
+                            fluidRow(
+                              dataTableOutput('TSsummaryTables'),
+                              style = "padding-bottom:100px")
+                            
                           )
                           
                         )
@@ -101,7 +113,10 @@ ui <- shinyUI(
              tabPanel("Seasonal Sales",         
                       fluidPage(
                         
-                        plotOutput('SSdistPlot'),
+                        fluidRow(
+                          plotOutput('SSdistPlot'),
+                          style = "padding-bottom:50px"
+                        ),
                         
                         tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
                         
@@ -112,7 +127,10 @@ ui <- shinyUI(
                                      tags$style(type="text/css", '#SSstorageTables tfoot {display:none;}'))
                           ),
                           mainPanel(
-                            dataTableOutput('SSsummaryTables')
+                            fluidRow(
+                              dataTableOutput('SSsummaryTables'),
+                              style = "padding-bottom:100px")
+                            
                           )
                           
                         )
