@@ -1,11 +1,12 @@
 # Corn 
+# Trailing Stop
 # Graphing
 
-source('Corn/PriceObjectiveStorage.R')
+source('Corn/TrailingStopStorage.R')
 
 #Set Color Palette
 myColors = c("#ffff00", "#ffff00", "#ed7d31", "#ffff00", "#ffd700", "#FF69B4")
-colorLabels = c("Price Objective", "Price Objective Special", "Seasonal", "Ten Day High", "All Time High", "End of Year Trailing Stop")
+colorLabels = c("Trailing Stop", "Trailing Stop Special", "Seasonal", "Ten Day High", "All Time High", "End of Year Trailing Stop")
 names(myColors) = colorLabels 
 
 plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actualizedSales) {
@@ -47,7 +48,7 @@ plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actua
     geom_point(data = actualizedSales, aes(x = Date, y = Price, fill = Type), shape = 21, size = 3, alpha = .75) +
     geom_vline(xintercept = as.Date(paste(year(startDate), "09-01", sep = "-")), linetype = 2) +
     xlab("Day") + ylab("Price") +
-    ggtitle(paste(cropYear, "Price Objective w/o Multi-Year", sep = " ")) +
+    ggtitle(paste(cropYear, "Trailing Stop w/o Multi-Year", sep = " ")) +
     scale_x_date(date_labels = "%b '%y", date_breaks = "1 month", date_minor_breaks = "1 month") +
     
     geom_segment(data = segment_data[1:2,], aes(x = x, y = baseline, xend = xend, yend = baseline), linetype = 5) + 
@@ -82,14 +83,7 @@ for(i in 1:length(Corn_CropYearObjects)) {
                                                      mdy(Corn_CropYearObjects[[i]]$`Start Date`),
                                                      mdy(Corn_CropYearObjects[[i]]$`Stop Date`),
                                                      Corn_CropYearObjects[[i]]$`Marketing Year`,
-                                                     Corn_CropYearObjects[[i]]$`PO Actualized`)
+                                                     Corn_CropYearObjects[[i]]$`TS Actualized`)
   # print(Corn_CropYearObjects[[i]]$Plot)
   
 }
-
-# i = 2
-# cropYear = Corn_CropYearObjects[[i]]$`Crop Year`
-# startDate = mdy(Corn_CropYearObjects[[i]]$`Start Date`)
-# stopDate = mdy(Corn_CropYearObjects[[i]]$`Stop Date`)
-# marketingYear = Corn_CropYearObjects[[i]]$`Marketing Year`
-# actualizedSales = Corn_CropYearObjects[[i]]$`PO Actualized`
