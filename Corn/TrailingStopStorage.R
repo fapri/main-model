@@ -327,36 +327,36 @@ for (i in 1:length(Corn_CropYearObjects)){
   dates = make.unique(dates, sep = "Split")
   
   
-  Corn_CropYearObjects[[i]]$`Sales Summary` = data.frame(matrix(nrow = 6, ncol = length(dates)))
+  Corn_CropYearObjects[[i]]$`TS Sales Summary` = data.frame(matrix(nrow = 6, ncol = length(dates)))
   
-  colnames(Corn_CropYearObjects[[i]]$`Sales Summary`) = dates
+  colnames(Corn_CropYearObjects[[i]]$`TS Sales Summary`) = dates
   
-  Corn_CropYearObjects[[i]]$`Sales Summary` = cbind("Date" = NA, Corn_CropYearObjects[[i]]$`Sales Summary`)
+  Corn_CropYearObjects[[i]]$`TS Sales Summary` = cbind("Date" = NA, Corn_CropYearObjects[[i]]$`TS Sales Summary`)
   
-  Corn_CropYearObjects[[i]]$`Sales Summary`$`Date` =  c("Price", "Percentage", "Trigger", "On Farm", "Commercial", "Price - Storage")
+  Corn_CropYearObjects[[i]]$`TS Sales Summary`$`Date` =  c("Price", "Percentage", "Trigger", "On Farm", "Commercial", "Price - Storage")
   
-  Corn_CropYearObjects[[i]]$`Sales Summary`[1,2:(length(dates) + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`TS Actualized`$Price, digits = 2), format = 'f', digits = 2)
-  Corn_CropYearObjects[[i]]$`Sales Summary`[2,2:(length(dates) + 1)] = Corn_CropYearObjects[[i]]$`TS Actualized`$Percent.Sold
-  Corn_CropYearObjects[[i]]$`Sales Summary`[3,2:(length(dates) + 1)] = Corn_CropYearObjects[[i]]$`TS Actualized`$Type
+  Corn_CropYearObjects[[i]]$`TS Sales Summary`[1,2:(length(dates) + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`TS Actualized`$Price, digits = 2), format = 'f', digits = 2)
+  Corn_CropYearObjects[[i]]$`TS Sales Summary`[2,2:(length(dates) + 1)] = Corn_CropYearObjects[[i]]$`TS Actualized`$Percent.Sold
+  Corn_CropYearObjects[[i]]$`TS Sales Summary`[3,2:(length(dates) + 1)] = Corn_CropYearObjects[[i]]$`TS Actualized`$Type
   
   
   if (is.na(commercialRows[1])){
-    Corn_CropYearObjects[[i]]$`Sales Summary`[4,2:(length(dates) + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`TS Actualized`$onFarmStorage, digits = 2), format = 'f', digits = 2)
-    Corn_CropYearObjects[[i]]$`Sales Summary`[5,2:(length(dates) + 1)] = 0.00
+    Corn_CropYearObjects[[i]]$`TS Sales Summary`[4,2:(length(dates) + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`TS Actualized`$onFarmStorage, digits = 2), format = 'f', digits = 2)
+    Corn_CropYearObjects[[i]]$`TS Sales Summary`[5,2:(length(dates) + 1)] = 0.00
   }
   
   else{
     for (k in 1:tail(commercialRows, n=1)){
-      Corn_CropYearObjects[[i]]$`Sales Summary`[4,(k + 1)] = 0.00
-      Corn_CropYearObjects[[i]]$`Sales Summary`[5,(k + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`TS Actualized`$CommercialStorage[k], digits = 2), format = 'f', digits = 2)
+      Corn_CropYearObjects[[i]]$`TS Sales Summary`[4,(k + 1)] = 0.00
+      Corn_CropYearObjects[[i]]$`TS Sales Summary`[5,(k + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`TS Actualized`$CommercialStorage[k], digits = 2), format = 'f', digits = 2)
     }
     
-    Corn_CropYearObjects[[i]]$`Sales Summary`[4,(onfarmRows + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`TS Actualized`$onFarmStorage[onfarmRows], digits = 2), format = 'f', digits = 2)
-    Corn_CropYearObjects[[i]]$`Sales Summary`[5,(onfarmRows + 1)] = 0.00
+    Corn_CropYearObjects[[i]]$`TS Sales Summary`[4,(onfarmRows + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`TS Actualized`$onFarmStorage[onfarmRows], digits = 2), format = 'f', digits = 2)
+    Corn_CropYearObjects[[i]]$`TS Sales Summary`[5,(onfarmRows + 1)] = 0.00
     
   }
   
-  Corn_CropYearObjects[[i]]$`Sales Summary`[6,2:(length(dates) + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`TS Actualized`$finalPrice, digits = 2), format = 'f', digits = 2)
+  Corn_CropYearObjects[[i]]$`TS Sales Summary`[6,2:(length(dates) + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`TS Actualized`$finalPrice, digits = 2), format = 'f', digits = 2)
 }
 
 
@@ -368,16 +368,16 @@ finalizedPrices = data.frame("CropYear" = Corn_CropYears$CropYear, noStorageAvg,
 
 # Loads all prices into corn crop year object in a format ready for tables
 for (i in 1:length(Corn_CropYearObjects)){
-  Corn_CropYearObjects[[i]][["Storage"]] = data.frame(matrix(nrow = 3, ncol = 3))
+  Corn_CropYearObjects[[i]][["TS Storage"]] = data.frame(matrix(nrow = 3, ncol = 3))
   
-  colnames(Corn_CropYearObjects[[i]][["Storage"]]) = c(" ", "No Storage", "Storage")
+  colnames(Corn_CropYearObjects[[i]][["TS Storage"]]) = c(" ", "No Storage", "Storage")
   
-  Corn_CropYearObjects[[i]][["Storage"]]$` ` =  c("Total Avg Price", "Pre-Harvest Avg Price", "Post-Harvest Avg Price")
-  Corn_CropYearObjects[[i]][["Storage"]]$`No Storage`[1] = finalizedPrices$noStorageAvg[i]
-  Corn_CropYearObjects[[i]][["Storage"]]$`No Storage`[2] = finalizedPrices$preharvestAverage[i]
-  Corn_CropYearObjects[[i]][["Storage"]]$`No Storage`[3] = finalizedPrices$postharvestAverage[i]
-  Corn_CropYearObjects[[i]][["Storage"]]$`Storage`[1] = finalizedPrices$storageAdjAvg[i]
-  Corn_CropYearObjects[[i]][["Storage"]]$`Storage`[2] = finalizedPrices$preharvestAverage[i]
-  Corn_CropYearObjects[[i]][["Storage"]]$`Storage`[3] = finalizedPrices$postharvestAverageStorage[i]
+  Corn_CropYearObjects[[i]][["TS Storage"]]$` ` =  c("Total Avg Price", "Pre-Harvest Avg Price", "Post-Harvest Avg Price")
+  Corn_CropYearObjects[[i]][["TS Storage"]]$`No Storage`[1] = finalizedPrices$noStorageAvg[i]
+  Corn_CropYearObjects[[i]][["TS Storage"]]$`No Storage`[2] = finalizedPrices$preharvestAverage[i]
+  Corn_CropYearObjects[[i]][["TS Storage"]]$`No Storage`[3] = finalizedPrices$postharvestAverage[i]
+  Corn_CropYearObjects[[i]][["TS Storage"]]$`Storage`[1] = finalizedPrices$storageAdjAvg[i]
+  Corn_CropYearObjects[[i]][["TS Storage"]]$`Storage`[2] = finalizedPrices$preharvestAverage[i]
+  Corn_CropYearObjects[[i]][["TS Storage"]]$`Storage`[3] = finalizedPrices$postharvestAverageStorage[i]
   
 }
