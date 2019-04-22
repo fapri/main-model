@@ -74,16 +74,16 @@ plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actua
     theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = c(0.70, 0.75)) + 
     scale_fill_manual(name = "Sale", values = myColors) + 
     theme(legend.position="bottom")
-    
+  
   return(plot)
 }
 
 for(i in 1:length(Corn_CropYearObjects)) {
-  Corn_CropYearObjects[[i]]$Plot = plotMarketingYear(Corn_CropYearObjects[[i]]$`Crop Year`,
-                                                     mdy(Corn_CropYearObjects[[i]]$`Start Date`),
-                                                     mdy(Corn_CropYearObjects[[i]]$`Stop Date`),
-                                                     Corn_CropYearObjects[[i]]$`Marketing Year`,
-                                                     Corn_CropYearObjects[[i]]$`TS Actualized`)
+  Corn_CropYearObjects[[i]]$TSPlot = plotMarketingYear(Corn_CropYearObjects[[i]]$`Crop Year`,
+                                                       mdy(Corn_CropYearObjects[[i]]$`Start Date`),
+                                                       mdy(Corn_CropYearObjects[[i]]$`Stop Date`),
+                                                       Corn_CropYearObjects[[i]]$`Marketing Year`,
+                                                       Corn_CropYearObjects[[i]]$`TS Actualized`)
   # print(Corn_CropYearObjects[[i]]$Plot)
   
 }
