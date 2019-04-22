@@ -100,7 +100,22 @@ ui <- shinyUI(
              ),
              tabPanel("Seasonal Sales",         
                       fluidPage(
-                        titlePanel("Future Work")
+                        
+                        plotOutput('SSdistPlot'),
+                        
+                        tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                        
+                        sidebarLayout(
+                          sidebarPanel(
+                            fluidRow(selectInput('yearSS','Crop Year', choices = u.n, width = "25%"),
+                                     column(12, dataTableOutput('SSstorageTables')),
+                                     tags$style(type="text/css", '#SSstorageTables tfoot {display:none;}'))
+                          ),
+                          mainPanel(
+                            dataTableOutput('SSsummaryTables')
+                          )
+                          
+                        )
                       )
              )
       )
@@ -239,7 +254,11 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  
   #############################
+  #TRAILING STOP
+  #############################
+  
   
   output$TSdistPlot <- renderPlot({
     if (input$yearTS == "2008-09") {
@@ -372,6 +391,145 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
+  
+  ############################
+  #SEASONAL SALES
+  ############################
+  
+  
+  output$SSdistPlot <- renderPlot({
+    if (input$yearSS == "2008-09") {
+      Corn_CropYearObjects[[1]]$SSPlot
+    }
+    
+    else if (input$yearSS == "2009-10") {
+      Corn_CropYearObjects[[2]]$SSPlot
+    }
+    
+    else if (input$yearSS == "2010-11") {
+      Corn_CropYearObjects[[3]]$SSPlot
+    }
+    
+    else if (input$yearSS == "2011-12") {
+      Corn_CropYearObjects[[4]]$SSPlot
+    }
+    
+    else if (input$yearSS == "2012-13") {
+      Corn_CropYearObjects[[5]]$SSPlot
+    }
+    
+    else if (input$yearSS == "2013-14") {
+      Corn_CropYearObjects[[6]]$SSPlot
+    }
+    
+    else if (input$yearSS == "2014-15") {
+      Corn_CropYearObjects[[7]]$SSPlot
+    }
+    
+    else if (input$yearSS == "2015-16") {
+      Corn_CropYearObjects[[8]]$SSPlot
+    }
+    
+    else if (input$yearSS == "2016-17" ) {
+      Corn_CropYearObjects[[9]]$SSPlot
+    }
+  })
+  
+  output$SSstorageTables = renderDataTable({
+    if (input$yearSS == "2008-09") {
+      as.datatable(getTables(Corn_CropYearObjects[[1]]$`SS Storage`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearSS == "2009-10") {
+      as.datatable(getTables(Corn_CropYearObjects[[2]]$`SS Storage`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearSS == "2010-11") {
+      as.datatable(getTables(Corn_CropYearObjects[[3]]$`SS Storage`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearSS == "2011-12") {
+      as.datatable(getTables(Corn_CropYearObjects[[4]]$`SS Storage`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearSS == "2012-13") {
+      as.datatable(getTables(Corn_CropYearObjects[[5]]$`SS Storage`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearSS == "2013-14") {
+      as.datatable(getTables(Corn_CropYearObjects[[6]]$`SS Storage`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearSS == "2014-15") {
+      as.datatable(getTables(Corn_CropYearObjects[[7]]$`SS Storage`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearSS == "2015-16") {
+      as.datatable(getTables(Corn_CropYearObjects[[8]]$`SS Storage`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearSS == "2016-17" ) {
+      as.datatable(getTables(Corn_CropYearObjects[[9]]$`SS Storage`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$SSsummaryTables = renderDataTable({
+    if (input$yearSS == "2008-09") {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[1]]$`SS Sales Summary`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearSS == "2009-10") {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[2]]$`SS Sales Summary`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearSS == "2010-11") {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[3]]$`SS Sales Summary`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearSS == "2011-12") {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[4]]$`SS Sales Summary`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearSS == "2012-13") {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[5]]$`SS Sales Summary`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearSS == "2013-14") {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[6]]$`SS Sales Summary`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearSS == "2014-15") {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[7]]$`SS Sales Summary`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearSS == "2015-16") {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[8]]$`SS Sales Summary`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearSS == "2016-17" ) {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[9]]$`SS Sales Summary`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
   
 })
 
