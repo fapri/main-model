@@ -56,7 +56,8 @@ getSalesTable = function(data) {
 
 ui <- shinyUI(
   navbarPage("Corn Marketing Strategies",
-             tabPanel("Price Objective",         
+             navbarMenu("Price Objective",
+               tabPanel("Base Model",         
                       fluidPage(
                         # titlePanel("Corn: Price Objective"),
                         
@@ -83,6 +84,9 @@ ui <- shinyUI(
                           )
                         )
                       )
+               ),
+               tabPanel("New Model",
+                        titlePanel("Future Models"))
              ),
              tabPanel("Trailing Stop",         
                       fluidPage(
