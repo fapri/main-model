@@ -115,6 +115,7 @@ trailingStopTrigger = function(cropYear) {
         # Takes in price for percentile above prevous day, percentile above previous day, current day price
         if(isTrailingStopSpecial(pricePreviousPercentileBelow, marketingYear$Price[row])) {
           trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
+                                                                        "Previous Percentile" = marketingYear$Percentile[row - 1],
                                                                         "Percentile" = previousPercentileBelow,
                                                                         "Type" = "Trailing Stop Special"))
         }
@@ -129,12 +130,14 @@ trailingStopTrigger = function(cropYear) {
     else if(isTrailingStop(marketingYear$Percentile[row - 1], marketingYear$Percentile[row])) {
       if(nrow(trailingStopTriggers) == 0 || difftime((mdy(marketingYear$Date[row])), mdy(trailingStopTriggers$Date[nrow(trailingStopTriggers)])) >= 7){ 
         trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
+                                                                      "Previous Percentile" = marketingYear$Percentile[row - 1],
                                                                       "Percentile" = marketingYear$Percentile[row],
                                                                       "Type" = "Trailing Stop"))
       }
       
       else if ((mdy(marketingYear$Date[row]) %within% EYTSInterval)){ 
         trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
+                                                                      "Previous Percentile" = marketingYear$Percentile[row - 1],
                                                                       "Percentile" = marketingYear$Percentile[row],
                                                                       "Type" = "End of Year Trailing Stop"))
       }
@@ -144,6 +147,7 @@ trailingStopTrigger = function(cropYear) {
                           cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
                           Corn_FeaturesObject$`95% of Ten Day High`)) {
       trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
+                                                                    "Previous Percentile" = marketingYear$Percentile[row - 1],
                                                                     "Percentile" = marketingYear$Percentile[row],
                                                                     "Type" = "Ten Day High"))
     }
@@ -152,6 +156,7 @@ trailingStopTrigger = function(cropYear) {
                            cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
                            Corn_FeaturesObject$`95% of Ten Day High`, Corn_FeaturesObject$`All Time High`)) {
       trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
+                                                                    "Previous Percentile" = marketingYear$Percentile[row - 1],
                                                                     "Percentile" = marketingYear$Percentile[row],
                                                                     "Type" = "All Time High"))
     }
