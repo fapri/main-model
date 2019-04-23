@@ -22,7 +22,6 @@ binStorage1 = 0.2469625
 # Total cost of bin storage(exlcuding interest), 2nd month forward
 binStorageAfter = 0.0032009009009009
 
-
 getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
   # Initialize variables
   storageInterval = interval(mdy(paste("11-01", toString(year(int_start(intervalPost))), sep="-")), int_end(intervalPost))
@@ -76,8 +75,6 @@ getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
   return(storage)
 }
 
-
-
 # Fills storage values into the Corn Crop Year object under Price Actualized
 for (i in 1:length(Corn_CropYearObjects)){
   # Initialize Variables
@@ -94,7 +91,6 @@ for (i in 1:length(Corn_CropYearObjects)){
   Corn_CropYearObjects[[i]]$`SS Actualized`$commercialPrice = temp[,3]
   Corn_CropYearObjects[[i]]$`SS Actualized`$onFarmPrice = temp[,4]
 }
-
 
 getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   # Initialize variables
@@ -146,6 +142,7 @@ preharvestAverage = rep(0, 9)
 postharvestAverage = rep(0, 9)
 preharvestAverageStorage = rep(0, 9)
 postharvestAverageStorage = rep(0, 9)
+
 for (i in 1:length(Corn_CropYearObjects)){
   # Initialize variables
   preRows = rep(0, 9)
@@ -242,7 +239,6 @@ for (i in 1:length(Corn_CropYearObjects)){
 finalizedPrices = data.frame("CropYear" = Corn_CropYears$CropYear, noStorageAvg, storageAdjAvg, preharvestAverage,
                              postharvestAverage, postharvestAverageStorage)
 
-
 # Loads all prices into corn crop year object in a format ready for tables
 for (i in 1:length(Corn_CropYearObjects)){
   Corn_CropYearObjects[[i]][["SS Storage"]] = data.frame(matrix(nrow = 3, ncol = 3))
@@ -256,8 +252,4 @@ for (i in 1:length(Corn_CropYearObjects)){
   Corn_CropYearObjects[[i]][["SS Storage"]]$`Storage`[1] = finalizedPrices$storageAdjAvg[i]
   Corn_CropYearObjects[[i]][["SS Storage"]]$`Storage`[2] = finalizedPrices$preharvestAverage[i]
   Corn_CropYearObjects[[i]][["SS Storage"]]$`Storage`[3] = finalizedPrices$postharvestAverageStorage[i]
-  
 }
-
-
-

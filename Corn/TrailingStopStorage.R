@@ -267,6 +267,7 @@ preharvestAverage = rep(0, 9)
 postharvestAverage = rep(0, 9)
 preharvestAverageStorage = rep(0, 9)
 postharvestAverageStorage = rep(0, 9)
+
 for (i in 1:length(Corn_CropYearObjects)){
   # Initialize variables
   preRows = rep(0, 9)
@@ -359,12 +360,9 @@ for (i in 1:length(Corn_CropYearObjects)){
   Corn_CropYearObjects[[i]]$`TS Sales Summary`[6,2:(length(dates) + 1)] = formatC(round(Corn_CropYearObjects[[i]]$`TS Actualized`$finalPrice, digits = 2), format = 'f', digits = 2)
 }
 
-
-
 # Aggregates all adjusted prices by crop year
 finalizedPrices = data.frame("CropYear" = Corn_CropYears$CropYear, noStorageAvg, storageAdjAvg, preharvestAverage,
                              postharvestAverage, postharvestAverageStorage)
-
 
 # Loads all prices into corn crop year object in a format ready for tables
 for (i in 1:length(Corn_CropYearObjects)){
@@ -379,5 +377,4 @@ for (i in 1:length(Corn_CropYearObjects)){
   Corn_CropYearObjects[[i]][["TS Storage"]]$`Storage`[1] = finalizedPrices$storageAdjAvg[i]
   Corn_CropYearObjects[[i]][["TS Storage"]]$`Storage`[2] = finalizedPrices$preharvestAverage[i]
   Corn_CropYearObjects[[i]][["TS Storage"]]$`Storage`[3] = finalizedPrices$postharvestAverageStorage[i]
-  
 }

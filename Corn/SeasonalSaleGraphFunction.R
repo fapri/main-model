@@ -87,4 +87,3 @@ for(i in 1:length(Corn_CropYearObjects)) {
   # print(Corn_CropYearObjects[[i]]$Plot)
   
 }
-

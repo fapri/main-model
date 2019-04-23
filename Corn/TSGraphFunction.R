@@ -85,5 +85,4 @@ for(i in 1:length(Corn_CropYearObjects)) {
                                                        Corn_CropYearObjects[[i]]$`Marketing Year`,
                                                        Corn_CropYearObjects[[i]]$`TS Actualized`)
   # print(Corn_CropYearObjects[[i]]$Plot)
-  
 }

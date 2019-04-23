@@ -83,4 +83,3 @@ isActualized = function(cropYear){
 for(i in 1:length(Corn_CropYearObjects)) {
   Corn_CropYearObjects[[i]] = isActualized(Corn_CropYearObjects[[i]])
 }
-
