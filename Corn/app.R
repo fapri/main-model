@@ -79,7 +79,7 @@ ui <- shinyUI(
                         
                         sidebarLayout(
                           sidebarPanel(
-                            fluidRow(selectInput('yearPO','Crop Year', choices = u.n, width = "25%"),
+                            fluidRow(selectInput('yearPO','Crop Year', choices = u.n, width = "100%"),
                                      column(12, dataTableOutput('storageTables')),
                                      tags$style(type="text/css", '#storageTables tfoot {display:none;}'))
                             
@@ -108,7 +108,7 @@ ui <- shinyUI(
                         
                         sidebarLayout(
                           sidebarPanel(
-                            fluidRow(selectInput('yearTS','Crop Year', choices = u.n, width = "25%"),
+                            fluidRow(selectInput('yearTS','Crop Year', choices = u.n, width = "100%"),
                                      column(12, dataTableOutput('TSstorageTables')),
                                      tags$style(type="text/css", '#TSstorageTables tfoot {display:none;}'))
                           ),
@@ -134,7 +134,7 @@ ui <- shinyUI(
                         
                         sidebarLayout(
                           sidebarPanel(
-                            fluidRow(selectInput('yearSS','Crop Year', choices = u.n, width = "25%"),
+                            fluidRow(selectInput('yearSS','Crop Year', choices = u.n, width = "100%"),
                                      column(12, dataTableOutput('SSstorageTables')),
                                      tags$style(type="text/css", '#SSstorageTables tfoot {display:none;}'))
                           ),
