@@ -5,6 +5,7 @@ library(shiny)
 library(DT)
 library(htmltools)
 library(formattable)
+library(lubridate)
 
 appObjects = readRDS("appObjects.rds")
 Corn_CropYearObjects = appObjects[[1]]
