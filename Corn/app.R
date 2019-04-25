@@ -3,6 +3,10 @@ library(DT)
 library(htmltools)
 library(formattable)
 
+appObjects = readRDS("appObjects.rds")
+Corn_CropYearObjects = appObjects[[1]]
+Corn_CropYears = appObjects[[2]]
+
 u.n <-  Corn_CropYears$CropYear
 names(u.n) <- u.n
 
