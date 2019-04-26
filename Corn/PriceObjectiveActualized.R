@@ -2,9 +2,6 @@
 # Price Objective
 # Actualized
 
-# Create the corn objects necessary to run the Price Objective actualization strategy
-source("Corn/PriceObjective.R")
-
 # Finds actualized Price Objective sales
 isActualized = function(cropYear){
   priceObjectiveActualized = data.frame(matrix(ncol = 5, nrow = 0))

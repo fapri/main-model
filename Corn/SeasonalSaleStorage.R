@@ -2,9 +2,7 @@
 # Seasonal Sales
 # Storage
 
-source("Corn/SeasonalSaleActualized.R")
-
-# Extract Price data into the PO Actualized Data Frame
+# Extract Price data into the SS Actualized Data Frame
 for (i in 1:length(Corn_CropYearObjects)){
   for(j in 1:nrow(Corn_CropYearObjects[[i]]$`SS Actualized`)){
     Corn_CropYearObjects[[i]]$`SS Actualized`$Price[j] = Corn_CropYearObjects[[i]]$`Marketing Year`$Price[which(mdy(Corn_CropYearObjects[[i]]$`Marketing Year`$Date) == Corn_CropYearObjects[[i]]$`SS Actualized`$Date[j])]

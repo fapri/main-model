@@ -2,9 +2,7 @@
 # Trailing Stop
 # Storage
 
-source("Corn/TrailingStopActualized.R")
-
-# Extract Price data into the PO Actualized Data Frame
+# Extract Price data into the TS Actualized Data Frame
 for (i in 1:length(Corn_CropYearObjects)){
   for(j in 1:nrow(Corn_CropYearObjects[[i]]$`TS Actualized`)){
     Corn_CropYearObjects[[i]]$`TS Actualized`$Price[j] = Corn_CropYearObjects[[i]]$`Marketing Year`$Price[which(mdy(Corn_CropYearObjects[[i]]$`Marketing Year`$Date) == Corn_CropYearObjects[[i]]$`TS Actualized`$Date[j])]

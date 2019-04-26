@@ -1,8 +1,6 @@
 # Corn 
 # Graphing
 
-source('Corn/PriceObjectiveStorage.R')
-
 #Set Color Palette
 myColors = c("#ffff00", "#ffff00", "#ed7d31", "#ffff00", "#ffd700", "#FF69B4")
 colorLabels = c("Price Objective", "Price Objective Special", "Seasonal", "Ten Day High", "All Time High", "End of Year Trailing Stop")

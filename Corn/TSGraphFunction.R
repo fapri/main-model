@@ -2,8 +2,6 @@
 # Trailing Stop
 # Graphing
 
-source('Corn/TrailingStopStorage.R')
-
 #Set Color Palette
 myColors = c("#800080", "#800080", "#ed7d31", "#ffff00", "#ffd700", "#FF69B4")
 colorLabels = c("Trailing Stop", "Trailing Stop Special", "Seasonal", "Ten Day High", "All Time High", "End of Year Trailing Stop")

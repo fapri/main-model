@@ -1,9 +1,6 @@
 # Corn
 # Trailing Stop
 
-# Create the corn objects necessary to run the Trailing Stop strategy
-source('Corn/Main.R')
-
 # TODO EVENTUALLY WE CAN MOVE THESE TRIGGER FUNCTIONS TO ANOTHER FILE/FOLDER.
 # THEY ARE NOT DEPENDENT TO CORN
 

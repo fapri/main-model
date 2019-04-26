@@ -2,8 +2,6 @@
 # Seasonal Sales
 # Graphing
 
-source('Corn/SeasonalSaleStorage.R')
-
 #Set Color Palette
 myColors = c("#ffff00", "#ffff00", "#ed7d31", "#ffff00", "#ffd700", "#FF69B4")
 colorLabels = c("Seasonal Sale", "Seasonal Sale Special", "Seasonal", "Ten Day High", "All Time High", "End of Year Trailing Stop")
