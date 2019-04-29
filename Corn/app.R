@@ -1,5 +1,5 @@
 # Code I used to save the objects
-# saveRDS(list(Corn_CropYearObjects, Corn_CropYears), file="appObjects.rds")
+# saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file="appObjects.rds")
 
 library(shiny)
 library(DT)
@@ -10,6 +10,7 @@ library(lubridate)
 appObjects = readRDS("appObjects.rds")
 Corn_CropYearObjects = appObjects[[1]]
 Corn_CropYears = appObjects[[2]]
+finalizedPriceObject = appObjects[[3]]
 
 u.n <-  Corn_CropYears$CropYear
 names(u.n) <- u.n
@@ -146,6 +147,16 @@ ui <- shinyUI(
                         )
                       )
              ),
+             tabPanel("Strategy Results",
+                      fluidPage(
+                        fluidRow(column(4, dataTableOutput("finalPriceTable"))
+                        ),
+                        fluidRow(column(4, dataTableOutput("TSfinalPriceTable"))
+                        ),
+                        fluidRow(column(4, dataTableOutput("SSfinalPriceTable"))
+                        ))
+                      ),
+                        
              tabPanel("About Our Strategies",
                       fluidPage(
                         fluidRow(column(12, includeHTML("index.html")
@@ -289,6 +300,13 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$finalPriceTable = renderDataTable({
+    as.datatable(getTables(finalizedPriceObject$POResultsTable), rownames = FALSE, 
+                 caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    
+    
+  })
+  
   
   #############################
   #TRAILING STOP
@@ -427,6 +445,13 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$TSfinalPriceTable = renderDataTable({
+    as.datatable(getTables(finalizedPriceObject$TSResultsTable), rownames = FALSE, 
+                 caption = tags$caption("Trailing Stop", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    
+    
+  })
+  
   ############################
   #SEASONAL SALES
   ############################
@@ -562,6 +587,13 @@ server <- shinyServer(function(input,output,session){
       as.datatable(getSalesTable(Corn_CropYearObjects[[9]]$`SS Sales Summary`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
+  })
+  
+  output$SSfinalPriceTable = renderDataTable({
+    as.datatable(getTables(finalizedPriceObject$SSResultsTable), rownames = FALSE, 
+                 caption = tags$caption("Seasonal Sales", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    
+    
   })
 })
 
