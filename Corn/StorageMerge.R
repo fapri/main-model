@@ -379,8 +379,11 @@ finalizeStorage = function(actualizedSales, cropYear, intervalPre, intervalPost)
   
   salesSummary[6,2:(length(dates) + 1)] = formatC(round(actualizedSales$finalPrice, digits = 2), format = 'f', digits = 2)
   
+  preharvestPercent = sum(actualizedSales$Percent.Sold[preRows])
+  postharvestPercent = sum(actualizedSales$Percent.Sold[postRows])
+  
   finalizedPrices = data.frame("Crop Year" = cropYear, noStorageAvg, storageAdjAvg, preharvestAverage,
-                               postharvestAverage, postharvestAverageStorage)
+                               postharvestAverage, postharvestAverageStorage, preharvestPercent, postharvestPercent)
   
   listReturn = list(actualizedSales, salesSummary, finalizedPrices)
   
@@ -388,21 +391,22 @@ finalizeStorage = function(actualizedSales, cropYear, intervalPre, intervalPost)
   
 }
 
-POfinalizedPrices = data.frame(matrix(nrow = length(Corn_CropYearObjects), ncol = 6))
+POfinalizedPrices = data.frame(matrix(nrow = length(Corn_CropYearObjects), ncol = 8))
 colnames(POfinalizedPrices) = c("Crop Year", "noStorageAvg", "storageAdjAvg", "preharvestAverage",
-                                "postharvestAverage", "postharvestAverageStorage")
+                                "postharvestAverage", "postharvestAverageStorage", "preharvestPercent", 
+                                "postharvestPercent")
 
-TSfinalizedPrices = data.frame(matrix(nrow = length(Corn_CropYearObjects), ncol = 6))
+TSfinalizedPrices = data.frame(matrix(nrow = length(Corn_CropYearObjects), ncol = 8))
 colnames(TSfinalizedPrices) = colnames(POfinalizedPrices)
 
-SSfinalizedPrices = data.frame(matrix(nrow = length(Corn_CropYearObjects), ncol = 6))
+SSfinalizedPrices = data.frame(matrix(nrow = length(Corn_CropYearObjects), ncol = 8))
 colnames(SSfinalizedPrices) =colnames(POfinalizedPrices)
 
 
 
 
 # i = 1
-# actualizedSales = Corn_CropYearObjects[[i]]$`TS Actualized`
+# actualizedSales = Corn_CropYearObjects[[i]]$`PO Actualized`
 # intervalPre = Corn_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPre
 # intervalPost = Corn_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPost
 
@@ -446,6 +450,10 @@ POfinalizedPrices$`Crop Year` = Corn_CropYears$CropYear
 TSfinalizedPrices$`Crop Year` = Corn_CropYears$CropYear
 SSfinalizedPrices$`Crop Year` = Corn_CropYears$CropYear
 
+finalizedPriceObject = list("POfinalizedPrices" = POfinalizedPrices, 
+                            "TSfinalizedPrices" = TSfinalizedPrices, 
+                            "SSfinalizedPrices" = SSfinalizedPrices)
+
 makeStorageTable = function(finalizedPrices){
   storageTable = data.frame(matrix(nrow = 3, ncol = 3))
   colnames(storageTable) = c(" ", "No Storage", "Storage")
@@ -466,3 +474,26 @@ for (i in 1:length(Corn_CropYearObjects)){
   Corn_CropYearObjects[[i]]$`TS Storage` = makeStorageTable(TSfinalizedPrices)
   Corn_CropYearObjects[[i]]$`SS Storage` = makeStorageTable(SSfinalizedPrices)
 }
+
+makeResultsTable = function(finalizedPrices){
+  resultsTable = data.frame(matrix(nrow = 3, ncol = 3))
+  colnames(resultsTable) = c(" ", "No Storage", "Storage")
+  
+  resultsTable$` ` =  c("Total Avg Price", "Pre-Harvest Avg Price", "Post-Harvest Avg Price")
+  resultsTable$`No Storage`[2] = weighted.mean(finalizedPrices$preharvestAverage, finalizedPrices$preharvestPercent)
+  resultsTable$`No Storage`[3] = weighted.mean(finalizedPrices$postharvestAverage, finalizedPrices$postharvestPercent)
+  resultsTable$`Storage`[2] = weighted.mean(finalizedPrices$preharvestAverage, finalizedPrices$preharvestPercent)
+  resultsTable$`Storage`[3] = weighted.mean(finalizedPrices$postharvestAverageStorage, finalizedPrices$postharvestPercent)
+ 
+  preharvestSum = sum(finalizedPrices$preharvestPercent)
+  postharvestSum = sum(finalizedPrices$postharvestPercent)
+  
+  resultsTable$`No Storage`[1] = ((resultsTable$`No Storage`[2] * (preharvestSum * 0.01)) + (resultsTable$`No Storage`[3] * (postharvestSum * 0.01)))/ ((preharvestSum + postharvestSum) * 0.01)
+  resultsTable$`Storage`[1] = ((resultsTable$`Storage`[2] * (preharvestSum * 0.01)) + (resultsTable$`Storage`[3] * (postharvestSum * 0.01)))/ ((preharvestSum + postharvestSum) * 0.01)
+  
+  return(resultsTable)
+}
+
+finalizedPriceObject[["POResultsTable"]] = makeResultsTable(finalizedPriceObject[[1]])
+finalizedPriceObject[["TSResultsTable"]] = makeResultsTable(finalizedPriceObject[[2]])
+finalizedPriceObject[["SSResultsTable"]] = makeResultsTable(finalizedPriceObject[[3]])
