@@ -65,40 +65,40 @@ getSalesTable = function(data) {
 ui <- shinyUI(
   navbarPage("Corn Marketing Strategies",
              navbarMenu("Price Objective",
-               tabPanel("Base Model",         
-                      fluidPage(
-                        # titlePanel("Corn: Price Objective"),
-                        
-                        fluidRow(
-                          plotOutput('distPlot'),
-                          style = "padding-bottom:50px"
+                        tabPanel("Base Model",         
+                                 fluidPage(
+                                   # titlePanel("Corn: Price Objective"),
+                                   
+                                   fluidRow(
+                                     plotOutput('distPlot'),
+                                     style = "padding-bottom:50px"
+                                   ),
+                                   
+                                   
+                                   tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                                   
+                                   sidebarLayout(
+                                     sidebarPanel(
+                                       fluidRow(selectInput('yearPO','Crop Year', choices = u.n, width = "100%"),
+                                                column(12, dataTableOutput('storageTables')),
+                                                tags$style(type="text/css", '#storageTables tfoot {display:none;}'))
+                                       
+                                     ),
+                                     mainPanel(
+                                       fluidRow(
+                                         dataTableOutput('summaryTables'),
+                                         style = "padding-bottom:100px")
+                                       
+                                     )
+                                   )
+                                 )
                         ),
-                          
-                          
-                        tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
-                        
-                        sidebarLayout(
-                          sidebarPanel(
-                            fluidRow(selectInput('yearPO','Crop Year', choices = u.n, width = "100%"),
-                                     column(12, dataTableOutput('storageTables')),
-                                     tags$style(type="text/css", '#storageTables tfoot {display:none;}'))
-                            
-                          ),
-                          mainPanel(
-                            fluidRow(
-                              dataTableOutput('summaryTables'),
-                              style = "padding-bottom:100px")
-                            
-                          )
-                        )
-                      )
-               ),
-               tabPanel("New Model",
-                        titlePanel("Future Models"))
+                        tabPanel("New Model",
+                                 titlePanel("Future Models"))
              ),
              tabPanel("Trailing Stop",         
                       fluidPage(
-                       
+                        
                         fluidRow(
                           plotOutput('TSdistPlot'),
                           style = "padding-bottom:50px"
@@ -147,9 +147,16 @@ ui <- shinyUI(
                           
                         )
                       )
-             )
-      )
+             ),
+             tabPanel("About Our Strategies",
+                      fluidPage(
+                        fluidRow(column(12, includeHTML("index.html")
+                        )
+                        
+                        )
+                      ))
   )
+)
 
 server <- shinyServer(function(input,output,session){
   output$distPlot <- renderPlot({
