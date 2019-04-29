@@ -67,8 +67,6 @@ ui <- shinyUI(
              navbarMenu("Price Objective",
                         tabPanel("Base Model",         
                                  fluidPage(
-                                   # titlePanel("Corn: Price Objective"),
-                                   
                                    fluidRow(
                                      plotOutput('distPlot'),
                                      style = "padding-bottom:50px"
@@ -93,8 +91,8 @@ ui <- shinyUI(
                                    )
                                  )
                         ),
-                        tabPanel("New Model",
-                                 titlePanel("Future Models"))
+                        tabPanel("Multi-Year",
+                                 titlePanel("Multi-Year Model"))
              ),
              tabPanel("Trailing Stop",         
                       fluidPage(
