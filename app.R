@@ -157,7 +157,7 @@ ui <- shinyUI(
              ),
              tabPanel("About Our Strategies",
                       fluidPage(
-                        fluidRow(column(12, includeHTML("Corn/index.html")
+                        fluidRow(column(12, includeHTML("index.html")
                         )
                         
                         )
@@ -595,4 +595,4 @@ server <- shinyServer(function(input,output,session){
   })
 })
 
-shinyApp(ui=ui,server = server)
+shinyApp(ui = ui,server = server)
