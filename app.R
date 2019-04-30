@@ -4,10 +4,10 @@ library(htmltools)
 library(formattable)
 library(lubridate)
 
-# appObjects = readRDS("appObjects.rds")
-# Corn_CropYearObjects = appObjects[[1]]
-# Corn_CropYears = appObjects[[2]]
-# finalizedPriceObject = appObjects[[3]]
+appObjects = readRDS("appObjects.rds")
+Corn_CropYearObjects = appObjects[[1]]
+Corn_CropYears = appObjects[[2]]
+finalizedPriceObject = appObjects[[3]]
 
 u.n <-  Corn_CropYears$CropYear
 names(u.n) <- u.n
