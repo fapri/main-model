@@ -13,6 +13,13 @@ li.format{
   font-family: calibri; 
   font-size: 1.2em;
 }
+    
+/*
+.hover_img a { position:relative; }
+.hover_img a span { position:absolute; display:none; z-index:99; }
+.hover_img a:hover span { display:block; }
+*/
+    
 </style>
 
 </head>
@@ -20,7 +27,17 @@ li.format{
 <body>
     <ul>
       <li class = "format">
-<u><b> Price Objective (PO): </b></u>This strategy triggers a sale each time the market touches a higher percentile. For example, if the market was at the 90th percentile but then moved through the 95th percentile, a sale would be triggered. In general, a tenth of crop production is sold whenever a Price Objective sale is actualized. Price Objective sales are represented in yellow.
+<!--
+          <div class="hover_img">
+               <a href="#">
+-->
+                   <u><b> Price Objective (PO): </b></u>
+                   
+<!--
+                   <span><img src="PriceObjective.png" alt="image" height="200" /></span></a>
+              </div>
+-->
+              This strategy triggers a sale each time the market touches a higher percentile. For example, if the market was at the 90th percentile but then moved through the 95th percentile, a sale would be triggered. In general, a tenth of crop production is sold whenever a Price Objective sale is actualized. Price Objective sales are represented in yellow.
       </li>
     
       <li class = "format">

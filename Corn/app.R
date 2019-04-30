@@ -149,14 +149,15 @@ ui <- shinyUI(
              ),
              tabPanel("Strategy Results",
                       fluidPage(
-                        fluidRow(column(4, dataTableOutput("finalPriceTable"))
+                        tags$head(
+                          tags$style(
+                            ".title {margin: auto; width: 400px; color:#c90e0e}"
+                          )
                         ),
-                        fluidRow(column(4, dataTableOutput("TSfinalPriceTable"))
-                        ),
-                        fluidRow(column(4, dataTableOutput("SSfinalPriceTable"))
-                        ))
-                      ),
-                        
+                        tags$div(class="title", titlePanel("Without Multi-Year Sales")),
+                        splitLayout(cellWidths = c("33%", "33%", "33%"), dataTableOutput("finalPriceTable"), dataTableOutput("TSfinalPriceTable"), dataTableOutput("SSfinalPriceTable"))
+                      )
+             ),
              tabPanel("About Our Strategies",
                       fluidPage(
                         fluidRow(column(12, includeHTML("index.html")
