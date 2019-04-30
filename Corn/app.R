@@ -1,16 +1,13 @@
-# Code I used to save the objects
-# saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file="appObjects.rds")
-
 library(shiny)
 library(DT)
 library(htmltools)
 library(formattable)
 library(lubridate)
 
-appObjects = readRDS("appObjects.rds")
-Corn_CropYearObjects = appObjects[[1]]
-Corn_CropYears = appObjects[[2]]
-finalizedPriceObject = appObjects[[3]]
+# appObjects = readRDS("appObjects.rds")
+# Corn_CropYearObjects = appObjects[[1]]
+# Corn_CropYears = appObjects[[2]]
+# finalizedPriceObject = appObjects[[3]]
 
 u.n <-  Corn_CropYears$CropYear
 names(u.n) <- u.n
@@ -160,7 +157,7 @@ ui <- shinyUI(
              ),
              tabPanel("About Our Strategies",
                       fluidPage(
-                        fluidRow(column(12, includeHTML("index.html")
+                        fluidRow(column(12, includeHTML("Corn/index.html")
                         )
                         
                         )
