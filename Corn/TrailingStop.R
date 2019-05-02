@@ -8,19 +8,6 @@ isTrailingStop = function(previousDayPercentile, currentDayPercentile) {
   return(F)
 }
 
-# Checks End of the Year Trailing Stop
-isEndYearTrailingStop = function(date, previousPercentile, currentPercentile, postInterval) {
-  # checks if date is in June
-  if (month(date) >= 6 && year(date) == year(int_end(postInterval))) {
-    # Checks if Market passes down a percentile
-    if (currentPercentile < previousPercentile && currentPercentile >= 70) {
-      return(T)
-    } else 
-      return(F)
-  } else 
-    return(F)
-}
-
 # Checks cases where the baseline updates
 isTrailingStopSpecial = function(pricePreviousPercentileBelow, currentPrice) {
   if (currentPrice <= pricePreviousPercentileBelow) {

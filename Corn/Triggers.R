@@ -49,3 +49,16 @@ isAllTimeHigh = function(date, price, percentile, preInterval, postInterval, TDH
       return(F)
   }
 }
+
+# Checks End of the Year Trailing Stop
+isEndYearTrailingStop = function(date, previousPercentile, currentPercentile, postInterval) {
+  # checks if date is in June
+  if (month(date) >= 6 && year(date) == year(int_end(postInterval))) {
+    # Checks if Market passes down a percentile
+    if (currentPercentile < previousPercentile && currentPercentile >= 60) {
+      return(T)
+    } else 
+      return(F)
+  } else 
+    return(F)
+}
