@@ -3,8 +3,8 @@
 # Set up the data and Crop Year Objects
 source("Corn/Main.R")
 
-# add a trigger file that does random triggers! We have duplicates right now. 
-# source("Corn/TriggerFunctions.R")
+# Create common trigger functions
+source("Corn/Triggers.R")
 
 # Run the strategies
 source("Corn/PriceObjective.R")
