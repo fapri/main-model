@@ -27,7 +27,6 @@ getTotalSold = function(actualizedSales){
 
 # Finds actualized Price Objective sales
 isActualized = function(cropYear, cropYear1, cropYear2){
-  
   priceObjectiveActualized = isActualizedPresent(cropYear)
   priceObjectiveActualized1year = isActualizedPresent(cropYear1)
   priceObjectiveActualized2year = isActualizedPresent(cropYear2)
@@ -224,8 +223,6 @@ isActualized = function(cropYear, cropYear1, cropYear2){
               }
             }
           }
-          
-          
           
           #if trigger is the first one we can just make the sale
           else {
