@@ -166,9 +166,9 @@ ui <- shinyUI(
 )
 
 server <- shinyServer(function(input,output,session){
-  ######################
+  #################################################################################################
   # Price Objective
-  ######################
+  #################################################################################################
   
   output$distPlot <- renderPlot({
     if (input$yearPO == "2008-09") {
@@ -307,9 +307,9 @@ server <- shinyServer(function(input,output,session){
                  caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
   })
   
-  #############################
+  #################################################################################################
   # TRAILING STOP
-  #############################
+  #################################################################################################
 
   output$TSdistPlot <- renderPlot({
     if (input$yearTS == "2008-09") {
@@ -448,9 +448,9 @@ server <- shinyServer(function(input,output,session){
                  caption = tags$caption("Trailing Stop", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
   })
   
-  ############################
+  #################################################################################################
   # SEASONAL SALES
-  ############################
+  #################################################################################################
   
   output$SSdistPlot <- renderPlot({
     if (input$yearSS == "2008-09") {
