@@ -2,6 +2,12 @@ library(shiny)
 library(DT)
 library(htmltools)
 library(formattable)
+library(lubridate)
+
+appObjects = readRDS("appObjects.rds")
+Corn_CropYearObjects = appObjects[[1]]
+Corn_CropYears = appObjects[[2]]
+finalizedPriceObject = appObjects[[3]]
 
 u.n <-  Corn_CropYears$CropYear
 names(u.n) <- u.n
@@ -57,40 +63,38 @@ getSalesTable = function(data) {
 ui <- shinyUI(
   navbarPage("Corn Marketing Strategies",
              navbarMenu("Price Objective",
-               tabPanel("Base Model",         
-                      fluidPage(
-                        # titlePanel("Corn: Price Objective"),
-                        
-                        fluidRow(
-                          plotOutput('distPlot'),
-                          style = "padding-bottom:50px"
+                        tabPanel("Base Model",         
+                                 fluidPage(
+                                   fluidRow(
+                                     plotOutput('distPlot'),
+                                     style = "padding-bottom:50px"
+                                   ),
+                                   
+                                   
+                                   tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                                   
+                                   sidebarLayout(
+                                     sidebarPanel(
+                                       fluidRow(selectInput('yearPO','Crop Year', choices = u.n, width = "100%"),
+                                                column(12, dataTableOutput('storageTables')),
+                                                tags$style(type="text/css", '#storageTables tfoot {display:none;}'))
+                                       
+                                     ),
+                                     mainPanel(
+                                       fluidRow(
+                                         dataTableOutput('summaryTables'),
+                                         style = "padding-bottom:100px")
+                                       
+                                     )
+                                   )
+                                 )
                         ),
-                          
-                          
-                        tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
-                        
-                        sidebarLayout(
-                          sidebarPanel(
-                            fluidRow(selectInput('yearPO','Crop Year', choices = u.n, width = "25%"),
-                                     column(12, dataTableOutput('storageTables')),
-                                     tags$style(type="text/css", '#storageTables tfoot {display:none;}'))
-                            
-                          ),
-                          mainPanel(
-                            fluidRow(
-                              dataTableOutput('summaryTables'),
-                              style = "padding-bottom:100px")
-                            
-                          )
-                        )
-                      )
-               ),
-               tabPanel("New Model",
-                        titlePanel("Future Models"))
+                        tabPanel("Multi-Year",
+                                 titlePanel("Multi-Year Model"))
              ),
              tabPanel("Trailing Stop",         
                       fluidPage(
-                       
+                        
                         fluidRow(
                           plotOutput('TSdistPlot'),
                           style = "padding-bottom:50px"
@@ -100,7 +104,7 @@ ui <- shinyUI(
                         
                         sidebarLayout(
                           sidebarPanel(
-                            fluidRow(selectInput('yearTS','Crop Year', choices = u.n, width = "25%"),
+                            fluidRow(selectInput('yearTS','Crop Year', choices = u.n, width = "100%"),
                                      column(12, dataTableOutput('TSstorageTables')),
                                      tags$style(type="text/css", '#TSstorageTables tfoot {display:none;}'))
                           ),
@@ -126,7 +130,7 @@ ui <- shinyUI(
                         
                         sidebarLayout(
                           sidebarPanel(
-                            fluidRow(selectInput('yearSS','Crop Year', choices = u.n, width = "25%"),
+                            fluidRow(selectInput('yearSS','Crop Year', choices = u.n, width = "100%"),
                                      column(12, dataTableOutput('SSstorageTables')),
                                      tags$style(type="text/css", '#SSstorageTables tfoot {display:none;}'))
                           ),
@@ -139,11 +143,33 @@ ui <- shinyUI(
                           
                         )
                       )
-             )
-      )
+             ),
+             tabPanel("Strategy Results",
+                      fluidPage(
+                        tags$head(
+                          tags$style(
+                            ".title {margin: auto; width: 400px; color:#c90e0e}"
+                          )
+                        ),
+                        tags$div(class="title", titlePanel("Without Multi-Year Sales")),
+                        splitLayout(cellWidths = c("33%", "33%", "33%"), dataTableOutput("finalPriceTable"), dataTableOutput("TSfinalPriceTable"), dataTableOutput("SSfinalPriceTable"))
+                      )
+             ),
+             tabPanel("About Our Strategies",
+                      fluidPage(
+                        fluidRow(column(12, includeHTML("index.html")
+                        )
+                        
+                        )
+                      ))
   )
+)
 
 server <- shinyServer(function(input,output,session){
+  #################################################################################################
+  # Price Objective
+  #################################################################################################
+  
   output$distPlot <- renderPlot({
     if (input$yearPO == "2008-09") {
       Corn_CropYearObjects[[1]]$POPlot
@@ -184,47 +210,47 @@ server <- shinyServer(function(input,output,session){
   
   output$storageTables = renderDataTable({
     if (input$yearPO == "2008-09") {
-      as.datatable(getTables(Corn_CropYearObjects[[1]]$Storage), rownames = FALSE, 
+      as.datatable(getTables(Corn_CropYearObjects[[1]]$`PO Storage`), rownames = FALSE, 
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     
     else if (input$yearPO == "2009-10") {
-      as.datatable(getTables(Corn_CropYearObjects[[2]]$Storage), rownames = FALSE, 
+      as.datatable(getTables(Corn_CropYearObjects[[2]]$`PO Storage`), rownames = FALSE, 
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     
     else if (input$yearPO == "2010-11") {
-      as.datatable(getTables(Corn_CropYearObjects[[3]]$Storage), rownames = FALSE, 
+      as.datatable(getTables(Corn_CropYearObjects[[3]]$`PO Storage`), rownames = FALSE, 
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     
     else if (input$yearPO == "2011-12") {
-      as.datatable(getTables(Corn_CropYearObjects[[4]]$Storage), rownames = FALSE, 
+      as.datatable(getTables(Corn_CropYearObjects[[4]]$`PO Storage`), rownames = FALSE, 
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     
     else if (input$yearPO == "2012-13") {
-      as.datatable(getTables(Corn_CropYearObjects[[5]]$Storage), rownames = FALSE, 
+      as.datatable(getTables(Corn_CropYearObjects[[5]]$`PO Storage`), rownames = FALSE, 
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     
     else if (input$yearPO == "2013-14") {
-      as.datatable(getTables(Corn_CropYearObjects[[6]]$Storage), rownames = FALSE, 
+      as.datatable(getTables(Corn_CropYearObjects[[6]]$`PO Storage`), rownames = FALSE, 
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     
     else if (input$yearPO == "2014-15") {
-      as.datatable(getTables(Corn_CropYearObjects[[7]]$Storage), rownames = FALSE, 
+      as.datatable(getTables(Corn_CropYearObjects[[7]]$`PO Storage`), rownames = FALSE, 
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     
     else if (input$yearPO == "2015-16") {
-      as.datatable(getTables(Corn_CropYearObjects[[8]]$Storage), rownames = FALSE, 
+      as.datatable(getTables(Corn_CropYearObjects[[8]]$`PO Storage`), rownames = FALSE, 
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     
     else if (input$yearPO == "2016-17" ) {
-      as.datatable(getTables(Corn_CropYearObjects[[9]]$Storage), rownames = FALSE, 
+      as.datatable(getTables(Corn_CropYearObjects[[9]]$`PO Storage`), rownames = FALSE, 
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
@@ -276,12 +302,15 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$finalPriceTable = renderDataTable({
+    as.datatable(getTables(finalizedPriceObject$POResultsTable), rownames = FALSE, 
+                 caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+  })
   
-  #############################
-  #TRAILING STOP
-  #############################
-  
-  
+  #################################################################################################
+  # TRAILING STOP
+  #################################################################################################
+
   output$TSdistPlot <- renderPlot({
     if (input$yearTS == "2008-09") {
       Corn_CropYearObjects[[1]]$TSPlot
@@ -414,10 +443,14 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
-  ############################
-  #SEASONAL SALES
-  ############################
+  output$TSfinalPriceTable = renderDataTable({
+    as.datatable(getTables(finalizedPriceObject$TSResultsTable), rownames = FALSE, 
+                 caption = tags$caption("Trailing Stop", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+  })
   
+  #################################################################################################
+  # SEASONAL SALES
+  #################################################################################################
   
   output$SSdistPlot <- renderPlot({
     if (input$yearSS == "2008-09") {
@@ -550,6 +583,11 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
+  
+  output$SSfinalPriceTable = renderDataTable({
+    as.datatable(getTables(finalizedPriceObject$SSResultsTable), rownames = FALSE, 
+                 caption = tags$caption("Seasonal Sales", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+  })
 })
 
-shinyApp(ui=ui,server = server)
+shinyApp(ui = ui,server = server)

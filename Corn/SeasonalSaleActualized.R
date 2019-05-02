@@ -2,8 +2,6 @@
 # Seasonal Sales
 # Actualized
 
-source("Corn/Main.R")
-
 isActualized = function(cropYear){
   seasonalSaleActualized = data.frame(matrix(ncol = 5, nrow = 0))
   colnames(seasonalSaleActualized) = c("Date", "Percentile", "Type", "PercentSold", "TotalSold")

@@ -2,9 +2,6 @@
 # Trailing Stop
 # Actualized
 
-# Create the corn objects necessary to run the Trailing Stop actualization strategy
-source("Corn/TrailingStop.R")
-
 # Finds actualized Trailing Stop sales
 isActualized = function(cropYear){
   trailingStopActualized = data.frame(matrix(ncol = 5, nrow = 0))
