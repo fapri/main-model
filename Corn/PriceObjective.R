@@ -19,6 +19,11 @@ isPriceObjectiveSpecial = function(pricePreviousPercentileAbove, currentPrice) {
 # Finds all of the price objective triggers for a given crop year
 priceObjectiveTrigger = function(cropYear) {
   priceObjectiveTriggers = data.frame()
+  multiYearTriggers = data.frame()
+  
+  jan1 = paste("01-01", toString(year(mdy(cropYear$`Start Date`))), sep="-")
+  dec31 = paste("12-31", toString(year(mdy(cropYear$`Start Date`))), sep="-")
+  firstYearInterval = interval(mdy(jan1), mdy(dec31))
   
   marketingYear = cropYear[['Marketing Year']]
   
@@ -83,7 +88,29 @@ priceObjectiveTrigger = function(cropYear) {
     }
   }
   
+  # Multi Year trigger loading
+  for(row in 2:nrow(marketingYear)) {
+    if(mdy(marketingYear$Date[row]) %within% firstYearInterval){
+      if (isTenDayHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row], 
+                       cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
+                       Corn_FeaturesObject$`95% of Ten Day High`)) {
+        multiYearTriggers = rbind(multiYearTriggers, data.frame("Date" = marketingYear$Date[row], 
+                                                                "Percentile" = marketingYear$Percentile[row],
+                                                                "Type" = "Ten Day High"))
+      }
+      
+      else if (isAllTimeHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row],
+                             cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
+                             Corn_FeaturesObject$`95% of Ten Day High`, Corn_FeaturesObject$`All Time High`)) {
+        multiYearTriggers = rbind(multiYearTriggers, data.frame("Date" = marketingYear$Date[row], 
+                                                                "Percentile" = marketingYear$Percentile[row],
+                                                                "Type" = "All Time High"))
+      }
+    }
+  }
+  
   cropYear[['PO Triggers']] = priceObjectiveTriggers
+  cropYear[['MultiYear Triggers']] = multiYearTriggers
   
   return(cropYear)
 }
@@ -92,4 +119,5 @@ priceObjectiveTrigger = function(cropYear) {
 for(i in 1:length(Corn_CropYearObjects)) {
   Corn_CropYearObjects[[i]] = priceObjectiveTrigger(Corn_CropYearObjects[[i]])
   Corn_CropYearObjects[[i]]$`PO Triggers`$Date = mdy(Corn_CropYearObjects[[i]]$`PO Triggers`$Date)
+  Corn_CropYearObjects[[i]]$`MultiYear Triggers`$Date = mdy(Corn_CropYearObjects[[i]]$`MultiYear Triggers`$Date)
 }
