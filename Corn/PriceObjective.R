@@ -26,6 +26,7 @@ priceObjectiveTrigger = function(cropYear) {
   firstYearInterval = interval(mdy(jan1), mdy(dec31))
   
   marketingYear = cropYear[['Marketing Year']]
+  marketingYearMY = cropYear[['Marketing Year MY']]
   
   for(row in 2:nrow(marketingYear)) {
     # Special case for Feb -> March
@@ -89,21 +90,19 @@ priceObjectiveTrigger = function(cropYear) {
   }
   
   # Multi Year trigger loading
-  for(row in 2:nrow(marketingYear)) {
-    if(mdy(marketingYear$Date[row]) %within% firstYearInterval){
-      if (isTenDayHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row], 
-                       cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
+  for(row in 2:nrow(marketingYearMY)) {
+    if(mdy(marketingYearMY$Date[row]) %within% firstYearInterval){
+      if (isTenDayHighMY(mdy(marketingYearMY$Date[row]), marketingYearMY$`NC Price`[row], marketingYearMY$Percentile[row], 
                        Corn_FeaturesObject$`95% of Ten Day High`)) {
-        multiYearTriggers = rbind(multiYearTriggers, data.frame("Date" = marketingYear$Date[row], 
-                                                                "Percentile" = marketingYear$Percentile[row],
+        multiYearTriggers = rbind(multiYearTriggers, data.frame("Date" = marketingYearMY$Date[row], 
+                                                                "Percentile" = marketingYearMY$Percentile[row],
                                                                 "Type" = "Ten Day High"))
       }
       
-      else if (isAllTimeHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row],
-                             cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
+      else if (isAllTimeHighMY(mdy(marketingYearMY$Date[row]), marketingYearMY$`NC Price`[row], marketingYearMY$Percentile[row],
                              Corn_FeaturesObject$`95% of Ten Day High`, Corn_FeaturesObject$`All Time High`)) {
-        multiYearTriggers = rbind(multiYearTriggers, data.frame("Date" = marketingYear$Date[row], 
-                                                                "Percentile" = marketingYear$Percentile[row],
+        multiYearTriggers = rbind(multiYearTriggers, data.frame("Date" = marketingYearMY$Date[row], 
+                                                                "Percentile" = marketingYearMY$Percentile[row],
                                                                 "Type" = "All Time High"))
       }
     }
@@ -121,3 +120,4 @@ for(i in 1:length(Corn_CropYearObjects)) {
   Corn_CropYearObjects[[i]]$`PO Triggers`$Date = mdy(Corn_CropYearObjects[[i]]$`PO Triggers`$Date)
   Corn_CropYearObjects[[i]]$`MultiYear Triggers`$Date = mdy(Corn_CropYearObjects[[i]]$`MultiYear Triggers`$Date)
 }
+
