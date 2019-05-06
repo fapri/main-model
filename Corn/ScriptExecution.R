@@ -9,6 +9,7 @@ source("Corn/Triggers.R")
 # Run the strategies
 source("Corn/PriceObjective.R")
 source("Corn/PriceObjectiveActualized.R")
+source("Corn/PriceObjectiveActualizedMultiYear.R")
 source("Corn/TrailingStop.R")
 source("Corn/TrailingStopActualized.R")
 source("Corn/SeasonalSaleActualized.R")
