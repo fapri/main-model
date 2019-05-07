@@ -15,10 +15,28 @@ Corn_CropYearObjects[[i]]$`PO Actualized MY`$Price = NA
 for (i in 1:length(Corn_CropYearObjects)){
   for(j in 1:nrow(Corn_CropYearObjects[[i]]$`PO Actualized MY`)){
     
-    #FIX THIS PART $PRICE 
-    Corn_CropYearObjects[[i]]$`PO Actualized MY`$Price[j] = Corn_FuturesMarket$DecNC1yr[which(mdy(Corn_FuturesMarket$Date) == Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j])]
-    Corn_CropYearObjects[[i]]$`PO Actualized MY`$Price[j] = Corn_FuturesMarket$DecNC1yr[which(mdy(Corn_FuturesMarket$Date) == Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j])]
-    Corn_CropYearObjects[[i]]$`PO Actualized MY`$Price[j] = Corn_FuturesMarket$DecNC1yr[which(mdy(Corn_FuturesMarket$Date) == Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j])]
+    if(Corn_CropYearObjects[[i]]$`PO Actualized MY`$Type[j] == "Multiyear Year 1"){
+      Corn_CropYearObjects[[i]]$`PO Actualized MY`$Price[j] = Corn_FuturesMarket$DecNC1yr[which(mdy(Corn_FuturesMarket$Date) == Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j])]
+    }
+    
+    else if(Corn_CropYearObjects[[i]]$`PO Actualized MY`$Type[j] == "Multiyear Year 2"){
+      Corn_CropYearObjects[[i]]$`PO Actualized MY`$Price[j] = Corn_FuturesMarket$DecNC2yr[which(mdy(Corn_FuturesMarket$Date) == Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j])]
+    }
+      
+    else{
+      #Check if preharvest or porst harvest!!!!!!!!
+      if(year(Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j]) == year(int_start(Corn_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPre))){
+        Corn_CropYearObjects[[i]]$`PO Actualized MY`$Price[j] = Corn_CropYearObjects[[i]]$`Marketing Year`$Price[which(mdy(Corn_CropYearObjects[[i]]$`Marketing Year`$Date) == Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j])]
+      }
+      
+      else if(year(Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j]) == year(int_start(Corn_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPre)) - 1){
+        Corn_CropYearObjects[[i]]$`PO Actualized MY`$Price[j] = Corn_CropYearObjects[[i]]$`Marketing Year`$Price[which(mdy(Corn_CropYearObjects[[i - 1]]$`Marketing Year`$Date) == Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j])]
+      }
+      
+      else if(year(Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j]) == year(int_start(Corn_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPre)) - 2){
+        Corn_CropYearObjects[[i]]$`PO Actualized MY`$Price[j] = Corn_CropYearObjects[[i]]$`Marketing Year`$Price[which(mdy(Corn_CropYearObjects[[i - 2]]$`Marketing Year`$Date) == Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j])]
+      }
+    }
   }
 }
 
