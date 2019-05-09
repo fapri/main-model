@@ -10,35 +10,7 @@ for (i in 1:length(Corn_CropYearObjects)){
   }
 }
 
-# Extract Price data into the PO Actualized Multi Year Data Frame
-Corn_CropYearObjects[[i]]$`PO Actualized MY`$Price = NA
-for (i in 1:length(Corn_CropYearObjects)){
-  for(j in 1:nrow(Corn_CropYearObjects[[i]]$`PO Actualized MY`)){
-    
-    if(Corn_CropYearObjects[[i]]$`PO Actualized MY`$Type[j] == "Multiyear Year 1"){
-      Corn_CropYearObjects[[i]]$`PO Actualized MY`$Price[j] = Corn_FuturesMarket$DecNC1yr[which(mdy(Corn_FuturesMarket$Date) == Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j])]
-    }
-    
-    else if(Corn_CropYearObjects[[i]]$`PO Actualized MY`$Type[j] == "Multiyear Year 2"){
-      Corn_CropYearObjects[[i]]$`PO Actualized MY`$Price[j] = Corn_FuturesMarket$DecNC2yr[which(mdy(Corn_FuturesMarket$Date) == Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j])]
-    }
-      
-    else{
-      #Check if preharvest or porst harvest!!!!!!!!
-      if(year(Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j]) == year(int_start(Corn_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPre))){
-        Corn_CropYearObjects[[i]]$`PO Actualized MY`$Price[j] = Corn_CropYearObjects[[i]]$`Marketing Year`$Price[which(mdy(Corn_CropYearObjects[[i]]$`Marketing Year`$Date) == Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j])]
-      }
-      
-      else if(year(Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j]) == year(int_start(Corn_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPre)) - 1){
-        Corn_CropYearObjects[[i]]$`PO Actualized MY`$Price[j] = Corn_CropYearObjects[[i]]$`Marketing Year`$Price[which(mdy(Corn_CropYearObjects[[i - 1]]$`Marketing Year`$Date) == Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j])]
-      }
-      
-      else if(year(Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j]) == year(int_start(Corn_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPre)) - 2){
-        Corn_CropYearObjects[[i]]$`PO Actualized MY`$Price[j] = Corn_CropYearObjects[[i]]$`Marketing Year`$Price[which(mdy(Corn_CropYearObjects[[i - 2]]$`Marketing Year`$Date) == Corn_CropYearObjects[[i]]$`PO Actualized MY`$Date[j])]
-      }
-    }
-  }
-}
+# Multiyear price already inputted in actualized function
 
 # Extract Price data into the TS Actualized Data Frame
 for (i in 1:length(Corn_CropYearObjects)){
@@ -323,11 +295,22 @@ postharvestAverage = rep(0, 9)
 preharvestAverageStorage = rep(0, 9)
 postharvestAverageStorage = rep(0, 9)
 
+
+
+# i = 5
+# actualizedSales = Corn_CropYearObjects[[i]]$`PO Actualized MY`
+# cropYear = Corn_CropYears$CropYear[i]
+# intervalPre = POintervalPreMY
+# intervalPost = Corn_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPost
+
+
+
+
 finalizeStorage = function(actualizedSales, cropYear, intervalPre, intervalPost){
   # Initialize variables
   preRows = rep(0, 9)
   postRows = rep(0, 9)
-  
+  #########################################################################################################
   # Calculates total average price, accounting for storage
   storageAdjAvg = getStorageActualized(actualizedSales,
                                        intervalPre,
@@ -456,9 +439,11 @@ for (i in 1:length(Corn_CropYearObjects)){
   POfinalizedPrices[i,] = POtemp[[3]]
   
   # Price Objective Multi Year
+  jan1 = paste("01-01", toString(year(mdy(Corn_CropYearObjects[[i]]$`Start Date`)) - 2), sep="-")
+  POintervalPreMY = interval(mdy(jan1), int_end(Corn_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPre))
   POtempMY = finalizeStorage(Corn_CropYearObjects[[i]]$`PO Actualized MY`,
                              Corn_CropYears$CropYear[i],
-                             Corn_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPre,
+                             POintervalPreMY,
                              Corn_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPost)
   
   Corn_CropYearObjects[[i]]$`PO Actualized MY` = POtempMY[[1]]

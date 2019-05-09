@@ -4,6 +4,8 @@
 # Actualized
 
 library(data.table)
+library(lubridate)
+library(dplyr)
 
 isActualizedPresent = function(cropYear){
   if ("PO Actualized MY" %in% names(cropYear)){
@@ -44,6 +46,9 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
   priceObjectiveActualized2year = isActualizedPresent(cropYear2)
   
   marketingYear = cropYear[['Marketing Year']]
+  marketingYear1 = cropYear1[['Marketing Year MY']]
+  marketingYear2 = cropYear2[['Marketing Year MY']]
+  
   marketingYear$Date = mdy(marketingYear$Date)
   triggers = cropYear[['PO Triggers']]
   multiyearTriggers = cropYear[['MultiYear Triggers']]
@@ -70,6 +75,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
   percentSold = getPercentSold(priceObjectiveActualized)
   percentSold1year = getPercentSold(priceObjectiveActualized1year)
   percentSold2year = getPercentSold(priceObjectiveActualized2year)
+  
+  Corn_FuturesMarket$Date = mdy(Corn_FuturesMarket$Date)
 
   if(totalSold > 0){
     totalSoldMax = 60
@@ -80,10 +87,11 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
   
   if(!is.null(cropYear1)){
     #Mutli - Year Sales
-    for(row in 1:nrow(marketingYear)) {
+    for(row in 1:nrow(marketingYear1)) {
       if(marketingYear$Date[row] %in% multiyearTriggers$Date) {
-        
         mytRow = which(marketingYear$Date[row] == multiyearTriggers$Date)
+        futuresMarketRow = which(Corn_FuturesMarket$Date == marketingYear$Date[row])
+        
         if(!(multiyearTriggers$Date[mytRow] %within% interval4)){
           if(!(nrow(priceObjectiveActualized1year) == 0)){
             if(difftime(multiyearTriggers$Date[mytRow], priceObjectiveActualized1year$Date[nrow(priceObjectiveActualized1year)]) >= 7) {
@@ -94,7 +102,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                                   "Percentile" = multiyearTriggers$Percentile[mytRow],
                                                                                                   "Type" = "MultiYear Year 1",
                                                                                                   "Percent Sold" = 10,
-                                                                                                  "Total Sold" = totalSold1year))
+                                                                                                  "Total Sold" = totalSold1year,
+                                                                                                  "Price" = Corn_FuturesMarket$DecNC1yr[futuresMarketRow]))
                   
                   if(multiyearTriggers$Date[mytRow] %within% interval1 || multiyearTriggers$Date[mytRow] %within% interval2){
                     tRow = which(marketingYear$Date[row] == triggers$Date)
@@ -103,7 +112,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                           "Percentile" = triggers$Percentile[tRow],
                                                                                           "Type" = triggers$Type[tRow],
                                                                                           "Percent Sold" = 10,
-                                                                                          "Total Sold" = totalSold))
+                                                                                          "Total Sold" = totalSold,
+                                                                                          "Price" = Corn_FuturesMarket$DecNC[futuresMarketRow]))
                   }
                 }
               }
@@ -116,7 +126,9 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                               "Percentile" = multiyearTriggers$Percentile[mytRow],
                                                                                               "Type" = "MultiYear Year 1",
                                                                                               "Percent Sold" = 10,
-                                                                                              "Total Sold" = totalSold1year))
+                                                                                              "Total Sold" = totalSold1year,
+                                                                                              "Price" = Corn_FuturesMarket$DecNC1yr[futuresMarketRow]))
+              
               if(multiyearTriggers$Date[mytRow] %within% interval1 || multiyearTriggers$Date[mytRow] %within% interval2){
                 tRow = which(marketingYear$Date[row] == triggers$Date)
                 totalSold = totalSold + 10
@@ -124,7 +136,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                       "Percentile" = triggers$Percentile[tRow],
                                                                                       "Type" = triggers$Type[tRow],
                                                                                       "Percent Sold" = 10,
-                                                                                      "Total Sold" = totalSold))
+                                                                                      "Total Sold" = totalSold,
+                                                                                      "Price" = Corn_FuturesMarket$DecNC[futuresMarketRow]))
               }
             }  
           }
@@ -133,9 +146,11 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
     }
     
     #Mutli - Year Sales
-    for(row in 1:nrow(marketingYear)) {
+    for(row in 1:nrow(marketingYear2)) {
       if(marketingYear$Date[row] %in% multiyearTriggers$Date) {
         mytRow = which(marketingYear$Date[row] == multiyearTriggers$Date)
+        futuresMarketRow = which(marketingYear$Date[row] == Corn_FuturesMarket$Date)
+        
         if(!(multiyearTriggers$Date[mytRow] %within% interval4)){
           if(nrow(priceObjectiveActualized2year) != 0){
             if(difftime(multiyearTriggers$Date[mytRow], priceObjectiveActualized2year$Date[nrow(priceObjectiveActualized2year)]) >= 7) {
@@ -146,7 +161,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                                   "Percentile" = multiyearTriggers$Percentile[mytRow],
                                                                                                   "Type" = "MultiYear Year 2",
                                                                                                   "Percent Sold" = 10,
-                                                                                                  "Total Sold" = totalSold2year))
+                                                                                                  "Total Sold" = totalSold2year,
+                                                                                                  "Price" = Corn_FuturesMarket$DecNC2yr[futuresMarketRow]))
                 }
               }
             }
@@ -158,7 +174,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                               "Percentile" = multiyearTriggers$Percentile[mytRow],
                                                                                               "Type" = "Multiyear Year 2",
                                                                                               "Percent Sold" = 10,
-                                                                                              "Total Sold" = totalSold2year))
+                                                                                              "Total Sold" = totalSold2year,
+                                                                                              "Price" = Corn_FuturesMarket$DecNC2yr[futuresMarketRow]))
             }
           }
         }
@@ -193,7 +210,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                           "Percentile" = triggers$Percentile[tRow],
                                                                                           "Type" = triggers$Type[tRow],
                                                                                           "Percent Sold" = 10,
-                                                                                          "Total Sold" = totalSold))
+                                                                                          "Total Sold" = totalSold,
+                                                                                          "Price" = marketingYear$`Price`[row]))
                     priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                   }
                 }
@@ -205,7 +223,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                         "Percentile" = triggers$Percentile[tRow],
                                                                                         "Type" = triggers$Type[tRow],
                                                                                         "Percent Sold" = 10,
-                                                                                        "Total Sold" = totalSold))
+                                                                                        "Total Sold" = totalSold,
+                                                                                        "Price" = marketingYear$`Price`[row]))
                   priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                 }
               }
@@ -217,7 +236,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                       "Percentile" = triggers$Percentile[tRow],
                                                                                       "Type" = triggers$Type[tRow],
                                                                                       "Percent Sold" = 10,
-                                                                                      "Total Sold" = totalSold))
+                                                                                      "Total Sold" = totalSold,
+                                                                                      "Price" = marketingYear$`Price`[row]))
                 priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
               }
             }
@@ -247,7 +267,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                             "Percentile" = triggers$Percentile[tRow],
                                                                                             "Type" = triggers$Type[tRow],
                                                                                             "Percent Sold" = 10,
-                                                                                            "Total Sold" = totalSold))
+                                                                                            "Total Sold" = totalSold,
+                                                                                            "Price" = marketingYear$`Price`[row]))
                       priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                     }
                   }
@@ -259,7 +280,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                           "Percentile" = triggers$Percentile[tRow],
                                                                                           "Type" = triggers$Type[tRow],
                                                                                           "Percent Sold" = 10,
-                                                                                          "Total Sold" = totalSold))
+                                                                                          "Total Sold" = totalSold,
+                                                                                          "Price" = marketingYear$`Price`[row]))
                     priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                   }
                 }
@@ -275,7 +297,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                             "Percentile" = triggers$Percentile[tRow],
                                                                                             "Type" = triggers$Type[tRow],
                                                                                             "Percent Sold" = percentSold,
-                                                                                            "Total Sold" = totalSold))
+                                                                                            "Total Sold" = totalSold,
+                                                                                            "Price" = marketingYear$`Price`[row]))
                       priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                     }
                     
@@ -286,7 +309,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                             "Percentile" = triggers$Percentile[tRow],
                                                                                             "Type" = triggers$Type[tRow],
                                                                                             "Percent Sold" = percentSold,
-                                                                                            "Total Sold" = totalSold))
+                                                                                            "Total Sold" = totalSold,
+                                                                                            "Price" = marketingYear$`Price`[row]))
                       priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                     }
                     
@@ -297,7 +321,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                             "Percentile" = triggers$Percentile[tRow],
                                                                                             "Type" = triggers$Type[tRow],
                                                                                             "Percent Sold" = percentSold,
-                                                                                            "Total Sold" = totalSold))
+                                                                                            "Total Sold" = totalSold,
+                                                                                            "Price" = marketingYear$`Price`[row]))
                       priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                     }
                     
@@ -308,7 +333,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                             "Percentile" = triggers$Percentile[tRow],
                                                                                             "Type" = triggers$Type[tRow],
                                                                                             "Percent Sold" = percentSold,
-                                                                                            "Total Sold" = totalSold))
+                                                                                            "Total Sold" = totalSold,
+                                                                                            "Price" = marketingYear$`Price`[row]))
                       priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                     }
                   }
@@ -324,7 +350,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                     "Percentile" = triggers$Percentile[tRow],
                                                                                     "Type" = triggers$Type[tRow],
                                                                                     "Percent Sold" = 10,
-                                                                                    "Total Sold" = totalSold))
+                                                                                    "Total Sold" = totalSold,
+                                                                                    "Price" = marketingYear$`Price`[row]))
               priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
             }
           }
@@ -350,7 +377,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                         "Percentile" = marketingYear$Percentile[row],
                                                                                         "Type" = "Seasonal",
                                                                                         "Percent Sold" = percentSold,
-                                                                                        "Total Sold" = totalSold))
+                                                                                        "Total Sold" = totalSold,
+                                                                                        "Price" = marketingYear$`Price`[row]))
                   priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                 }
               }
@@ -363,7 +391,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                         "Percentile" = marketingYear$Percentile[row],
                                                                                         "Type" = "Seasonal",
                                                                                         "Percent Sold" = percentSold,
-                                                                                        "Total Sold" = totalSold))
+                                                                                        "Total Sold" = totalSold,
+                                                                                        "Price" = marketingYear$`Price`[row]))
                   priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                 }
               }
@@ -380,7 +409,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                         "Percentile" = marketingYear$Percentile[row],
                                                                                         "Type" = "Seasonal",
                                                                                         "Percent Sold" = percentSold,
-                                                                                        "Total Sold" = totalSold))
+                                                                                        "Total Sold" = totalSold,
+                                                                                        "Price" = marketingYear$`Price`[row]))
                   priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                 }
               }
@@ -393,7 +423,8 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                                                                                         "Percentile" = marketingYear$Percentile[row],
                                                                                         "Type" = "Seasonal",
                                                                                         "Percent Sold" = percentSold,
-                                                                                        "Total Sold" = totalSold))
+                                                                                        "Total Sold" = totalSold,
+                                                                                        "Price" = marketingYear$`Price`[row]))
                   priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                 }
               }
