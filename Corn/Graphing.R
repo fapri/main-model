@@ -3,8 +3,8 @@
 # Graphing
 
 #Set Color Palette
-myColors = c("#ffff00", "#ffff00","#800080", "#800080", "#ed7d31", "#4286f4", "#ff4242", "#FF69B4", "#000080", "#000080")
-colorLabels = c("Price Objective", "Price Objective Special","Trailing Stop", "Trailing Stop Special", "Seasonal", "Ten Day High", "All Time High", "End of Year Trailing Stop", "Multi-Year", "Multi-Year")
+myColors = c("#ffff00", "#ffff00","#800080", "#800080", "#ed7d31", "#4286f4", "#ff4242", "#FF69B4", "#000080")
+colorLabels = c("Price Objective", "Price Objective Special","Trailing Stop", "Trailing Stop Special", "Seasonal", "Ten Day High", "All Time High", "End of Year Trailing Stop", "Multi-Year")
 names(myColors) = colorLabels 
 
 plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actualizedSales, dynamicTitle) {
