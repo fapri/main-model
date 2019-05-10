@@ -50,7 +50,7 @@ isActualized = function(cropYear){
                 tempRows = which(trailingStopActualized$Date %within% interval1 & trailingStopActualized$Type == "Trailing Stop")
                 #check if a sale was made in that percentile
                 if(!(triggers$Previous.Percentile[tRow] %in% trailingStopActualized$Previous.Percentile[tempRows])) {
-                  #PO, ATH, TDH at 10% increments
+                  #TS, ATH, TDH at 10% increments
                   totalSold = totalSold + 10
                   trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                     "Previous Percentile" = triggers$Previous.Percentile[tRow],
@@ -62,7 +62,7 @@ isActualized = function(cropYear){
               }
               #if trigger date is in an unrestricted interval or ATH/TDH we can just make the sale
               else {
-                #PO, ATH, TDH at 10% increments
+                #TS, ATH, TDH at 10% increments
                 totalSold = totalSold + 10
                 trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                   "Previous Percentile" = triggers$Previous.Percentile[tRow],
@@ -74,7 +74,7 @@ isActualized = function(cropYear){
             }
             #if trigger is the first one we can just make the sale
             else {
-              #PO, ATH, TDH at 10% increments
+              #TS, ATH, TDH at 10% increments
               totalSold = totalSold + 10
               trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                 "Previous Percentile" = triggers$Previous.Percentile[tRow],
@@ -87,7 +87,7 @@ isActualized = function(cropYear){
         }
       }
       
-      #check if postharvest
+      #check if TSstharvest
       else if(triggers$Date[tRow] %within% intervalPost) {
         #if > 0% of crop remains
         if(totalSold < 100) {
@@ -105,7 +105,7 @@ isActualized = function(cropYear){
                   tempRows = which(trailingStopActualized$Date %within% interval3 & trailingStopActualized$Type == "Trailing Stop")
                   #check if a sale was made in that percentile. 
                   if(!(triggers$Previous.Percentile[tRow] %in% trailingStopActualized$Previous.Percentile[tempRows])) {
-                    #PO, ATH, TDH at 10% increments
+                    #TS, ATH, TDH at 10% increments
                     totalSold = totalSold + 10
                     trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                       "Previous Percentile" = triggers$Previous.Percentile[tRow],
@@ -117,7 +117,7 @@ isActualized = function(cropYear){
                 }
                 #if trigger date is in an unrestricted interval or ATH/TDH we can just make the sale
                 else {
-                  #PO, ATH, TDH at 10% increments
+                  #TS, ATH, TDH at 10% increments
                   totalSold = totalSold + 10
                   trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow],
                                                                                     "Previous Percentile" = triggers$Previous.Percentile[tRow],
@@ -184,7 +184,7 @@ isActualized = function(cropYear){
           
           #if trigger is the first one we can just make the sale
           else {
-            #PO, ATH, TDH at 10% increments
+            #TS, ATH, TDH at 10% increments
             totalSold = totalSold + 10
             trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                               "Percentile" = triggers$Percentile[tRow],
