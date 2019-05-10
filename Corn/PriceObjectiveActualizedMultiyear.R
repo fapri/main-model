@@ -100,7 +100,7 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                   totalSold1year = totalSold1year + 10
                   priceObjectiveActualized1year = rbind(priceObjectiveActualized1year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
                                                                                                   "Percentile" = multiyearTriggers$Percentile[mytRow],
-                                                                                                  "Type" = "MultiYear Year 1",
+                                                                                                  "Type" = "Mutli-Year",
                                                                                                   "Percent Sold" = 10,
                                                                                                   "Total Sold" = totalSold1year,
                                                                                                   "Price" = Corn_FuturesMarket$DecNC1yr[futuresMarketRow]))
@@ -124,7 +124,7 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
               totalSold1year = totalSold1year + 10
               priceObjectiveActualized1year = rbind(priceObjectiveActualized1year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
                                                                                               "Percentile" = multiyearTriggers$Percentile[mytRow],
-                                                                                              "Type" = "MultiYear Year 1",
+                                                                                              "Type" = "Multi-Year",
                                                                                               "Percent Sold" = 10,
                                                                                               "Total Sold" = totalSold1year,
                                                                                               "Price" = Corn_FuturesMarket$DecNC1yr[futuresMarketRow]))
@@ -159,7 +159,7 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                   totalSold2year = totalSold2year + 10
                   priceObjectiveActualized2year = rbind(priceObjectiveActualized2year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
                                                                                                   "Percentile" = multiyearTriggers$Percentile[mytRow],
-                                                                                                  "Type" = "MultiYear Year 2",
+                                                                                                  "Type" = "Multi-Year",
                                                                                                   "Percent Sold" = 10,
                                                                                                   "Total Sold" = totalSold2year,
                                                                                                   "Price" = Corn_FuturesMarket$DecNC2yr[futuresMarketRow]))
@@ -172,7 +172,7 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
               totalSold2year = totalSold2year + 10
               priceObjectiveActualized2year = rbind(priceObjectiveActualized2year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
                                                                                               "Percentile" = multiyearTriggers$Percentile[mytRow],
-                                                                                              "Type" = "Multiyear Year 2",
+                                                                                              "Type" = "Multi-Year",
                                                                                               "Percent Sold" = 10,
                                                                                               "Total Sold" = totalSold2year,
                                                                                               "Price" = Corn_FuturesMarket$DecNC2yr[futuresMarketRow]))
