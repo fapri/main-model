@@ -6,13 +6,17 @@ source("Corn/Main.R")
 # Create common trigger functions
 source("Corn/Triggers.R")
 
-# Run the strategies
+# Run the strategies (without multi-year)
 source("Corn/PriceObjective.R")
 source("Corn/PriceObjectiveActualized.R")
-source("Corn/PriceObjectiveActualizedMultiYear.R")
 source("Corn/TrailingStop.R")
 source("Corn/TrailingStopActualized.R")
 source("Corn/SeasonalSaleActualized.R")
+
+
+# Run the strategies (with multi-year)
+source("Corn/MultiYearTrigger.R")
+source("Corn/PriceObjectiveActualizedMultiYear.R")
 
 # Adjust for storage
 source("Corn/StorageMerge.R")
