@@ -4,18 +4,8 @@
 
 #Set Color Palette
 myColors = c("#ffff00", "#ffff00","#800080", "#800080", "#ed7d31", "#4286f4", "#ff4242", "#FF69B4", "#000080", "#000080")
-colorLabels = c("Price Objective", "Price Objective Special","Trailing Stop", "Trailing Stop Special", "Seasonal", "Ten Day High", "All Time High", "End of Year Trailing Stop", "Multiyear Year 1", "Multiyear Year 2")
+colorLabels = c("Price Objective", "Price Objective Special","Trailing Stop", "Trailing Stop Special", "Seasonal", "Ten Day High", "All Time High", "End of Year Trailing Stop", "Multi-Year", "Multi-Year")
 names(myColors) = colorLabels 
-
-# i = 1
-# cropYear = Corn_CropYearObjects[[i]]$`Crop Year`
-# startDate = mdy(Corn_CropYearObjects[[i]]$`Start Date`)
-# stopDate = mdy(Corn_CropYearObjects[[i]]$`Stop Date`)
-# marketingYear = Corn_CropYearObjects[[i]]$`Marketing Year MY`
-# actualizedSales = Corn_CropYearObjects[[i]]$`PO Actualized MY`
-# dynamicTitle = POMYTitle
-
-
 
 plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actualizedSales, dynamicTitle) {
   harvest = mdy(paste("09-01", toString(year(startDate)), sep="-"))
@@ -42,6 +32,24 @@ plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actua
     ninetyFive[j] = unique(marketingYear$`95th`)[j]
   }
   
+  if(actualizedSales$Type[1] == "Multi-Year"){
+    marketingInterval = interval(startDate, stopDate)
+    multiyearRows = 1:(which(ymd(actualizedSales$Date) %within% marketingInterval)[1] - 1)
+    for(i in 1:last(multiyearRows)){
+      if(!(ymd(actualizedSales$Date[i]) %within% marketingInterval)){
+        priceDiff = actualizedSales$Price[i] - actualizedSales$Price[multiyearRows]
+        for(j in 1:length(priceDiff)){
+          if(abs(priceDiff[j]) < .10 && abs(priceDiff[j]) != 0){
+            actualizedSales$Date[j] = mdy(paste("12-10", toString(year(startDate)), sep="-"))
+          }
+          else{
+            actualizedSales$Date[i] = mdy(paste("12-01", toString(year(startDate)), sep="-"))
+          }
+        }
+      }
+    }
+  }
+  
   # create a data frame for baseline values for each of the four segments
   baselineLines = data.frame(baseline, sixty, seventy, eighty, ninety, ninetyFive)
   
@@ -58,7 +66,6 @@ plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actua
     xlab("Day") + ylab("Price") +
     ggtitle(paste(cropYear, dynamicTitle, sep = " ")) +
     scale_x_date(date_labels = "%b '%y", date_breaks = "1 month", date_minor_breaks = "1 month") +
-    
     geom_segment(data = segment_data[1:2,], aes(x = x, y = baseline, xend = xend, yend = baseline), linetype = 5) + 
     geom_text(data = segment_data[1:2,], aes(x = xcenter, y = baseline, fontface = "bold"), label = "Baseline", color = "#0000FF", size = 4) +
     geom_segment(data = segment_data[1:2,], aes(x = x, y = seventy, xend = xend, yend = seventy), linetype = 5) + 
@@ -98,11 +105,11 @@ for(i in 1:length(Corn_CropYearObjects)) {
   POMYTitle = "Price Objective with Multi-Year"
   names(Corn_CropYearObjects[[i]]$`Marketing Year MY`) = names(Corn_CropYearObjects[[i]]$`Marketing Year`)
   Corn_CropYearObjects[[i]]$POMYPlot = plotMarketingYear(Corn_CropYearObjects[[i]]$`Crop Year`,
-                                                       mdy(Corn_CropYearObjects[[i]]$`Start Date`),
-                                                       mdy(Corn_CropYearObjects[[i]]$`Stop Date`),
-                                                       Corn_CropYearObjects[[i]]$`Marketing Year MY`,
-                                                       Corn_CropYearObjects[[i]]$`PO Actualized MY`,
-                                                       POMYTitle)
+                                                         mdy(Corn_CropYearObjects[[i]]$`Start Date`),
+                                                         mdy(Corn_CropYearObjects[[i]]$`Stop Date`),
+                                                         Corn_CropYearObjects[[i]]$`Marketing Year`,
+                                                         Corn_CropYearObjects[[i]]$`PO Actualized MY`,
+                                                         POMYTitle)
   
   TSTitle = "Trailing Stop w/o Multi-Year"
   Corn_CropYearObjects[[i]]$TSPlot = plotMarketingYear(Corn_CropYearObjects[[i]]$`Crop Year`,
