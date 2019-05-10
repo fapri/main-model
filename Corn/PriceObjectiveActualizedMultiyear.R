@@ -86,7 +86,7 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
   }
   
   if(!is.null(cropYear1)){
-    #Mutli - Year Sales
+    #Multi-Year Sales
     for(row in 1:nrow(marketingYear1)) {
       if(marketingYear$Date[row] %in% multiyearTriggers$Date) {
         mytRow = which(marketingYear$Date[row] == multiyearTriggers$Date)
@@ -100,7 +100,7 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
                   totalSold1year = totalSold1year + 10
                   priceObjectiveActualized1year = rbind(priceObjectiveActualized1year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
                                                                                                   "Percentile" = multiyearTriggers$Percentile[mytRow],
-                                                                                                  "Type" = "Mutli-Year",
+                                                                                                  "Type" = "Multi-Year",
                                                                                                   "Percent Sold" = 10,
                                                                                                   "Total Sold" = totalSold1year,
                                                                                                   "Price" = Corn_FuturesMarket$DecNC1yr[futuresMarketRow]))
@@ -145,7 +145,7 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
       }
     }
     
-    #Mutli - Year Sales
+    #Multi - Year Sales
     for(row in 1:nrow(marketingYear2)) {
       if(marketingYear$Date[row] %in% multiyearTriggers$Date) {
         mytRow = which(marketingYear$Date[row] == multiyearTriggers$Date)
