@@ -40,7 +40,7 @@ getPercentSold = function(actualizedSales){
 }
 
 # Finds actualized Price Objective sales
-isActualizedMY = function(cropYear, cropYear1, cropYear2){
+isActualizedPOMY = function(cropYear, cropYear1, cropYear2){
   priceObjectiveActualized = isActualizedPresent(cropYear)
   priceObjectiveActualized1year = isActualizedPresent(cropYear1)
   priceObjectiveActualized2year = isActualizedPresent(cropYear2)
@@ -459,14 +459,14 @@ isActualizedMY = function(cropYear, cropYear1, cropYear2){
 
 for(i in 1:(length(Corn_CropYearObjects) - 2)) {
   temp = list()
-  temp[[1]] = isActualizedMY(Corn_CropYearObjects[[i]], Corn_CropYearObjects[[i + 1]], Corn_CropYearObjects[[i + 2]])
+  temp[[1]] = isActualizedPOMY(Corn_CropYearObjects[[i]], Corn_CropYearObjects[[i + 1]], Corn_CropYearObjects[[i + 2]])
   Corn_CropYearObjects[[i]] = temp[[1]][[1]]
   Corn_CropYearObjects[[i + 1]] = temp[[1]][[2]]
   Corn_CropYearObjects[[i + 2]] = temp[[1]][[3]]
 }
 
 for(i in (length(Corn_CropYearObjects) - 2):length(Corn_CropYearObjects)){
-  Corn_CropYearObjects[[i]] = isActualizedMY(Corn_CropYearObjects[[i]], NULL, NULL)
+  Corn_CropYearObjects[[i]] = isActualizedPOMY(Corn_CropYearObjects[[i]], NULL, NULL)
 }
 
 
