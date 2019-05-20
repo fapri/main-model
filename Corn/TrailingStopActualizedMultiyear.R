@@ -473,11 +473,6 @@ isActualizedTSMY = function(cropYear, cropYear1, cropYear2){
   return(actualizedList)
 }
 
-# i = 5
-# cropYear = Corn_CropYearObjects[[i]]
-# cropYear1 = Corn_CropYearObjects[[i + 1]]
-# cropYear2 = Corn_CropYearObjects[[i + 2]]
-
 for(i in 1:(length(Corn_CropYearObjects) - 2)) {
   temp = list()
   temp[[1]] = isActualizedTSMY(Corn_CropYearObjects[[i]], Corn_CropYearObjects[[i + 1]], Corn_CropYearObjects[[i + 2]])
@@ -486,6 +481,6 @@ for(i in 1:(length(Corn_CropYearObjects) - 2)) {
   Corn_CropYearObjects[[i + 2]] = temp[[1]][[3]]
 }
 
-for(i in (length(Corn_CropYearObjects) - 2):length(Corn_CropYearObjects)){
+for(i in (length(Corn_CropYearObjects) - 1):length(Corn_CropYearObjects)){
   Corn_CropYearObjects[[i]] = isActualizedTSMY(Corn_CropYearObjects[[i]], NULL, NULL)
 }
