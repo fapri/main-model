@@ -77,7 +77,7 @@ isActualizedPOMY = function(cropYear, cropYear1, cropYear2){
   percentSold2year = getPercentSold(priceObjectiveActualized2year)
   
   Corn_FuturesMarket$Date = mdy(Corn_FuturesMarket$Date)
-
+  
   if(totalSold > 0){
     totalSoldMax = 60
   }
@@ -446,8 +446,6 @@ isActualizedPOMY = function(cropYear, cropYear1, cropYear2){
     actualizedList = cropYear
   }
   
-  
-  
   return(actualizedList)
 }
 
@@ -455,7 +453,6 @@ isActualizedPOMY = function(cropYear, cropYear1, cropYear2){
 # cropYear = Corn_CropYearObjects[[i]]
 # cropYear1 = Corn_CropYearObjects[[i + 1]]
 # cropYear2 = Corn_CropYearObjects[[i + 2]]
-
 
 for(i in 1:(length(Corn_CropYearObjects) - 2)) {
   temp = list()
@@ -468,12 +465,3 @@ for(i in 1:(length(Corn_CropYearObjects) - 2)) {
 for(i in (length(Corn_CropYearObjects) - 2):length(Corn_CropYearObjects)){
   Corn_CropYearObjects[[i]] = isActualizedPOMY(Corn_CropYearObjects[[i]], NULL, NULL)
 }
-
-
-
-
-
-
-
-
-
