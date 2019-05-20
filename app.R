@@ -69,8 +69,7 @@ ui <- shinyUI(
                                      plotOutput('distPlot'),
                                      style = "padding-bottom:50px"
                                    ),
-                                   
-                                   
+
                                    tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
                                    
                                    sidebarLayout(
@@ -95,8 +94,7 @@ ui <- shinyUI(
                                      plotOutput('POMYdistPlot'),
                                      style = "padding-bottom:50px"
                                    ),
-                                   
-                                   
+
                                    tags$style(type="text/css", '#POMYsummaryTables tfoot {display:none;}'),
                                    
                                    sidebarLayout(
@@ -116,57 +114,86 @@ ui <- shinyUI(
                                  )
                         )
              ),
-             tabPanel("Trailing Stop",         
-                      fluidPage(
-                        
-                        fluidRow(
-                          plotOutput('TSdistPlot'),
-                          style = "padding-bottom:50px"
+             navbarMenu("Trailing Stop",
+                        tabPanel("Base Model",         
+                                 fluidPage(
+                                   fluidRow(
+                                     plotOutput('TSdistPlot'),
+                                     style = "padding-bottom:50px"
+                                   ),
+                                   
+                                   tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                                   
+                                   sidebarLayout(
+                                     sidebarPanel(
+                                       fluidRow(selectInput('yearTS','Crop Year', choices = u.n, width = "100%"),
+                                                column(12, dataTableOutput('TSstorageTables')),
+                                                tags$style(type="text/css", '#TSstorageTables tfoot {display:none;}'))
+                                     ),
+                                     mainPanel(
+                                       fluidRow(
+                                         dataTableOutput('TSsummaryTables'),
+                                         style = "padding-bottom:100px")
+                                       
+                                     )
+                                   )
+                                 )
                         ),
-                        
-                        tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
-                        
-                        sidebarLayout(
-                          sidebarPanel(
-                            fluidRow(selectInput('yearTS','Crop Year', choices = u.n, width = "100%"),
-                                     column(12, dataTableOutput('TSstorageTables')),
-                                     tags$style(type="text/css", '#TSstorageTables tfoot {display:none;}'))
-                          ),
-                          mainPanel(
-                            fluidRow(
-                              dataTableOutput('TSsummaryTables'),
-                              style = "padding-bottom:100px")
-                            
-                          )
-                          
+                        tabPanel("Multi-Year",
+                                 fluidPage(
+                                   fluidRow(
+                                     plotOutput('TSMYdistPlot'),
+                                     style = "padding-bottom:50px"
+                                   ),
+
+                                   tags$style(type="text/css", '#TSMYsummaryTables tfoot {display:none;}'),
+                                   
+                                   sidebarLayout(
+                                     sidebarPanel(
+                                       fluidRow(selectInput('yearTSMY','Crop Year', choices = u.n, width = "100%"),
+                                                column(12, dataTableOutput('TSMYstorageTables')),
+                                                tags$style(type="text/css", '#TSMYstorageTables tfoot {display:none;}'))
+                                       
+                                     ),
+                                     mainPanel(
+                                       fluidRow(
+                                         dataTableOutput('TSMYsummaryTables'),
+                                         style = "padding-bottom:100px")
+                                       
+                                     )
+                                   )
+                                 )
                         )
-                      )
              ),
-             tabPanel("Seasonal Sales",         
-                      fluidPage(
-                        
-                        fluidRow(
-                          plotOutput('SSdistPlot'),
-                          style = "padding-bottom:50px"
+             navbarMenu("Seasonal Sales",
+                        tabPanel("Base Model",         
+                                 fluidPage(
+                                   fluidRow(
+                                     plotOutput('SSdistPlot'),
+                                     style = "padding-bottom:50px"
+                                   ),
+                                   
+                                   tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                                   
+                                   sidebarLayout(
+                                     sidebarPanel(
+                                       fluidRow(selectInput('yearSS','Crop Year', choices = u.n, width = "100%"),
+                                                column(12, dataTableOutput('SSstorageTables')),
+                                                tags$style(type="text/css", '#SSstorageTables tfoot {display:none;}'))
+                                     ),
+                                     mainPanel(
+                                       fluidRow(
+                                         dataTableOutput('SSsummaryTables'),
+                                         style = "padding-bottom:100px")
+                                       
+                                     )
+                                     
+                                   )
+                                 )
                         ),
-                        
-                        tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
-                        
-                        sidebarLayout(
-                          sidebarPanel(
-                            fluidRow(selectInput('yearSS','Crop Year', choices = u.n, width = "100%"),
-                                     column(12, dataTableOutput('SSstorageTables')),
-                                     tags$style(type="text/css", '#SSstorageTables tfoot {display:none;}'))
-                          ),
-                          mainPanel(
-                            fluidRow(
-                              dataTableOutput('SSsummaryTables'),
-                              style = "padding-bottom:100px")
-                            
-                          )
-                          
+                        tabPanel("Multi-Year",
+                                 titlePanel("SS Mulit-Year")
                         )
-                      )
              ),
              tabPanel("Strategy Results",
                       fluidPage(
@@ -756,6 +783,149 @@ server <- shinyServer(function(input,output,session){
   
   output$POMYfinalPriceTable = renderDataTable({
     as.datatable(getTables(finalizedPriceObject$POResultsTableMY), rownames = FALSE, 
+                 caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+  })
+  
+  
+  #################################################################################################
+  # TRAILING STOP MULTI-YEAR
+  #################################################################################################
+  
+  
+  output$TSMYdistPlot <- renderPlot({
+    if (input$yearTSMY == "2008-09") {
+      Corn_CropYearObjects[[1]]$TSMYPlot
+    }
+    
+    else if (input$yearTSMY == "2009-10") {
+      Corn_CropYearObjects[[2]]$TSMYPlot
+    }
+    
+    else if (input$yearTSMY == "2010-11") {
+      Corn_CropYearObjects[[3]]$TSMYPlot
+    }
+    
+    else if (input$yearTSMY == "2011-12") {
+      Corn_CropYearObjects[[4]]$TSMYPlot
+    }
+    
+    else if (input$yearTSMY == "2012-13") {
+      Corn_CropYearObjects[[5]]$TSMYPlot
+    }
+    
+    else if (input$yearTSMY == "2013-14") {
+      Corn_CropYearObjects[[6]]$TSMYPlot
+    }
+    
+    else if (input$yearTSMY == "2014-15") {
+      Corn_CropYearObjects[[7]]$TSMYPlot
+    }
+    
+    else if (input$yearTSMY == "2015-16") {
+      Corn_CropYearObjects[[8]]$TSMYPlot
+    }
+    
+    else if (input$yearTSMY == "2016-17" ) {
+      Corn_CropYearObjects[[9]]$TSMYPlot
+    }
+  })
+  
+  output$TSMYstorageTables = renderDataTable({
+    if (input$yearTSMY == "2008-09") {
+      as.datatable(getTables(Corn_CropYearObjects[[1]]$`TS Storage MY`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearTSMY == "2009-10") {
+      as.datatable(getTables(Corn_CropYearObjects[[2]]$`TS Storage MY`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearTSMY == "2010-11") {
+      as.datatable(getTables(Corn_CropYearObjects[[3]]$`TS Storage MY`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearTSMY == "2011-12") {
+      as.datatable(getTables(Corn_CropYearObjects[[4]]$`TS Storage MY`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearTSMY == "2012-13") {
+      as.datatable(getTables(Corn_CropYearObjects[[5]]$`TS Storage MY`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearTSMY == "2013-14") {
+      as.datatable(getTables(Corn_CropYearObjects[[6]]$`TS Storage MY`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearTSMY == "2014-15") {
+      as.datatable(getTables(Corn_CropYearObjects[[7]]$`TS Storage MY`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearTSMY == "2015-16") {
+      as.datatable(getTables(Corn_CropYearObjects[[8]]$`TS Storage MY`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearTSMY == "2016-17" ) {
+      as.datatable(getTables(Corn_CropYearObjects[[9]]$`TS Storage MY`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSMYsummaryTables = renderDataTable({
+    if (input$yearTSMY == "2008-09") {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[1]]$`TS Sales Summary MY`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearTSMY == "2009-10") {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[2]]$`TS Sales Summary MY`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearTSMY == "2010-11") {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[3]]$`TS Sales Summary MY`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearTSMY == "2011-12") {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[4]]$`TS Sales Summary MY`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearTSMY == "2012-13") {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[5]]$`TS Sales Summary MY`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearTSMY == "2013-14") {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[6]]$`TS Sales Summary MY`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearTSMY == "2014-15") {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[7]]$`TS Sales Summary MY`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearTSMY == "2015-16") {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[8]]$`TS Sales Summary MY`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    
+    else if (input$yearTSMY == "2016-17" ) {
+      as.datatable(getSalesTable(Corn_CropYearObjects[[9]]$`TS Sales Summary MY`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSMYfinalPriceTable = renderDataTable({
+    as.datatable(getTables(finalizedPriceObject$TSResultsTableMY), rownames = FALSE, 
                  caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
   })
   
