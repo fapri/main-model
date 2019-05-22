@@ -195,7 +195,8 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                                                                                   "Percentile" = marketingYear$Percentile[row],
                                                                                   "Type" = "Seasonal",
                                                                                   "Percent Sold" = percentSold,
-                                                                                  "Total Sold" = totalSold))
+                                                                                  "Total Sold" = totalSold,
+                                                                                  "Price" = marketingYear$`Price`[row]))
               }
             }
             else if(day == 20 || day == 21 || day == 22 || day == 23) {
@@ -207,7 +208,8 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                                                                                   "Percentile" = marketingYear$Percentile[row],
                                                                                   "Type" = "Seasonal",
                                                                                   "Percent Sold" = percentSold,
-                                                                                  "Total Sold" = totalSold))
+                                                                                  "Total Sold" = totalSold,
+                                                                                  "Price" = marketingYear$`Price`[row]))
               }
             }
           }
@@ -223,7 +225,8 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                                                                                   "Percentile" = marketingYear$Percentile[row],
                                                                                   "Type" = "Seasonal",
                                                                                   "Percent Sold" = percentSold,
-                                                                                  "Total Sold" = totalSold))
+                                                                                  "Total Sold" = totalSold,
+                                                                                  "Price" = marketingYear$`Price`[row]))
               }
             }
             else if(day == 20 || day == 21 || day == 22 || day == 23) {
@@ -235,7 +238,8 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                                                                                   "Percentile" = marketingYear$Percentile[row],
                                                                                   "Type" = "Seasonal",
                                                                                   "Percent Sold" = percentSold,
-                                                                                  "Total Sold" = totalSold))
+                                                                                  "Total Sold" = totalSold,
+                                                                                  "Price" = marketingYear$`Price`[row]))
               }
             }
           }
@@ -408,7 +412,7 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
 }
 
 
-# i = 5
+# i = 4
 # cropYear = Corn_CropYearObjects[[i]]
 # cropYear1 = Corn_CropYearObjects[[i + 1]]
 # cropYear2 = Corn_CropYearObjects[[i + 2]]
@@ -433,7 +437,7 @@ for(i in (length(Corn_CropYearObjects) - 1):length(Corn_CropYearObjects)){
 
 
 
-# for(i in 1:4) {
+# for(i in 1:3) {
 #   temp = list()
 #   temp[[1]] = isActualizedSSMY(Corn_CropYearObjects[[i]], Corn_CropYearObjects[[i + 1]], Corn_CropYearObjects[[i + 2]])
 #   Corn_CropYearObjects[[i]] = temp[[1]][[1]]
