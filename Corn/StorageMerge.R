@@ -2,6 +2,8 @@
 # All Strategies
 # Storage
 
+# Multiyear prices already inputted in actualization function
+
 # Extract Price data into the PO Actualized Data Frame
 Corn_CropYearObjects[[i]]$`PO Actualized`$Price = NA
 for (i in 1:length(Corn_CropYearObjects)){
@@ -10,7 +12,7 @@ for (i in 1:length(Corn_CropYearObjects)){
   }
 }
 
-# Multiyear price already inputted in actualization function
+# Multiyear prices already inputted in actualization function
 
 # Extract Price data into the TS Actualized Data Frame
 for (i in 1:length(Corn_CropYearObjects)){
@@ -110,7 +112,6 @@ getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
   return(storage)
 }
 
-
 # Function to fill storage values into the Corn Crop Year object
 fillStorage = function(actualizedSales, marketingYear, intervalPost){
   # Call storage function. This will return the base cost of storage
@@ -145,6 +146,10 @@ for(i in 1:length(Corn_CropYearObjects)){
   Corn_CropYearObjects[[i]]$`SS Actualized` = fillStorage(Corn_CropYearObjects[[i]][["SS Actualized"]],
                                                           Corn_CropYearObjects[[i]][["Marketing Year"]],
                                                           Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
+  # Seasonal Sales Multi Year
+  Corn_CropYearObjects[[i]]$`SS Actualized MY` = fillStorage(Corn_CropYearObjects[[i]][["SS Actualized MY"]],
+                                                             Corn_CropYearObjects[[i]][["Marketing Year"]],
+                                                             Corn_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
 }
 
 # Returns storage adjusted averages
@@ -417,11 +422,15 @@ colnames(TSfinalizedPrices) = colnames(POfinalizedPrices)
 
 # Trailing Stop Multi Year
 TSfinalizedPricesMY = data.frame(matrix(nrow = length(Corn_CropYearObjects), ncol = 8))
-colnames(TSfinalizedPricesMY) = colnames(TSfinalizedPrices)
+colnames(TSfinalizedPricesMY) = colnames(POfinalizedPrices)
 
 #Seasonal Sales
 SSfinalizedPrices = data.frame(matrix(nrow = length(Corn_CropYearObjects), ncol = 8))
 colnames(SSfinalizedPrices) =colnames(POfinalizedPrices)
+
+# Seasonal Sales Multi Year
+SSfinalizedPricesMY = data.frame(matrix(nrow = length(Corn_CropYearObjects), ncol = 8))
+colnames(SSfinalizedPricesMY) = colnames(POfinalizedPrices)
 
 for (i in 1:length(Corn_CropYearObjects)){
   # Price Objective
@@ -477,6 +486,18 @@ for (i in 1:length(Corn_CropYearObjects)){
   Corn_CropYearObjects[[i]]$`SS Actualized` = SStemp[[1]]
   Corn_CropYearObjects[[i]]$`SS Sales Summary` = SStemp[[2]]
   SSfinalizedPrices[i,] = SStemp[[3]]
+  
+  # Seasonal Sales Multi Year
+  jan1 = paste("01-01", toString(year(mdy(Corn_CropYearObjects[[i]]$`Start Date`)) - 2), sep="-")
+  SSintervalPreMY = interval(mdy(jan1), int_end(Corn_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPre))
+  SStempMY = finalizeStorage(Corn_CropYearObjects[[i]]$`SS Actualized MY`,
+                             Corn_CropYears$CropYear[i],
+                             SSintervalPreMY,
+                             Corn_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPost)
+  
+  Corn_CropYearObjects[[i]]$`SS Actualized MY` = SStempMY[[1]]
+  Corn_CropYearObjects[[i]]$`SS Sales Summary MY` = SStempMY[[2]]
+  SSfinalizedPricesMY[i,] = SStempMY[[3]]
 }
 
 POfinalizedPrices$`Crop Year` = Corn_CropYears$CropYear
@@ -484,12 +505,14 @@ POfinalizedPricesMY$`Crop Year` = Corn_CropYears$CropYear
 TSfinalizedPrices$`Crop Year` = Corn_CropYears$CropYear
 TSfinalizedPricesMY$`Crop Year` = Corn_CropYears$CropYear
 SSfinalizedPrices$`Crop Year` = Corn_CropYears$CropYear
+SSfinalizedPricesMY$`Crop Year` = Corn_CropYears$CropYear
 
 finalizedPriceObject = list("POfinalizedPrices" = POfinalizedPrices,
                             "POfinalizedPricesMY" = POfinalizedPricesMY,
                             "TSfinalizedPrices" = TSfinalizedPrices, 
                             "TSfinalizedPricesMY" = TSfinalizedPricesMY,
-                            "SSfinalizedPrices" = SSfinalizedPrices)
+                            "SSfinalizedPrices" = SSfinalizedPrices,
+                            "SSfinalizedPricesMY" = SSfinalizedPricesMY)
 
 makeStorageTable = function(finalizedPrices){
   storageTable = data.frame(matrix(nrow = 3, ncol = 3))
@@ -512,6 +535,7 @@ for (i in 1:length(Corn_CropYearObjects)){
   Corn_CropYearObjects[[i]]$`TS Storage` = makeStorageTable(TSfinalizedPrices)
   Corn_CropYearObjects[[i]]$`TS Storage MY` = makeStorageTable(TSfinalizedPricesMY)
   Corn_CropYearObjects[[i]]$`SS Storage` = makeStorageTable(SSfinalizedPrices)
+  Corn_CropYearObjects[[i]]$`SS Storage MY` = makeStorageTable(SSfinalizedPricesMY)
 }
 
 makeResultsTable = function(finalizedPrices){
@@ -538,3 +562,4 @@ finalizedPriceObject[["POResultsTableMY"]] = makeResultsTable(finalizedPriceObje
 finalizedPriceObject[["TSResultsTable"]] = makeResultsTable(finalizedPriceObject[[3]])
 finalizedPriceObject[["TSResultsTableMY"]] = makeResultsTable(finalizedPriceObject[[4]])
 finalizedPriceObject[["SSResultsTable"]] = makeResultsTable(finalizedPriceObject[[5]])
+finalizedPriceObject[["SSResultsTableMY"]] = makeResultsTable(finalizedPriceObject[[6]])
