@@ -18,6 +18,7 @@ source("Corn/SeasonalSaleActualized.R")
 source("Corn/MultiYearTrigger.R")
 source("Corn/PriceObjectiveActualizedMultiYear.R")
 source("Corn/TrailingStopActualizedMultiYear.R")
+source("Corn/SeasonalSaleActualizedMultiYear.R")
 
 # Adjust for storage
 source("Corn/StorageMerge.R")
