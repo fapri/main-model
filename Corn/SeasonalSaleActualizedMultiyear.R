@@ -248,14 +248,14 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
         if(marketingYear$Date[row] %within% intervalPre){
           if(nrow(seasonalSaleActualized) == 0 || abs(difftime(marketingYear$Date[row], seasonalSaleActualized$Date[nrow(seasonalSaleActualized)])) >= 7) {
             preHarvestPercentRemaining = 60 - totalSold
-            if(preHarvestPercentRemaining > 0){
-              if(month(marketingYear$Date[row]) == 3 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
+            if(preHarvestPercentRemaining > 0){              
+              if(month(marketingYear$Date[row]) == 3) {
                 # if the day is within a seasonal sale date
                 day = day(marketingYear$Date[row])
                 if(day == 10 || day == 11 || day == 12 || day == 13){ 
                   if (preHarvestPercentRemaining >= 40) {
                     # seasonal sales must be at least 10%
-                    percentSold = ((100 - totalSold) / 4)
+                    percentSold = (preHarvestPercentRemaining / 4)
                     totalSold = totalSold + percentSold
                     seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
                                                                                           "Percentile" = marketingYear$Percentile[row],
@@ -269,7 +269,7 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                 else if(day == 20 || day == 21 || day == 22 || day == 23) {
                   if (preHarvestPercentRemaining >= 30) {
                     # seasonal sales must be at least 10%
-                    percentSold = ((100 - totalSold) / 3)
+                    percentSold = (preHarvestPercentRemaining / 3)
                     totalSold = totalSold + percentSold
                     seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
                                                                                           "Percentile" = marketingYear$Percentile[row],
@@ -281,13 +281,13 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                   }
                 }
               }
-              else if(month(marketingYear$Date[row]) == 6 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
+              else if(month(marketingYear$Date[row]) == 6) {
                 # if the day is within a seasonal sale date
                 day = day(marketingYear$Date[row])
                 if(day == 10 || day == 11 || day == 12 || day == 13) {
                   if (preHarvestPercentRemaining >= 20) {
                     #seasonal sales must be at least 10%
-                    percentSold = ((100 - totalSold) / 2)
+                    percentSold = (preHarvestPercentRemaining / 2)
                     totalSold = totalSold + percentSold
                     seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
                                                                                           "Percentile" = marketingYear$Percentile[row],
@@ -301,7 +301,7 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                 else if(day == 20 || day == 21 || day == 22 || day == 23) {
                   if(preHarvestPercentRemaining >= 10) {
                     #seasonal sales must be at least 10%
-                    percentSold = ((100 - totalSold) / 1)
+                    percentSold = (preHarvestPercentRemaining / 1)
                     totalSold = totalSold + percentSold
                     seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
                                                                                           "Percentile" = marketingYear$Percentile[row],
@@ -408,6 +408,10 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
 }
 
 
+# i = 5
+# cropYear = Corn_CropYearObjects[[i]]
+# cropYear1 = Corn_CropYearObjects[[i + 1]]
+# cropYear2 = Corn_CropYearObjects[[i + 2]]
 
 
 for(i in 1:(length(Corn_CropYearObjects) - 2)) {
@@ -423,4 +427,17 @@ for(i in (length(Corn_CropYearObjects) - 1):length(Corn_CropYearObjects)){
   Corn_CropYearObjects[[i]] = isActualizedSSMY(Corn_CropYearObjects[[i]], NULL, NULL)
 }
 
+
+
+
+
+
+
+# for(i in 1:4) {
+#   temp = list()
+#   temp[[1]] = isActualizedSSMY(Corn_CropYearObjects[[i]], Corn_CropYearObjects[[i + 1]], Corn_CropYearObjects[[i + 2]])
+#   Corn_CropYearObjects[[i]] = temp[[1]][[1]]
+#   Corn_CropYearObjects[[i + 1]] = temp[[1]][[2]]
+#   Corn_CropYearObjects[[i + 2]] = temp[[1]][[3]]
+# }
 
