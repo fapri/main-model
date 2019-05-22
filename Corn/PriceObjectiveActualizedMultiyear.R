@@ -206,12 +206,26 @@ isActualizedPOMY = function(cropYear, cropYear1, cropYear2){
                   if(!(triggers$Percentile[tRow] %in% priceObjectiveActualized$Percentile[tempRows])) {
                     #PO, ATH, TDH at 10% increments
                     totalSold = totalSold + 10
-                    priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
-                                                                                          "Percentile" = triggers$Percentile[tRow],
-                                                                                          "Type" = triggers$Type[tRow],
-                                                                                          "Percent Sold" = 10,
-                                                                                          "Total Sold" = totalSold,
-                                                                                          "Price" = marketingYear$`Price`[row]))
+                    if (totalSold > tail(priceObjectiveActualized$Total.Sold, 1)){
+                      totalSoldTemp = totalSold
+                      totalSold = tail(priceObjectiveActualized$Total.Sold, 1)
+                      priceObjectiveActualized$Total.Sold[nrow(priceObjectiveActualized)] = totalSoldTemp
+                      priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
+                                                                                            "Percentile" = triggers$Percentile[tRow],
+                                                                                            "Type" = triggers$Type[tRow],
+                                                                                            "Percent Sold" = 10,
+                                                                                            "Total Sold" = totalSold,
+                                                                                            "Price" = marketingYear$`Price`[row]))
+                      totalSold = totalSoldTemp
+                    }
+                    else{
+                      priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
+                                                                                            "Percentile" = triggers$Percentile[tRow],
+                                                                                            "Type" = triggers$Type[tRow],
+                                                                                            "Percent Sold" = 10,
+                                                                                            "Total Sold" = totalSold,
+                                                                                            "Price" = marketingYear$`Price`[row]))
+                    }
                     priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                   }
                 }
@@ -219,12 +233,26 @@ isActualizedPOMY = function(cropYear, cropYear1, cropYear2){
                 else {
                   #PO, ATH, TDH at 10% increments
                   totalSold = totalSold + 10
-                  priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
-                                                                                        "Percentile" = triggers$Percentile[tRow],
-                                                                                        "Type" = triggers$Type[tRow],
-                                                                                        "Percent Sold" = 10,
-                                                                                        "Total Sold" = totalSold,
-                                                                                        "Price" = marketingYear$`Price`[row]))
+                  if (totalSold > tail(priceObjectiveActualized$Total.Sold, 1)){
+                    totalSoldTemp = totalSold
+                    totalSold = tail(priceObjectiveActualized$Total.Sold, 1)
+                    priceObjectiveActualized$Total.Sold[nrow(priceObjectiveActualized)] = totalSoldTemp
+                    priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
+                                                                                          "Percentile" = triggers$Percentile[tRow],
+                                                                                          "Type" = triggers$Type[tRow],
+                                                                                          "Percent Sold" = 10,
+                                                                                          "Total Sold" = totalSold,
+                                                                                          "Price" = marketingYear$`Price`[row]))
+                    totalSold = totalSoldTemp
+                  }
+                  else{
+                    priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
+                                                                                          "Percentile" = triggers$Percentile[tRow],
+                                                                                          "Type" = triggers$Type[tRow],
+                                                                                          "Percent Sold" = 10,
+                                                                                          "Total Sold" = totalSold,
+                                                                                          "Price" = marketingYear$`Price`[row]))
+                  }
                   priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                 }
               }
@@ -448,11 +476,6 @@ isActualizedPOMY = function(cropYear, cropYear1, cropYear2){
   
   return(actualizedList)
 }
-
-# i = 1
-# cropYear = Corn_CropYearObjects[[i]]
-# cropYear1 = Corn_CropYearObjects[[i + 1]]
-# cropYear2 = Corn_CropYearObjects[[i + 2]]
 
 for(i in 1:(length(Corn_CropYearObjects) - 2)) {
   temp = list()

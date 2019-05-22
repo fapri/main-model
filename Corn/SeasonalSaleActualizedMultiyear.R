@@ -261,12 +261,26 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                     # seasonal sales must be at least 10%
                     percentSold = (preHarvestPercentRemaining / 4)
                     totalSold = totalSold + percentSold
-                    seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
-                                                                                          "Percentile" = marketingYear$Percentile[row],
-                                                                                          "Type" = "Seasonal",
-                                                                                          "Percent Sold" = percentSold,
-                                                                                          "Total Sold" = totalSold,
-                                                                                          "Price" = marketingYear$`Price`[row]))
+                    if (totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
+                      totalSoldTemp = totalSold
+                      totalSold = tail(seasonalSaleActualized$Total.Sold, 1)
+                      seasonalSaleActualized$Total.Sold[nrow(seasonalSaleActualized)] = totalSoldTemp
+                      seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
+                                                                                        "Percentile" = marketingYear$Percentile[row],
+                                                                                        "Type" = "Seasonal",
+                                                                                        "Percent Sold" = percentSold,
+                                                                                        "Total Sold" = totalSold,
+                                                                                        "Price" = marketingYear$`Price`[row]))
+                      totalSold = totalSoldTemp
+                    }
+                    else{
+                      seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
+                                                                                        "Percentile" = marketingYear$Percentile[row],
+                                                                                        "Type" = "Seasonal",
+                                                                                        "Percent Sold" = percentSold,
+                                                                                        "Total Sold" = totalSold,
+                                                                                        "Price" = marketingYear$`Price`[row]))
+                    }
                     seasonalSaleActualized = arrange(seasonalSaleActualized, Date)
                   }
                 }
@@ -275,12 +289,26 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                     # seasonal sales must be at least 10%
                     percentSold = (preHarvestPercentRemaining / 3)
                     totalSold = totalSold + percentSold
-                    seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
-                                                                                          "Percentile" = marketingYear$Percentile[row],
-                                                                                          "Type" = "Seasonal",
-                                                                                          "Percent Sold" = percentSold,
-                                                                                          "Total Sold" = totalSold,
-                                                                                          "Price" = marketingYear$`Price`[row]))
+                    if (totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
+                      totalSoldTemp = totalSold
+                      totalSold = tail(seasonalSaleActualized$Total.Sold, 1)
+                      seasonalSaleActualized$Total.Sold[nrow(seasonalSaleActualized)] = totalSoldTemp
+                      seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
+                                                                                        "Percentile" = marketingYear$Percentile[row],
+                                                                                        "Type" = "Seasonal",
+                                                                                        "Percent Sold" = percentSold,
+                                                                                        "Total Sold" = totalSold,
+                                                                                        "Price" = marketingYear$`Price`[row]))
+                      totalSold = totalSoldTemp
+                    }
+                    else{
+                      seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
+                                                                                        "Percentile" = marketingYear$Percentile[row],
+                                                                                        "Type" = "Seasonal",
+                                                                                        "Percent Sold" = percentSold,
+                                                                                        "Total Sold" = totalSold,
+                                                                                        "Price" = marketingYear$`Price`[row]))
+                    }
                     seasonalSaleActualized = arrange(seasonalSaleActualized, Date)
                   }
                 }
@@ -293,12 +321,26 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                     #seasonal sales must be at least 10%
                     percentSold = (preHarvestPercentRemaining / 2)
                     totalSold = totalSold + percentSold
-                    seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
-                                                                                          "Percentile" = marketingYear$Percentile[row],
-                                                                                          "Type" = "Seasonal",
-                                                                                          "Percent Sold" = percentSold,
-                                                                                          "Total Sold" = totalSold,
-                                                                                          "Price" = marketingYear$`Price`[row]))
+                    if (totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
+                      totalSoldTemp = totalSold
+                      totalSold = tail(seasonalSaleActualized$Total.Sold, 1)
+                      seasonalSaleActualized$Total.Sold[nrow(seasonalSaleActualized)] = totalSoldTemp
+                      seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
+                                                                                        "Percentile" = marketingYear$Percentile[row],
+                                                                                        "Type" = "Seasonal",
+                                                                                        "Percent Sold" = percentSold,
+                                                                                        "Total Sold" = totalSold,
+                                                                                        "Price" = marketingYear$`Price`[row]))
+                      totalSold = totalSoldTemp
+                    }
+                    else{
+                      seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
+                                                                                        "Percentile" = marketingYear$Percentile[row],
+                                                                                        "Type" = "Seasonal",
+                                                                                        "Percent Sold" = percentSold,
+                                                                                        "Total Sold" = totalSold,
+                                                                                        "Price" = marketingYear$`Price`[row]))
+                    }
                     seasonalSaleActualized = arrange(seasonalSaleActualized, Date)
                   }
                 }
@@ -307,12 +349,26 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                     #seasonal sales must be at least 10%
                     percentSold = (preHarvestPercentRemaining / 1)
                     totalSold = totalSold + percentSold
-                    seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
-                                                                                          "Percentile" = marketingYear$Percentile[row],
-                                                                                          "Type" = "Seasonal",
-                                                                                          "Percent Sold" = percentSold,
-                                                                                          "Total Sold" = totalSold,
-                                                                                          "Price" = marketingYear$`Price`[row]))
+                    if (totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
+                      totalSoldTemp = totalSold
+                      totalSold = tail(seasonalSaleActualized$Total.Sold, 1)
+                      seasonalSaleActualized$Total.Sold[nrow(seasonalSaleActualized)] = totalSoldTemp
+                      seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
+                                                                                        "Percentile" = marketingYear$Percentile[row],
+                                                                                        "Type" = "Seasonal",
+                                                                                        "Percent Sold" = percentSold,
+                                                                                        "Total Sold" = totalSold,
+                                                                                        "Price" = marketingYear$`Price`[row]))
+                      totalSold = totalSoldTemp
+                    }
+                    else{
+                      seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
+                                                                                        "Percentile" = marketingYear$Percentile[row],
+                                                                                        "Type" = "Seasonal",
+                                                                                        "Percent Sold" = percentSold,
+                                                                                        "Total Sold" = totalSold,
+                                                                                        "Price" = marketingYear$`Price`[row]))
+                    }
                     seasonalSaleActualized = arrange(seasonalSaleActualized, Date)
                   }
                 }
@@ -335,11 +391,11 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                     percentSold = ((100 - totalSold) / 4)
                     totalSold = totalSold + percentSold
                     seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
-                                                                                          "Percentile" = marketingYear$Percentile[row],
-                                                                                          "Type" = "Seasonal",
-                                                                                          "Percent Sold" = percentSold,
-                                                                                          "Total Sold" = totalSold,
-                                                                                          "Price" = marketingYear$`Price`[row]))
+                                                                                      "Percentile" = marketingYear$Percentile[row],
+                                                                                      "Type" = "Seasonal",
+                                                                                      "Percent Sold" = percentSold,
+                                                                                      "Total Sold" = totalSold,
+                                                                                      "Price" = marketingYear$`Price`[row]))
                     seasonalSaleActualized = arrange(seasonalSaleActualized, Date)
                   }
                 }
@@ -349,11 +405,11 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                     percentSold = ((100 - totalSold) / 3)
                     totalSold = totalSold + percentSold
                     seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
-                                                                                          "Percentile" = marketingYear$Percentile[row],
-                                                                                          "Type" = "Seasonal",
-                                                                                          "Percent Sold" = percentSold,
-                                                                                          "Total Sold" = totalSold,
-                                                                                          "Price" = marketingYear$`Price`[row]))
+                                                                                      "Percentile" = marketingYear$Percentile[row],
+                                                                                      "Type" = "Seasonal",
+                                                                                      "Percent Sold" = percentSold,
+                                                                                      "Total Sold" = totalSold,
+                                                                                      "Price" = marketingYear$`Price`[row]))
                     seasonalSaleActualized = arrange(seasonalSaleActualized, Date)
                   }
                 }
@@ -367,11 +423,11 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                     percentSold = ((100 - totalSold) / 2)
                     totalSold = totalSold + percentSold
                     seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
-                                                                                          "Percentile" = marketingYear$Percentile[row],
-                                                                                          "Type" = "Seasonal",
-                                                                                          "Percent Sold" = percentSold,
-                                                                                          "Total Sold" = totalSold,
-                                                                                          "Price" = marketingYear$`Price`[row]))
+                                                                                      "Percentile" = marketingYear$Percentile[row],
+                                                                                      "Type" = "Seasonal",
+                                                                                      "Percent Sold" = percentSold,
+                                                                                      "Total Sold" = totalSold,
+                                                                                      "Price" = marketingYear$`Price`[row]))
                     seasonalSaleActualized = arrange(seasonalSaleActualized, Date)
                   }
                 }
@@ -381,11 +437,11 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                     percentSold = ((100 - totalSold) / 1)
                     totalSold = totalSold + percentSold
                     seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = marketingYear$Date[row],
-                                                                                          "Percentile" = marketingYear$Percentile[row],
-                                                                                          "Type" = "Seasonal",
-                                                                                          "Percent Sold" = percentSold,
-                                                                                          "Total Sold" = totalSold,
-                                                                                          "Price" = marketingYear$`Price`[row]))
+                                                                                      "Percentile" = marketingYear$Percentile[row],
+                                                                                      "Type" = "Seasonal",
+                                                                                      "Percent Sold" = percentSold,
+                                                                                      "Total Sold" = totalSold,
+                                                                                      "Price" = marketingYear$`Price`[row]))
                     seasonalSaleActualized = arrange(seasonalSaleActualized, Date)
                   }
                 }
@@ -411,13 +467,6 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
   return(actualizedList)
 }
 
-
-# i = 4
-# cropYear = Corn_CropYearObjects[[i]]
-# cropYear1 = Corn_CropYearObjects[[i + 1]]
-# cropYear2 = Corn_CropYearObjects[[i + 2]]
-
-
 for(i in 1:(length(Corn_CropYearObjects) - 2)) {
   temp = list()
   temp[[1]] = isActualizedSSMY(Corn_CropYearObjects[[i]], Corn_CropYearObjects[[i + 1]], Corn_CropYearObjects[[i + 2]])
@@ -430,18 +479,3 @@ for(i in 1:(length(Corn_CropYearObjects) - 2)) {
 for(i in (length(Corn_CropYearObjects) - 1):length(Corn_CropYearObjects)){
   Corn_CropYearObjects[[i]] = isActualizedSSMY(Corn_CropYearObjects[[i]], NULL, NULL)
 }
-
-
-
-
-
-
-
-# for(i in 1:3) {
-#   temp = list()
-#   temp[[1]] = isActualizedSSMY(Corn_CropYearObjects[[i]], Corn_CropYearObjects[[i + 1]], Corn_CropYearObjects[[i + 2]])
-#   Corn_CropYearObjects[[i]] = temp[[1]][[1]]
-#   Corn_CropYearObjects[[i + 1]] = temp[[1]][[2]]
-#   Corn_CropYearObjects[[i + 2]] = temp[[1]][[3]]
-# }
-
