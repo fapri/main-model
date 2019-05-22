@@ -111,22 +111,20 @@ for(i in 1:length(Corn_CropYearObjects)) {
                                                          Corn_CropYearObjects[[i]]$`PO Actualized MY`,
                                                          POMYTitle)
   
-  TSMYTitle = "Trailing Stop with Multi-Year"
-  names(Corn_CropYearObjects[[i]]$`Marketing Year MY`) = names(Corn_CropYearObjects[[i]]$`Marketing Year`)
-  Corn_CropYearObjects[[i]]$TSMYPlot = plotMarketingYear(Corn_CropYearObjects[[i]]$`Crop Year`,
-                                                         mdy(Corn_CropYearObjects[[i]]$`Start Date`),
-                                                         mdy(Corn_CropYearObjects[[i]]$`Stop Date`),
-                                                         Corn_CropYearObjects[[i]]$`Marketing Year`,
-                                                         Corn_CropYearObjects[[i]]$`TS Actualized MY`,
-                                                         TSMYTitle)
-  
-  TSTitle = "Trailing Stop w/o Multi-Year"
+    TSTitle = "Trailing Stop w/o Multi-Year"
   Corn_CropYearObjects[[i]]$TSPlot = plotMarketingYear(Corn_CropYearObjects[[i]]$`Crop Year`,
                                                        mdy(Corn_CropYearObjects[[i]]$`Start Date`),
                                                        mdy(Corn_CropYearObjects[[i]]$`Stop Date`),
                                                        Corn_CropYearObjects[[i]]$`Marketing Year`,
                                                        Corn_CropYearObjects[[i]]$`TS Actualized`,
                                                        TSTitle)
+  TSMYTitle = "Trailing Stop with Multi-Year"
+  Corn_CropYearObjects[[i]]$TSMYPlot = plotMarketingYear(Corn_CropYearObjects[[i]]$`Crop Year`,
+                                                         mdy(Corn_CropYearObjects[[i]]$`Start Date`),
+                                                         mdy(Corn_CropYearObjects[[i]]$`Stop Date`),
+                                                         Corn_CropYearObjects[[i]]$`Marketing Year`,
+                                                         Corn_CropYearObjects[[i]]$`TS Actualized MY`,
+                                                         TSMYTitle)
   
   SSTitle = "Seasonal Sales w/o Multi-Year"
   Corn_CropYearObjects[[i]]$SSPlot = plotMarketingYear(Corn_CropYearObjects[[i]]$`Crop Year`,
@@ -135,4 +133,12 @@ for(i in 1:length(Corn_CropYearObjects)) {
                                                        Corn_CropYearObjects[[i]]$`Marketing Year`,
                                                        Corn_CropYearObjects[[i]]$`SS Actualized`,
                                                        SSTitle)
+  
+  SSMYTitle = "Seasonal Sales with Multi-Year"
+  Corn_CropYearObjects[[i]]$SSMYPlot = plotMarketingYear(Corn_CropYearObjects[[i]]$`Crop Year`,
+                                                         mdy(Corn_CropYearObjects[[i]]$`Start Date`),
+                                                         mdy(Corn_CropYearObjects[[i]]$`Stop Date`),
+                                                         Corn_CropYearObjects[[i]]$`Marketing Year`,
+                                                         Corn_CropYearObjects[[i]]$`SS Actualized MY`,
+                                                         SSMYTitle)
 }
