@@ -539,10 +539,10 @@ for (i in 1:length(Corn_CropYearObjects)){
 }
 
 makeResultsTable = function(finalizedPrices){
-  resultsTable = data.frame(matrix(nrow = 3, ncol = 3))
+  resultsTable = data.frame(matrix(nrow = 4, ncol = 3))
   colnames(resultsTable) = c(" ", "No Storage", "Storage")
   
-  resultsTable$` ` =  c("Total Avg Price", "Pre-Harvest Avg Price", "Post-Harvest Avg Price")
+  resultsTable$` ` =  c("Total Avg Price", "Pre-Harvest Avg Price", "Post-Harvest Avg Price", "USDA Avergage (Basis Adjusted)")
   resultsTable$`No Storage`[2] = weighted.mean(finalizedPrices$preharvestAverage, finalizedPrices$preharvestPercent)
   resultsTable$`No Storage`[3] = weighted.mean(finalizedPrices$postharvestAverage, finalizedPrices$postharvestPercent)
   resultsTable$`Storage`[2] = weighted.mean(finalizedPrices$preharvestAverage, finalizedPrices$preharvestPercent)
@@ -553,6 +553,9 @@ makeResultsTable = function(finalizedPrices){
   
   resultsTable$`No Storage`[1] = ((resultsTable$`No Storage`[2] * (preharvestSum * 0.01)) + (resultsTable$`No Storage`[3] * (postharvestSum * 0.01)))/ ((preharvestSum + postharvestSum) * 0.01)
   resultsTable$`Storage`[1] = ((resultsTable$`Storage`[2] * (preharvestSum * 0.01)) + (resultsTable$`Storage`[3] * (postharvestSum * 0.01)))/ ((preharvestSum + postharvestSum) * 0.01)
+  
+  resultsTable$`No Storage`[4] = 4.75
+  resultsTable$`Storage`[4] = NA
   
   return(resultsTable)
 }
