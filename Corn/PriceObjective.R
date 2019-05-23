@@ -19,9 +19,8 @@ isPriceObjectiveSpecial = function(pricePreviousPercentileAbove, currentPrice) {
 # Finds all of the price objective triggers for a given crop year
 priceObjectiveTrigger = function(cropYear) {
   priceObjectiveTriggers = data.frame()
-  
   marketingYear = cropYear[['Marketing Year']]
-  
+
   for(row in 2:nrow(marketingYear)) {
     # Special case for Feb -> March
     if (month(mdy(marketingYear$Date[row])) == 3 && month(mdy(marketingYear$Date[row - 1])) == 2){
@@ -82,9 +81,9 @@ priceObjectiveTrigger = function(cropYear) {
                                                                         "Type" = "End of Year Trailing Stop"))
     }
   }
-  
+
   cropYear[['PO Triggers']] = priceObjectiveTriggers
-  
+
   return(cropYear)
 }
 
@@ -93,3 +92,4 @@ for(i in 1:length(Corn_CropYearObjects)) {
   Corn_CropYearObjects[[i]] = priceObjectiveTrigger(Corn_CropYearObjects[[i]])
   Corn_CropYearObjects[[i]]$`PO Triggers`$Date = mdy(Corn_CropYearObjects[[i]]$`PO Triggers`$Date)
 }
+

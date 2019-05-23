@@ -62,3 +62,31 @@ isEndYearTrailingStop = function(date, previousPercentile, currentPercentile, po
   } else 
     return(F)
 }
+
+######################
+# Multi-Year Functions
+######################
+# Checks 5% Drop from Ten Day High
+isTenDayHighMY = function(date, price, percentile, TDH) {
+  # Checks if the price is in 95 percentile.
+  # Checks if the price is > 95%TDH for NC
+  if (is.na(TDH[which(TDH$Date == date),]$NC)) {
+    return(F)
+  } else if (percentile == 95 && price < TDH[which(TDH$Date == date),]$NC) {
+    return(T)
+  } else 
+    return(F)
+}
+
+# Checks All Time High
+isAllTimeHighMY = function(date, price, percentile, TDH, ATH) {
+  # Checks if the price is in 95 percentile.
+  # Checks if the price is > 95%TDH for NC
+  if (is.na(TDH[which(TDH$Date == date),]$NC)) {
+    return(F)
+  } else if (((price - ATH[which(ATH$Date == date),]$NC) > (-1)) && price < TDH[which(TDH$Date == date),]$NC) {
+    return(T)
+  } else 
+    return(F)
+  
+}
