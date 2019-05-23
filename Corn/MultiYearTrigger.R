@@ -14,16 +14,18 @@ multiyearTrigger = function(cropYear) {
   # Multi Year trigger loading
   for(row in 2:nrow(marketingYearMY)) {
     if(mdy(marketingYearMY$Date[row]) %within% firstYearInterval){
-      if (isTenDayHighMY(mdy(marketingYearMY$Date[row]), marketingYearMY$`NC Price`[row], marketingYearMY$Percentile[row], 
-                         Corn_FeaturesObject$`95% of Ten Day High`)) {
+      if (isTenDayHigh(mdy(marketingYearMY$Date[row]), marketingYearMY$`NC Price`[row], marketingYearMY$Percentile[row], 
+                       cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
+                       Corn_FeaturesObject$`95% of Ten Day High`, MY = TRUE)) {
         multiYearTriggers = rbind(multiYearTriggers, data.frame("Date" = marketingYearMY$Date[row],
                                                                 "Previous Percentile" = marketingYearMY$Percentile[row - 1],
                                                                 "Percentile" = marketingYearMY$Percentile[row],
                                                                 "Type" = "Ten Day High"))
       }
       
-      else if (isAllTimeHighMY(mdy(marketingYearMY$Date[row]), marketingYearMY$`NC Price`[row], marketingYearMY$Percentile[row],
-                               Corn_FeaturesObject$`95% of Ten Day High`, Corn_FeaturesObject$`All Time High`)) {
+      else if (isAllTimeHigh(mdy(marketingYearMY$Date[row]), marketingYearMY$`NC Price`[row], marketingYearMY$Percentile[row],
+                             cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
+                             Corn_FeaturesObject$`95% of Ten Day High`, Corn_FeaturesObject$`All Time High`, MY = TRUE)) {
         multiYearTriggers = rbind(multiYearTriggers, data.frame("Date" = marketingYearMY$Date[row], 
                                                                 "Previous Percentile" = marketingYearMY$Percentile[row - 1],
                                                                 "Percentile" = marketingYearMY$Percentile[row],
@@ -41,5 +43,3 @@ for(i in 1:length(Corn_CropYearObjects)) {
   Corn_CropYearObjects[[i]] = multiyearTrigger(Corn_CropYearObjects[[i]])
   Corn_CropYearObjects[[i]]$`MultiYear Triggers`$Date = mdy(Corn_CropYearObjects[[i]]$`MultiYear Triggers`$Date)
 }
-
-
