@@ -76,7 +76,7 @@ trailingStopTrigger = function(cropYear) {
     
     else if (isTenDayHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row], 
                           cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
-                          Corn_FeaturesObject$`95% of Ten Day High`)) {
+                          Corn_FeaturesObject$`95% of Ten Day High`, MY = FALSE)) {
       trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                     "Previous Percentile" = marketingYear$Percentile[row - 1],
                                                                     "Percentile" = marketingYear$Percentile[row],
@@ -85,7 +85,7 @@ trailingStopTrigger = function(cropYear) {
     
     else if (isAllTimeHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row],
                            cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
-                           Corn_FeaturesObject$`95% of Ten Day High`, Corn_FeaturesObject$`All Time High`)) {
+                           Corn_FeaturesObject$`95% of Ten Day High`, Corn_FeaturesObject$`All Time High`, MY = FALSE)) {
       trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                     "Previous Percentile" = marketingYear$Percentile[row - 1],
                                                                     "Percentile" = marketingYear$Percentile[row],
