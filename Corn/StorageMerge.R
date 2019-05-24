@@ -2,31 +2,7 @@
 # All Strategies
 # Storage
 
-# Multiyear prices already inputted in actualization function
-
-# Extract Price data into the PO Actualized Data Frame
-Corn_CropYearObjects[[i]]$`PO Actualized`$Price = NA
-for (i in 1:length(Corn_CropYearObjects)){
-  for(j in 1:nrow(Corn_CropYearObjects[[i]]$`PO Actualized`)){
-    Corn_CropYearObjects[[i]]$`PO Actualized`$Price[j] = Corn_CropYearObjects[[i]]$`Marketing Year`$Price[which(mdy(Corn_CropYearObjects[[i]]$`Marketing Year`$Date) == Corn_CropYearObjects[[i]]$`PO Actualized`$Date[j])]
-  }
-}
-
-# Multiyear prices already inputted in actualization function
-
-# Extract Price data into the TS Actualized Data Frame
-for (i in 1:length(Corn_CropYearObjects)){
-  for(j in 1:nrow(Corn_CropYearObjects[[i]]$`TS Actualized`)){
-    Corn_CropYearObjects[[i]]$`TS Actualized`$Price[j] = Corn_CropYearObjects[[i]]$`Marketing Year`$Price[which(mdy(Corn_CropYearObjects[[i]]$`Marketing Year`$Date) == Corn_CropYearObjects[[i]]$`TS Actualized`$Date[j])]
-  }
-}
-
-# Extract Price data into the SS Actualized Data Frame
-for (i in 1:length(Corn_CropYearObjects)){
-  for(j in 1:nrow(Corn_CropYearObjects[[i]]$`SS Actualized`)){
-    Corn_CropYearObjects[[i]]$`SS Actualized`$Price[j] = Corn_CropYearObjects[[i]]$`Marketing Year`$Price[which(mdy(Corn_CropYearObjects[[i]]$`Marketing Year`$Date) == Corn_CropYearObjects[[i]]$`SS Actualized`$Date[j])]
-  }
-}
+# All prices are now being extracted in their actualization functions
 
 # Interest Rate
 interestRate = 0.055
