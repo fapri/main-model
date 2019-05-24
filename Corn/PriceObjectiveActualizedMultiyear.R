@@ -3,10 +3,6 @@
 # Multi Year
 # Actualized
 
-library(data.table)
-library(lubridate)
-library(dplyr)
-
 isActualizedPresent = function(cropYear){
   if ("PO Actualized MY" %in% names(cropYear)){
     return(cropYear[["PO Actualized MY"]])
@@ -40,7 +36,7 @@ getPercentSold = function(actualizedSales){
 }
 
 # Finds actualized Price Objective sales
-isActualizedPOMY = function(cropYear, cropYear1, cropYear2){
+isActualizedPO = function(cropYear, cropYear1, cropYear2, MY){
   priceObjectiveActualized = isActualizedPresent(cropYear)
   priceObjectiveActualized1year = isActualizedPresent(cropYear1)
   priceObjectiveActualized2year = isActualizedPresent(cropYear2)
@@ -78,9 +74,15 @@ isActualizedPOMY = function(cropYear, cropYear1, cropYear2){
   
   Corn_FuturesMarket$Date = mdy(Corn_FuturesMarket$Date)
   
-  if(totalSold > 0){
-    totalSoldMax = 60
+  if (!is.null(cropYear1)){
+    if(totalSold > 0){
+      totalSoldMax = 60
+    }
+    else{
+      totalSoldMax = 50
+    }
   }
+  
   else{
     totalSoldMax = 50
   }
@@ -463,28 +465,43 @@ isActualizedPOMY = function(cropYear, cropYear1, cropYear2){
     }
   }
   
-  cropYear[['PO Actualized MY']] = priceObjectiveActualized
-  
-  if(!is.null(cropYear1)){
-    cropYear1[['PO Actualized MY']] = priceObjectiveActualized1year
-    cropYear2[['PO Actualized MY']] = priceObjectiveActualized2year
-    actualizedList = list(cropYear, cropYear1, cropYear2)
+  if(MY == TRUE) {
+    cropYear[['PO Actualized MY']] = priceObjectiveActualized
+    if(!is.null(cropYear1)){
+      cropYear1[['PO Actualized MY']] = priceObjectiveActualized1year
+      cropYear2[['PO Actualized MY']] = priceObjectiveActualized2year
+      actualizedList = list(cropYear, cropYear1, cropYear2)
+    }
+    else{
+      actualizedList = cropYear
+    }
   }
-  else{
+  
+  if(MY == FALSE) {
+    cropYear[['PO Actualized']] = priceObjectiveActualized
     actualizedList = cropYear
   }
   
   return(actualizedList)
 }
 
-for(i in 1:(length(Corn_CropYearObjects) - 2)) {
-  temp = list()
-  temp[[1]] = isActualizedPOMY(Corn_CropYearObjects[[i]], Corn_CropYearObjects[[i + 1]], Corn_CropYearObjects[[i + 2]])
-  Corn_CropYearObjects[[i]] = temp[[1]][[1]]
-  Corn_CropYearObjects[[i + 1]] = temp[[1]][[2]]
-  Corn_CropYearObjects[[i + 2]] = temp[[1]][[3]]
+
+# Price Objective loading
+for(i in 1:length(Corn_CropYearObjects)){
+  Corn_CropYearObjects[[i]] = isActualizedPO(Corn_CropYearObjects[[i]], NULL, NULL, MY = FALSE)
 }
 
-for(i in (length(Corn_CropYearObjects) - 1):length(Corn_CropYearObjects)){
-  Corn_CropYearObjects[[i]] = isActualizedPOMY(Corn_CropYearObjects[[i]], NULL, NULL)
+if("Marketing Year MY" %in% names(Corn_CropYearObjects[[1]])){
+  # Multi-year loading
+  for(i in 1:(length(Corn_CropYearObjects) - 2)) {
+    temp = list()
+    temp[[1]] = isActualizedPO(Corn_CropYearObjects[[i]], Corn_CropYearObjects[[i + 1]], Corn_CropYearObjects[[i + 2]], MY = TRUE)
+    Corn_CropYearObjects[[i]] = temp[[1]][[1]]
+    Corn_CropYearObjects[[i + 1]] = temp[[1]][[2]]
+    Corn_CropYearObjects[[i + 2]] = temp[[1]][[3]]
+  }
+  
+  for(i in (length(Corn_CropYearObjects) - 1):length(Corn_CropYearObjects)){
+    Corn_CropYearObjects[[i]] = isActualizedPO(Corn_CropYearObjects[[i]], NULL, NULL, MY = TRUE)
 }
+  }
