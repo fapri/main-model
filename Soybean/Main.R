@@ -70,6 +70,7 @@ createFeatures = function(date, OC, NC, rowMax) {
   return(featuresObj)
 }
 
+# Creates a crop year based on the input parameters
 createCropYear = function(cropYear, startDate, stopDate) {
   harvest = paste("09-01", toString(year(mdy(startDate))), sep="-")
   marchUpdate1 = paste("03-01", toString(year(mdy(startDate))), sep="-")
@@ -77,6 +78,7 @@ createCropYear = function(cropYear, startDate, stopDate) {
   
   intervalPre = interval(mdy(startDate), mdy(harvest) - days(1))
   intervalPost = interval(mdy(harvest), mdy(stopDate))
+  intervalPrePost = data.frame(intervalPre, intervalPost)
   
   marketingYearPre = Soybean_FuturesMarket[which(mdy(Soybean_FuturesMarket$Date) %within% intervalPre), c(1, 3)]
   marketingYearPre = setNames(marketingYearPre, c("Date","Price"))
@@ -84,7 +86,11 @@ createCropYear = function(cropYear, startDate, stopDate) {
   marketingYearPost = setNames(marketingYearPost, c("Date","Price"))
   marketingYear = rbind(marketingYearPre, marketingYearPost)
   
+  marketingYearMY = Soybean_FuturesMarket[which(mdy(Soybean_FuturesMarket$Date) %within% intervalPrePost), c(1, 3)]
+  marketingYearMY = setNames(marketingYearMY, c("Date","NC Price"))
+  
   marketingYear[,c("Baseline", "60th", "70th", "80th", "90th", "95th", "Basis", "Percentile")] = NA
+  marketingYearMY[,c("NC Baseline", "NC60th", "NC70th", "NC80th", "NC90th", "NC95th", "Basis", "Percentile")] = NA
   
   interval1 = interval(mdy(startDate) - months(5), mdy(marchUpdate1) - days(1))
   interval2 = interval(mdy(marchUpdate1), mdy(harvest) - days(1))
@@ -93,40 +99,56 @@ createCropYear = function(cropYear, startDate, stopDate) {
   
   for(row in 1:nrow(marketingYear)) {
     if(mdy(marketingYear$Date[row]) %within% interval1) {
-      basis = marketingYear[row, "Basis"] = Soybean_Basis[which(Soybean_Basis$CropYearStart == year(interval1$start)), 3]
-      marketingYear[row, "Baseline"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval1), 8] - basis
-      marketingYear[row, "60th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval1), 9] - basis
-      marketingYear[row, "70th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval1), 10] - basis
-      marketingYear[row, "80th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval1), 11] - basis
-      marketingYear[row, "90th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval1), 12] - basis
-      marketingYear[row, "95th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval1), 13] - basis
+      basis = marketingYear[row, "Basis"] = marketingYearMY[row, "Basis"] = Soybean_Basis[which(Soybean_Basis$CropYearStart == year(interval1$start)), 3]
+      marketingYear[row, "Baseline"] = marketingYearMY[row, "NC Baseline"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval1), 8] - basis
+      marketingYear[row, "60th"] = marketingYearMY[row, "NC60th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval1), 9] - basis
+      marketingYear[row, "70th"] = marketingYearMY[row, "NC70th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval1), 10] - basis
+      marketingYear[row, "80th"] = marketingYearMY[row, "NC80th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval1), 11] - basis
+      marketingYear[row, "90th"] = marketingYearMY[row, "NC90th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval1), 12] - basis
+      marketingYear[row, "95th"] = marketingYearMY[row, "NC95th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval1), 13] - basis
     }
     else if(mdy(marketingYear$Date[row]) %within% interval2) {
-      basis = marketingYear[row, "Basis"] = Soybean_Basis[which(Soybean_Basis$CropYearEnd == year(interval2$start)), 3]
-      marketingYear[row, "Baseline"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval2), 8] - basis
-      marketingYear[row, "60th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval2), 9] - basis
-      marketingYear[row, "70th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval2), 10] - basis
-      marketingYear[row, "80th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval2), 11] - basis
-      marketingYear[row, "90th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval2), 12] - basis
-      marketingYear[row, "95th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval2), 13] - basis
+      basis = marketingYear[row, "Basis"] = marketingYearMY[row, "Basis"] = Soybean_Basis[which(Soybean_Basis$CropYearEnd == year(interval2$start)), 3]
+      marketingYear[row, "Baseline"] = marketingYearMY[row, "NC Baseline"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval2), 8] - basis
+      marketingYear[row, "60th"] = marketingYearMY[row, "NC60th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval2), 9] - basis
+      marketingYear[row, "70th"] = marketingYearMY[row, "NC70th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval2), 10] - basis
+      marketingYear[row, "80th"] = marketingYearMY[row, "NC80th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval2), 11] - basis
+      marketingYear[row, "90th"] = marketingYearMY[row, "NC90th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval2), 12] - basis
+      marketingYear[row, "95th"] = marketingYearMY[row, "NC95th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval2), 13] - basis
     }
     else if(mdy(marketingYear$Date[row]) %within% interval3) {
-      basis = marketingYear[row, "Basis"] = Soybean_Basis[which(Soybean_Basis$CropYearStart == year(interval3$start)), 3]
+      basis = marketingYear[row, "Basis"] = marketingYearMY[row, "Basis"] = Soybean_Basis[which(Soybean_Basis$CropYearStart == year(interval3$start)), 3]
       marketingYear[row, "Baseline"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval3), 2] - basis
       marketingYear[row, "60th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval3), 3] - basis
       marketingYear[row, "70th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval3), 4] - basis
       marketingYear[row, "80th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval3), 5] - basis
       marketingYear[row, "90th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval3), 6] - basis
       marketingYear[row, "95th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval3), 7] - basis
+      
+      #NC Baseline
+      marketingYearMY[row, "NC Baseline"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval3), 8] - basis
+      marketingYearMY[row, "NC60th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval3), 9] - basis
+      marketingYearMY[row, "NC70th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval3), 10] - basis
+      marketingYearMY[row, "NC80th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval3), 11] - basis
+      marketingYearMY[row, "NC90th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval3), 12] - basis
+      marketingYearMY[row, "NC95th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval3), 13] - basis
     }
     else if(mdy(marketingYear$Date[row]) %within% interval4) {
-      basis = marketingYear[row, "Basis"] = Soybean_Basis[which(Soybean_Basis$CropYearEnd == year(interval4$start)), 3]
+      basis = marketingYear[row, "Basis"] = marketingYearMY[row, "Basis"] = Soybean_Basis[which(Soybean_Basis$CropYearEnd == year(interval4$start)), 3]
       marketingYear[row, "Baseline"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval4), 2] - basis
       marketingYear[row, "60th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval4), 3] - basis
       marketingYear[row, "70th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval4), 4] - basis
       marketingYear[row, "80th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval4), 5] - basis
       marketingYear[row, "90th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval4), 6] - basis
       marketingYear[row, "95th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval4), 7] - basis
+      
+      #NC Baseline
+      marketingYearMY[row, "NC Baseline"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval4), 8] - basis
+      marketingYearMY[row, "NC60th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval4), 9] - basis
+      marketingYearMY[row, "NC70th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval4), 10] - basis
+      marketingYearMY[row, "NC80th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval4), 11] - basis
+      marketingYearMY[row, "NC90th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval4), 12] - basis
+      marketingYearMY[row, "NC95th"] = Soybean_Baseline[which(mdy(Soybean_Baseline$Date) %within% interval4), 13] - basis
     }
   }
   
@@ -148,13 +170,29 @@ createCropYear = function(cropYear, startDate, stopDate) {
       marketingYear[row, "Percentile"] = 0
   }
   
-  intervalPrePost = data.frame(intervalPre, intervalPost)
+  for(row in 1:nrow(marketingYearMY)) {
+    if(marketingYearMY$`NC Price`[row] > marketingYearMY$`NC95th`[row])
+      marketingYearMY[row, "Percentile"] = 95
+    else if(marketingYearMY$`NC Price`[row] >= marketingYearMY$`NC90th`[row])
+      marketingYearMY[row, "Percentile"] = 90
+    else if(marketingYearMY$`NC Price`[row] >= marketingYearMY$`NC80th`[row])
+      marketingYearMY[row, "Percentile"] = 80
+    else if(marketingYearMY$`NC Price`[row] >= marketingYearMY$`NC70th`[row])
+      marketingYearMY[row, "Percentile"] = 70
+    else if(marketingYearMY$`NC Price`[row] >= marketingYearMY$`NC60th`[row])
+      marketingYearMY[row, "Percentile"] = 60
+    else if(marketingYearMY$`NC Price`[row] >= marketingYearMY$`NC Baseline`[row])
+      marketingYearMY[row, "Percentile"] = 50
+    else
+      marketingYearMY[row, "Percentile"] = 0
+  }
   
   cropYearObj = list("Crop Year" = cropYear, "Start Date" = startDate, "Stop Date" = stopDate, "Interval" = interval, 
-                     "Marketing Year" = marketingYear, "Pre/Post Interval" = intervalPrePost)
+                     "Marketing Year" = marketingYear, "Pre/Post Interval" = intervalPrePost, "Marketing Year MY" = marketingYearMY)
   
   return(cropYearObj)
 }
+
 
 # Create the crop year objects
 Soybean_CropYearObjects = list()
@@ -165,3 +203,13 @@ for(i in 1:nrow(Soybean_CropYears)) {
 # Create the features object
 Soybean_FeaturesObject = createFeatures(Soybean_FuturesMarket$Date, Soybean_FuturesMarket$NearbyOC, 
                                         Soybean_FuturesMarket$NovNC, nrow(Soybean_FuturesMarket))
+
+
+
+
+
+
+for(i in 1:9){
+  plot(Soybean_CropYearObjects[[i]]$`Marketing Year`$Price, type = "l")
+  title(i)
+}
