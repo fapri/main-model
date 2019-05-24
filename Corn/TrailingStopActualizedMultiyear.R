@@ -40,7 +40,7 @@ getPercentSold = function(actualizedSales){
 }
 
 # Finds actualized Trailing Stop sales
-isActualizedTSMY = function(cropYear, cropYear1, cropYear2){
+isActualizedTS = function(cropYear, cropYear1, cropYear2, MY){
   trailingStopActualized = isActualizedPresent(cropYear)
   trailingStopActualized1year = isActualizedPresent(cropYear1)
   trailingStopActualized2year = isActualizedPresent(cropYear2)
@@ -486,28 +486,42 @@ isActualizedTSMY = function(cropYear, cropYear1, cropYear2){
     }
   }
   
-  cropYear[['TS Actualized MY']] = trailingStopActualized[, -which(names(trailingStopActualized) %in% c("Previous.Percentile"))]
-  
-  if(!is.null(cropYear1)){
-    cropYear1[['TS Actualized MY']] = trailingStopActualized1year
-    cropYear2[['TS Actualized MY']] = trailingStopActualized2year
-    actualizedList = list(cropYear, cropYear1, cropYear2)
+  if(MY == TRUE) {
+    cropYear[['TS Actualized MY']] = trailingStopActualized
+    if(!is.null(cropYear1)){
+      cropYear1[['TS Actualized MY']] = trailingStopActualized1year
+      cropYear2[['TS Actualized MY']] = trailingStopActualized2year
+      actualizedList = list(cropYear, cropYear1, cropYear2)
+    }
+    else{
+      actualizedList = cropYear
+    }
   }
-  else{
+  
+  if(MY == FALSE) {
+    cropYear[['TS Actualized']] = trailingStopActualized
     actualizedList = cropYear
   }
   
   return(actualizedList)
 }
 
-for(i in 1:(length(Corn_CropYearObjects) - 2)) {
-  temp = list()
-  temp[[1]] = isActualizedTSMY(Corn_CropYearObjects[[i]], Corn_CropYearObjects[[i + 1]], Corn_CropYearObjects[[i + 2]])
-  Corn_CropYearObjects[[i]] = temp[[1]][[1]]
-  Corn_CropYearObjects[[i + 1]] = temp[[1]][[2]]
-  Corn_CropYearObjects[[i + 2]] = temp[[1]][[3]]
+# Trailing Stop loading
+for(i in 1:length(Corn_CropYearObjects)){
+  Corn_CropYearObjects[[i]] = isActualizedTS(Corn_CropYearObjects[[i]], NULL, NULL, MY = FALSE)
 }
 
-for(i in (length(Corn_CropYearObjects) - 1):length(Corn_CropYearObjects)){
-  Corn_CropYearObjects[[i]] = isActualizedTSMY(Corn_CropYearObjects[[i]], NULL, NULL)
+# Multi-year loading
+if("Marketing Year MY" %in% names(Corn_CropYearObjects[[1]])){
+  for(i in 1:(length(Corn_CropYearObjects) - 2)) {
+    temp = list()
+    temp[[1]] = isActualizedTS(Corn_CropYearObjects[[i]], Corn_CropYearObjects[[i + 1]], Corn_CropYearObjects[[i + 2]], MY = TRUE)
+    Corn_CropYearObjects[[i]] = temp[[1]][[1]]
+    Corn_CropYearObjects[[i + 1]] = temp[[1]][[2]]
+    Corn_CropYearObjects[[i + 2]] = temp[[1]][[3]]
+  }
+  
+  for(i in (length(Corn_CropYearObjects) - 1):length(Corn_CropYearObjects)){
+    Corn_CropYearObjects[[i]] = isActualizedTS(Corn_CropYearObjects[[i]], NULL, NULL, MY = TRUE)
+  }
 }
