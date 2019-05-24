@@ -1,21 +1,23 @@
 # Corn
 
+# Libraries
+library(lubridate)
+library(dplyr)
+library(ggplot2)
+library(data.table)
+
 # Set up the data and Crop Year Objects
-source("Corn/Main.R")
+source("Corn/MainMultiyear.R")
 
 # Create common trigger functions
 source("Corn/Triggers.R")
 
-# Run the strategies (without multi-year)
-source("Corn/PriceObjective.R")
-source("Corn/PriceObjectiveActualized.R")
-source("Corn/TrailingStop.R")
-source("Corn/TrailingStopActualized.R")
-source("Corn/SeasonalSaleActualized.R")
-
-
-# Run the strategies (with multi-year)
+# Run if multi-year sales
 source("Corn/MultiYearTrigger.R")
+
+# Run the strategies
+source("Corn/PriceObjective.R")
+source("Corn/TrailingStop.R")
 source("Corn/PriceObjectiveActualizedMultiYear.R")
 source("Corn/TrailingStopActualizedMultiYear.R")
 source("Corn/SeasonalSaleActualizedMultiYear.R")
