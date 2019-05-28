@@ -102,7 +102,3 @@ if(type == "soybean"){
     Soybean_CropYearObjects[[i]]$`PO Triggers`$Date = mdy(Soybean_CropYearObjects[[i]]$`PO Triggers`$Date)
   }
 }
-
-
-
-
