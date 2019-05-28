@@ -18,6 +18,8 @@ source("Corn/MultiYearTrigger.R")
 # Run the strategies
 source("Corn/PriceObjective.R")
 source("Corn/TrailingStop.R")
+
+# These actualize for Mutli-year and non-multi-year
 source("Corn/PriceObjectiveActualizedMultiYear.R")
 source("Corn/TrailingStopActualizedMultiYear.R")
 source("Corn/SeasonalSaleActualizedMultiYear.R")
