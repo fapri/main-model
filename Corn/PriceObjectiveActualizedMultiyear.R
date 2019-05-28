@@ -208,7 +208,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, MY){
                   if(!(triggers$Percentile[tRow] %in% priceObjectiveActualized$Percentile[tempRows])) {
                     #PO, ATH, TDH at 10% increments
                     totalSold = totalSold + 10
-                    if (totalSold > tail(priceObjectiveActualized$Total.Sold, 1)){
+                    if (MY == TRUE && totalSold > tail(priceObjectiveActualized$Total.Sold, 1)){
                       totalSoldTemp = totalSold
                       totalSold = tail(priceObjectiveActualized$Total.Sold, 1)
                       priceObjectiveActualized$Total.Sold[nrow(priceObjectiveActualized)] = totalSoldTemp
@@ -235,7 +235,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, MY){
                 else {
                   #PO, ATH, TDH at 10% increments
                   totalSold = totalSold + 10
-                  if (totalSold > tail(priceObjectiveActualized$Total.Sold, 1)){
+                  if (MY == TRUE && totalSold > tail(priceObjectiveActualized$Total.Sold, 1)){
                     totalSoldTemp = totalSold
                     totalSold = tail(priceObjectiveActualized$Total.Sold, 1)
                     priceObjectiveActualized$Total.Sold[nrow(priceObjectiveActualized)] = totalSoldTemp
