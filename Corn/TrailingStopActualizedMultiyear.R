@@ -214,7 +214,7 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, MY){
                   if(!(triggers$Previous.Percentile[tRow] %in% trailingStopActualized$Previous.Percentile[tempRows])) {
                     #TS, ATH, TDH at 10% increments
                     totalSold = totalSold + 10
-                    if (totalSold > tail(trailingStopActualized$Total.Sold, 1)){
+                    if (MY == TRUE && totalSold > tail(trailingStopActualized$Total.Sold, 1)){
                       totalSoldTemp = totalSold
                       totalSold = tail(trailingStopActualized$Total.Sold, 1)
                       trailingStopActualized$Total.Sold[nrow(trailingStopActualized)] = totalSoldTemp
@@ -243,7 +243,7 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, MY){
                 else {
                   #TS, ATH, TDH at 10% increments
                   totalSold = totalSold + 10
-                  if (totalSold > tail(trailingStopActualized$Total.Sold, 1)){
+                  if (MY == TRUE && totalSold > tail(trailingStopActualized$Total.Sold, 1)){
                     totalSoldTemp = totalSold
                     totalSold = tail(trailingStopActualized$Total.Sold, 1)
                     trailingStopActualized$Total.Sold[nrow(trailingStopActualized)] = totalSoldTemp
