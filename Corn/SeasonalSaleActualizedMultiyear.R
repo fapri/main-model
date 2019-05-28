@@ -261,7 +261,7 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2, MY){
                     # seasonal sales must be at least 10%
                     percentSold = (preHarvestPercentRemaining / 4)
                     totalSold = totalSold + percentSold
-                    if (totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
+                    if (MY == TRUE && totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
                       totalSoldTemp = totalSold
                       totalSold = tail(seasonalSaleActualized$Total.Sold, 1)
                       seasonalSaleActualized$Total.Sold[nrow(seasonalSaleActualized)] = totalSoldTemp
@@ -289,7 +289,7 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2, MY){
                     # seasonal sales must be at least 10%
                     percentSold = (preHarvestPercentRemaining / 3)
                     totalSold = totalSold + percentSold
-                    if (totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
+                    if (MY == TRUE && totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
                       totalSoldTemp = totalSold
                       totalSold = tail(seasonalSaleActualized$Total.Sold, 1)
                       seasonalSaleActualized$Total.Sold[nrow(seasonalSaleActualized)] = totalSoldTemp
@@ -321,7 +321,7 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2, MY){
                     #seasonal sales must be at least 10%
                     percentSold = (preHarvestPercentRemaining / 2)
                     totalSold = totalSold + percentSold
-                    if (totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
+                    if (MY == TRUE && totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
                       totalSoldTemp = totalSold
                       totalSold = tail(seasonalSaleActualized$Total.Sold, 1)
                       seasonalSaleActualized$Total.Sold[nrow(seasonalSaleActualized)] = totalSoldTemp
@@ -349,7 +349,7 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2, MY){
                     #seasonal sales must be at least 10%
                     percentSold = (preHarvestPercentRemaining / 1)
                     totalSold = totalSold + percentSold
-                    if (totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
+                    if (MY == TRUE && totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
                       totalSoldTemp = totalSold
                       totalSold = tail(seasonalSaleActualized$Total.Sold, 1)
                       seasonalSaleActualized$Total.Sold[nrow(seasonalSaleActualized)] = totalSoldTemp
