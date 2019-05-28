@@ -11,32 +11,35 @@ source("Soybean/Main.R")
 # Create common trigger functions
 source("Soybean/Triggers.R")
 
-# Run the strategies (without multi-year)
+
+source("Soybean/MultiYearTrigger.R")
+
+
+# Run the strategies
 source("Soybean/PriceObjective.R")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 source("Soybean/PriceObjectiveActualized.R")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 source("Soybean/TrailingStop.R")
 source("Soybean/TrailingStopActualized.R")
 source("Soybean/SeasonalSaleActualized.R")
 
 
 # Run the strategies (with multi-year)
-source("Soybean/MultiYearTrigger.R")
+
 source("Soybean/PriceObjectiveActualizedMultiYear.R")
 source("Soybean/TrailingStopActualizedMultiYear.R")
 source("Soybean/SeasonalSaleActualizedMultiYear.R")
