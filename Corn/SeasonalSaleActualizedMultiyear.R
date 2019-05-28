@@ -36,7 +36,7 @@ getPercentSold = function(actualizedSales){
   }
 }
 
-isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
+isActualizedSSMY = function(cropYear, cropYear1, cropYear2, MY){
   seasonalSaleActualized = isActualizedPresent(cropYear)
   seasonalSaleActualized1year = isActualizedPresent(cropYear1)
   seasonalSaleActualized2year = isActualizedPresent(cropYear2)
@@ -261,7 +261,7 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                     # seasonal sales must be at least 10%
                     percentSold = (preHarvestPercentRemaining / 4)
                     totalSold = totalSold + percentSold
-                    if (totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
+                    if (MY == TRUE && totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
                       totalSoldTemp = totalSold
                       totalSold = tail(seasonalSaleActualized$Total.Sold, 1)
                       seasonalSaleActualized$Total.Sold[nrow(seasonalSaleActualized)] = totalSoldTemp
@@ -289,7 +289,7 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                     # seasonal sales must be at least 10%
                     percentSold = (preHarvestPercentRemaining / 3)
                     totalSold = totalSold + percentSold
-                    if (totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
+                    if (MY == TRUE && totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
                       totalSoldTemp = totalSold
                       totalSold = tail(seasonalSaleActualized$Total.Sold, 1)
                       seasonalSaleActualized$Total.Sold[nrow(seasonalSaleActualized)] = totalSoldTemp
@@ -321,7 +321,7 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                     #seasonal sales must be at least 10%
                     percentSold = (preHarvestPercentRemaining / 2)
                     totalSold = totalSold + percentSold
-                    if (totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
+                    if (MY == TRUE && totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
                       totalSoldTemp = totalSold
                       totalSold = tail(seasonalSaleActualized$Total.Sold, 1)
                       seasonalSaleActualized$Total.Sold[nrow(seasonalSaleActualized)] = totalSoldTemp
@@ -349,7 +349,7 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
                     #seasonal sales must be at least 10%
                     percentSold = (preHarvestPercentRemaining / 1)
                     totalSold = totalSold + percentSold
-                    if (totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
+                    if (MY == TRUE && totalSold > tail(seasonalSaleActualized$Total.Sold, 1)){
                       totalSoldTemp = totalSold
                       totalSold = tail(seasonalSaleActualized$Total.Sold, 1)
                       seasonalSaleActualized$Total.Sold[nrow(seasonalSaleActualized)] = totalSoldTemp
@@ -453,29 +453,43 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2){
     }
   }
   
-  cropYear[['SS Actualized MY']] = seasonalSaleActualized
-  
-  if(!is.null(cropYear1)){
-    cropYear1[['SS Actualized MY']] = seasonalSaleActualized1year
-    cropYear2[['SS Actualized MY']] = seasonalSaleActualized2year
-    actualizedList = list(cropYear, cropYear1, cropYear2)
+  if(MY == TRUE) {
+    cropYear[['SS Actualized MY']] = seasonalSaleActualized
+    if(!is.null(cropYear1)){
+      cropYear1[['SS Actualized MY']] = seasonalSaleActualized1year
+      cropYear2[['SS Actualized MY']] = seasonalSaleActualized2year
+      actualizedList = list(cropYear, cropYear1, cropYear2)
+    }
+    
+    else{
+      actualizedList = cropYear
+    }
   }
-  else{
+  
+  if(MY == FALSE) {
+    cropYear[['SS Actualized']] = seasonalSaleActualized
     actualizedList = cropYear
   }
   
   return(actualizedList)
 }
 
-for(i in 1:(length(Corn_CropYearObjects) - 2)) {
-  temp = list()
-  temp[[1]] = isActualizedSSMY(Corn_CropYearObjects[[i]], Corn_CropYearObjects[[i + 1]], Corn_CropYearObjects[[i + 2]])
-  Corn_CropYearObjects[[i]] = temp[[1]][[1]]
-  Corn_CropYearObjects[[i + 1]] = temp[[1]][[2]]
-  Corn_CropYearObjects[[i + 2]] = temp[[1]][[3]]
+# Seasonal Sales loading
+for(i in 1:length(Corn_CropYearObjects)){
+  Corn_CropYearObjects[[i]] = isActualizedSSMY(Corn_CropYearObjects[[i]], NULL, NULL, MY = FALSE)
 }
 
-
-for(i in (length(Corn_CropYearObjects) - 1):length(Corn_CropYearObjects)){
-  Corn_CropYearObjects[[i]] = isActualizedSSMY(Corn_CropYearObjects[[i]], NULL, NULL)
+# Mutli-year loading
+if("Marketing Year MY" %in% names(Corn_CropYearObjects[[1]])){
+  for(i in 1:(length(Corn_CropYearObjects) - 2)) {
+    temp = list()
+    temp[[1]] = isActualizedSSMY(Corn_CropYearObjects[[i]], Corn_CropYearObjects[[i + 1]], Corn_CropYearObjects[[i + 2]], MY = TRUE)
+    Corn_CropYearObjects[[i]] = temp[[1]][[1]]
+    Corn_CropYearObjects[[i + 1]] = temp[[1]][[2]]
+    Corn_CropYearObjects[[i + 2]] = temp[[1]][[3]]
+  }
+  
+  for(i in (length(Corn_CropYearObjects) - 1):length(Corn_CropYearObjects)){
+    Corn_CropYearObjects[[i]] = isActualizedSSMY(Corn_CropYearObjects[[i]], NULL, NULL, MY = TRUE)
+  }
 }

@@ -60,7 +60,7 @@ priceObjectiveTrigger = function(cropYear) {
     
     else if (isTenDayHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row], 
                           cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
-                          Corn_FeaturesObject$`95% of Ten Day High`)) {
+                          Corn_FeaturesObject$`95% of Ten Day High`, MY = FALSE)) {
       priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                         "Percentile" = marketingYear$Percentile[row],
                                                                         "Type" = "Ten Day High"))
@@ -68,7 +68,7 @@ priceObjectiveTrigger = function(cropYear) {
     
     else if (isAllTimeHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row],
                            cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
-                           Corn_FeaturesObject$`95% of Ten Day High`, Corn_FeaturesObject$`All Time High`)) {
+                           Corn_FeaturesObject$`95% of Ten Day High`, Corn_FeaturesObject$`All Time High`, MY = FALSE)) {
       priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                         "Percentile" = marketingYear$Percentile[row],
                                                                         "Type" = "All Time High"))
@@ -92,4 +92,3 @@ for(i in 1:length(Corn_CropYearObjects)) {
   Corn_CropYearObjects[[i]] = priceObjectiveTrigger(Corn_CropYearObjects[[i]])
   Corn_CropYearObjects[[i]]$`PO Triggers`$Date = mdy(Corn_CropYearObjects[[i]]$`PO Triggers`$Date)
 }
-

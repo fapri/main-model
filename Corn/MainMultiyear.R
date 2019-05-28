@@ -1,10 +1,6 @@
 # Corn
 # Multiyear
 
-library(lubridate)
-library(dplyr)
-library(ggplot2)
-
 Corn_CropYears = read.csv("Data/Corn_CropYears.csv", stringsAsFactors = FALSE)
 Corn_FuturesMarket = read.csv("Data/Corn_FuturesMarket.csv", stringsAsFactors = FALSE)
 Corn_Basis = read.csv("Data/Corn_Basis.csv", stringsAsFactors = FALSE)
