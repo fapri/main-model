@@ -1,6 +1,8 @@
 # Soybean
 # Price Objective
 
+# COMBINES CORN AND SOYBEAN
+
 # Checks if currentDayPercentile is a price objective trigger
 isPriceObjective = function(previousDayPercentile, currentDayPercentile) {
   if(currentDayPercentile >= 70 && previousDayPercentile < currentDayPercentile)
