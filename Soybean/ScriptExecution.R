@@ -19,21 +19,21 @@ source("Soybean/MultiYearTrigger.R")
 source("Soybean/PriceObjective.R")
 source("Soybean/PriceObjectiveActualized.R")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 source("Soybean/TrailingStop.R")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 source("Soybean/TrailingStopActualized.R")
 source("Soybean/SeasonalSaleActualized.R")
 
