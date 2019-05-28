@@ -6,28 +6,29 @@ library(ggplot2)
 
 # Set up the data and Crop Year Objects
 source("Soybean/Main.R")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# soybean
 
 # Create common trigger functions
 source("Soybean/Triggers.R")
 
 # Run the strategies (without multi-year)
 source("Soybean/PriceObjective.R")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 source("Soybean/PriceObjectiveActualized.R")
 source("Soybean/TrailingStop.R")
 source("Soybean/TrailingStopActualized.R")
