@@ -11,44 +11,21 @@ source("Soybean/Main.R")
 # Create common trigger functions
 source("Soybean/Triggers.R")
 
-
+# Load Multi-year marketing year
 source("Soybean/MultiYearTrigger.R")
-
 
 # Run the strategies
 source("Soybean/PriceObjective.R")
 source("Soybean/PriceObjectiveActualized.R")
-
 source("Soybean/TrailingStop.R")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 source("Soybean/TrailingStopActualized.R")
 source("Soybean/SeasonalSaleActualized.R")
 
-
-# Run the strategies (with multi-year)
-
-source("Soybean/PriceObjectiveActualizedMultiYear.R")
-source("Soybean/TrailingStopActualizedMultiYear.R")
-source("Soybean/SeasonalSaleActualizedMultiYear.R")
-
 # Adjust for storage
-source("Soybean/StorageMerge.R")
+source("Soybean/Storage.R")
 
 # Graph the Strategies
 source("Soybean/Graphing.R")
 
 # Code I used to save the objects
-saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), file = "appObjects.rds")
+saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), file = "appObjectsSoybean.rds")
