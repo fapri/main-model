@@ -752,7 +752,7 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSsummaryTables = renderDataTable({
-    if (input$yearPO == "2008-09") {
+    if (input$yearTS == "2008-09") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[1]]$`TS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -763,7 +763,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2009-10") {
+    else if (input$yearTS == "2009-10") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[2]]$`TS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -774,7 +774,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2010-11") {
+    else if (input$yearTS == "2010-11") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[3]]$`TS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -785,7 +785,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2011-12") {
+    else if (input$yearTS == "2011-12") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[4]]$`TS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -796,7 +796,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2012-13") {
+    else if (input$yearTS == "2012-13") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[5]]$`TS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -807,7 +807,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2013-14") {
+    else if (input$yearTS == "2013-14") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[6]]$`TS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -818,7 +818,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2014-15") {
+    else if (input$yearTS == "2014-15") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[7]]$`TS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -829,7 +829,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2015-16") {
+    else if (input$yearTS == "2015-16") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[8]]$`TS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -840,7 +840,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2016-17") {
+    else if (input$yearTS == "2016-17") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[9]]$`TS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1054,7 +1054,7 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$SSsummaryTables = renderDataTable({
-    if (input$yearPO == "2008-09") {
+    if (input$yearSS == "2008-09") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[1]]$`SS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1065,7 +1065,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2009-10") {
+    else if (input$yearSS == "2009-10") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[2]]$`SS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1076,7 +1076,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2010-11") {
+    else if (input$yearSS == "2010-11") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[3]]$`SS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1087,7 +1087,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2011-12") {
+    else if (input$yearSS == "2011-12") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[4]]$`SS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1098,7 +1098,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2012-13") {
+    else if (input$yearSS == "2012-13") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[5]]$`SS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1109,7 +1109,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2013-14") {
+    else if (input$yearSS == "2013-14") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[6]]$`SS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1120,7 +1120,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2014-15") {
+    else if (input$yearSS == "2014-15") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[7]]$`SS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1131,7 +1131,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2015-16") {
+    else if (input$yearSS == "2015-16") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[8]]$`SS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1142,7 +1142,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2016-17") {
+    else if (input$yearSS == "2016-17") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[9]]$`SS Sales Summary`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1356,7 +1356,7 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$POMYsummaryTables = renderDataTable({
-    if (input$yearPO == "2008-09") {
+    if (input$yearPOMY == "2008-09") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[1]]$`PO Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1367,7 +1367,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2009-10") {
+    else if (input$yearPOMY == "2009-10") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[2]]$`PO Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1378,7 +1378,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2010-11") {
+    else if (input$yearPOMY == "2010-11") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[3]]$`PO Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1389,7 +1389,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2011-12") {
+    else if (input$yearPOMY == "2011-12") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[4]]$`PO Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1400,7 +1400,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2012-13") {
+    else if (input$yearPOMY == "2012-13") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[5]]$`PO Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1411,7 +1411,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2013-14") {
+    else if (input$yearPOMY == "2013-14") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[6]]$`PO Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1422,7 +1422,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2014-15") {
+    else if (input$yearPOMY == "2014-15") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[7]]$`PO Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1433,7 +1433,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2015-16") {
+    else if (input$yearPOMY == "2015-16") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[8]]$`PO Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1444,7 +1444,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2016-17") {
+    else if (input$yearPOMY == "2016-17") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[9]]$`PO Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1658,7 +1658,7 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSMYsummaryTables = renderDataTable({
-    if (input$yearTS == "2008-09") {
+    if (input$yearTSMY == "2008-09") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[1]]$`TS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1669,7 +1669,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearTS == "2009-10") {
+    else if (input$yearTSMY == "2009-10") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[2]]$`TS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1680,7 +1680,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearTS == "2010-11") {
+    else if (input$yearTSMY == "2010-11") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[3]]$`TS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1691,7 +1691,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearTS == "2011-12") {
+    else if (input$yearTSMY == "2011-12") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[4]]$`TS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1702,7 +1702,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearTS == "2012-13") {
+    else if (input$yearTSMY == "2012-13") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[5]]$`TS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1713,7 +1713,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearTS == "2013-14") {
+    else if (input$yearTSMY == "2013-14") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[6]]$`TS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1724,7 +1724,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearTS == "2014-15") {
+    else if (input$yearTSMY == "2014-15") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[7]]$`TS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1735,7 +1735,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearTS == "2015-16") {
+    else if (input$yearTSMY == "2015-16") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[8]]$`TS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1746,7 +1746,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2016-17") {
+    else if (input$yearTSMY == "2016-17") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[9]]$`PO Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1960,7 +1960,7 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$SSMYsummaryTables = renderDataTable({
-    if (input$yearSS == "2008-09") {
+    if (input$yearSSMY == "2008-09") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[1]]$`SS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1971,7 +1971,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearSS == "2009-10") {
+    else if (input$yearSSMY == "2009-10") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[2]]$`SS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1982,7 +1982,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearSS == "2010-11") {
+    else if (input$yearSSMY == "2010-11") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[3]]$`SS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -1993,7 +1993,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearSS == "2011-12") {
+    else if (input$yearSSMY == "2011-12") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[4]]$`SS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -2004,7 +2004,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearSS == "2012-13") {
+    else if (input$yearSSMY == "2012-13") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[5]]$`SS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -2015,7 +2015,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearSS == "2013-14") {
+    else if (input$yearSSMY == "2013-14") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[6]]$`SS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -2026,7 +2026,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearSS == "2014-15") {
+    else if (input$yearSSMY == "2014-15") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[7]]$`SS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -2037,7 +2037,7 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearSS == "2015-16") {
+    else if (input$yearSSMY == "2015-16") {
       if (input$cropType == "corn"){
         as.datatable(getSalesTable(Corn_CropYearObjects[[8]]$`SS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
@@ -2048,13 +2048,13 @@ server <- shinyServer(function(input,output,session){
       }
     }
     
-    else if (input$yearPO == "2016-17") {
+    else if (input$yearSSMY == "2016-17") {
       if (input$cropType == "corn"){
-        as.datatable(getSalesTable(Corn_CropYearObjects[[9]]$`PO Sales Summary MY`), rownames = FALSE, 
+        as.datatable(getSalesTable(Corn_CropYearObjects[[9]]$`SS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
       }
       else if (input$cropType == "soybean"){
-        as.datatable(getSalesTable(Soybean_CropYearObjects[[9]]$`PO Sales Summary MY`), rownames = FALSE, 
+        as.datatable(getSalesTable(Soybean_CropYearObjects[[9]]$`SS Sales Summary MY`), rownames = FALSE, 
                      caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
       }
     }
