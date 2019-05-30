@@ -104,7 +104,7 @@ if(type == "corn"){
   # Gets the price objective triggers for earch crop year
   # Gets the trailing stop triggers for earch crop year
   for(i in 1:length(Corn_CropYearObjects)) {
-    Corn_CropYearObjects[[i]] = trailingStopTrigger(Corn_CropYearObjects[[i]])
+    Corn_CropYearObjects[[i]] = trailingStopTrigger(Corn_CropYearObjects[[i]], Corn_FeaturesObject)
     Corn_CropYearObjects[[i]]$`TS Triggers`$Date = mdy(Corn_CropYearObjects[[i]]$`TS Triggers`$Date)
   }
 }
