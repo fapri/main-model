@@ -855,11 +855,11 @@ server <- shinyServer(function(input,output,session){
   output$TSfinalPriceTable = renderDataTable({
     if (input$cropType == "corn"){
       as.datatable(getTables(finalizedPriceObject$TSResultsTable), rownames = FALSE, 
-                   caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+                   caption = tags$caption("Trailing Stop", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "soybean"){
       as.datatable(getTables(finalizedPriceObjectSoybean$TSResultsTable), rownames = FALSE, 
-                   caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+                   caption = tags$caption("Trailing Stop", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
   
@@ -1157,11 +1157,11 @@ server <- shinyServer(function(input,output,session){
   output$SSfinalPriceTable = renderDataTable({
     if (input$cropType == "corn"){
       as.datatable(getTables(finalizedPriceObject$SSResultsTable), rownames = FALSE, 
-                   caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+                   caption = tags$caption("Seasonal Sales", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "soybean"){
       as.datatable(getTables(finalizedPriceObjectSoybean$SSResultsTable), rownames = FALSE, 
-                   caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+                   caption = tags$caption("Seasonal Sales", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
   
@@ -1761,11 +1761,11 @@ server <- shinyServer(function(input,output,session){
   output$TSMYfinalPriceTable = renderDataTable({
     if (input$cropType == "corn"){
       as.datatable(getTables(finalizedPriceObject$TSResultsTableMY), rownames = FALSE, 
-                   caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+                   caption = tags$caption("Trailing Stop", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "soybean"){
       as.datatable(getTables(finalizedPriceObjectSoybean$TSResultsTableMY), rownames = FALSE, 
-                   caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+                   caption = tags$caption("Trailing Stop", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
   
@@ -2063,11 +2063,11 @@ server <- shinyServer(function(input,output,session){
   output$SSMYfinalPriceTable = renderDataTable({
     if (input$cropType == "corn"){
       as.datatable(getTables(finalizedPriceObject$SSResultsTableMY), rownames = FALSE, 
-                   caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+                   caption = tags$caption("Seasonal Sales", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "soybean"){
       as.datatable(getTables(finalizedPriceObjectSoybean$SSResultsTableMY), rownames = FALSE, 
-                   caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+                   caption = tags$caption("Seasonal Sales", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
 })
