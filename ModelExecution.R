@@ -29,10 +29,10 @@ source("Model/TrailingStop.R")
 # SPLIT UP AND DO THE ACTUALIZATION STUFF
 if(type == "soybean"){
 
-}
+} else if(type == "corn"){
 
-if(type == "corn"){
-
+} else {
+  # maybe have an option to do both??
 }
 
 # Adjust for storage
