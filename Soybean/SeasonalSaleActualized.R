@@ -111,7 +111,7 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2, futuresMarket,MY){
                                                                                               "Type" = "Multi-Year",
                                                                                               "Percent Sold" = 10,
                                                                                               "Total Sold" = totalSold1year,
-                                                                                              "Price" = futuresMarket$DecNC1yr[futuresMarketRow]))
+                                                                                              "Price" = futuresMarket$NovNC1yr[futuresMarketRow]))
                   
                   if(multiyearTriggers$Date[mytRow] %within% interval1 || multiyearTriggers$Date[mytRow] %within% interval2){
                     tRow = which(marketingYear$Date[row] == triggers$Date)
@@ -121,7 +121,7 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2, futuresMarket,MY){
                                                                                       "Type" = triggers$Type[tRow],
                                                                                       "Percent Sold" = 10,
                                                                                       "Total Sold" = totalSold,
-                                                                                      "Price" = futuresMarket$DecNC[futuresMarketRow]))
+                                                                                      "Price" = futuresMarket$NovNC[futuresMarketRow]))
                   }
                 }
               }
@@ -135,7 +135,7 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2, futuresMarket,MY){
                                                                                           "Type" = "Multi-Year",
                                                                                           "Percent Sold" = 10,
                                                                                           "Total Sold" = totalSold1year,
-                                                                                          "Price" = futuresMarket$DecNC1yr[futuresMarketRow]))
+                                                                                          "Price" = futuresMarket$NovNC1yr[futuresMarketRow]))
               
               if(multiyearTriggers$Date[mytRow] %within% interval1 || multiyearTriggers$Date[mytRow] %within% interval2){
                 tRow = which(marketingYear$Date[row] == triggers$Date)
@@ -145,7 +145,7 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2, futuresMarket,MY){
                                                                                   "Type" = triggers$Type[tRow],
                                                                                   "Percent Sold" = 10,
                                                                                   "Total Sold" = totalSold,
-                                                                                  "Price" = futuresMarket$DecNC[futuresMarketRow]))
+                                                                                  "Price" = futuresMarket$NovNC[futuresMarketRow]))
               }
             }  
           }
@@ -170,7 +170,7 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2, futuresMarket,MY){
                                                                                               "Type" = "Multi-Year",
                                                                                               "Percent Sold" = 10,
                                                                                               "Total Sold" = totalSold2year,
-                                                                                              "Price" = futuresMarket$DecNC2yr[futuresMarketRow]))
+                                                                                              "Price" = futuresMarket$NovNC2yr[futuresMarketRow]))
                 }
               }
             }
@@ -183,7 +183,7 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2, futuresMarket,MY){
                                                                                           "Type" = "Multi-Year",
                                                                                           "Percent Sold" = 10,
                                                                                           "Total Sold" = totalSold2year,
-                                                                                          "Price" = futuresMarket$DecNC2yr[futuresMarketRow]))
+                                                                                          "Price" = futuresMarket$NovNC2yr[futuresMarketRow]))
             }
           }
         }
@@ -515,21 +515,19 @@ if (type == "soybean"){
   for(i in 1:length(Soybean_CropYearObjects)){
     Soybean_CropYearObjects[[i]] = isActualizedSSMY(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = FALSE)
   }
-  
-  # PAUSED FOR TRACK 'N TRADE DATA
-  
-  # # Mutli-year loading
-  # if("Marketing Year MY" %in% names(Soybean_CropYearObjects[[1]])){
-  #   for(i in 1:(length(Soybean_CropYearObjects) - 2)) {
-  #     temp = list()
-  #     temp[[1]] = isActualizedSSMY(Soybean_CropYearObjects[[i]], Soybean_CropYearObjects[[i + 1]], Soybean_CropYearObjects[[i + 2]], Soybean_FuturesMarket, MY = TRUE)
-  #     Soybean_CropYearObjects[[i]] = temp[[1]][[1]]
-  #     Soybean_CropYearObjects[[i + 1]] = temp[[1]][[2]]
-  #     Soybean_CropYearObjects[[i + 2]] = temp[[1]][[3]]
-  #   }
-  #   
-  #   for(i in (length(Soybean_CropYearObjects) - 1):length(Soybean_CropYearObjects)){
-  #     Soybean_CropYearObjects[[i]] = isActualizedSSMY(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = TRUE)
-  #   }
-  # }
+
+  # Mutli-year loading
+  if("Marketing Year MY" %in% names(Soybean_CropYearObjects[[1]])){
+    for(i in 1:(length(Soybean_CropYearObjects) - 2)) {
+      temp = list()
+      temp[[1]] = isActualizedSSMY(Soybean_CropYearObjects[[i]], Soybean_CropYearObjects[[i + 1]], Soybean_CropYearObjects[[i + 2]], Soybean_FuturesMarket, MY = TRUE)
+      Soybean_CropYearObjects[[i]] = temp[[1]][[1]]
+      Soybean_CropYearObjects[[i + 1]] = temp[[1]][[2]]
+      Soybean_CropYearObjects[[i + 2]] = temp[[1]][[3]]
+    }
+
+    for(i in (length(Soybean_CropYearObjects) - 1):length(Soybean_CropYearObjects)){
+      Soybean_CropYearObjects[[i]] = isActualizedSSMY(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = TRUE)
+    }
+  }
 }
