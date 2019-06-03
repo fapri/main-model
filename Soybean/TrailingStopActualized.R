@@ -664,21 +664,19 @@ if (type == "soybean"){
   for(i in 1:length(Soybean_CropYearObjects)){
     Soybean_CropYearObjects[[i]] = isActualizedTS(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = FALSE)
   }
-  
-  # PAUSED UNTIL OBTAINED FROM TRACK 'N TRADE
-  
-  # # Multi-year loading
-  # if("Marketing Year MY" %in% names(Soybean_CropYearObjects[[1]])){
-  #   for(i in 1:(length(Soybean_CropYearObjects) - 2)) {
-  #     temp = list()
-  #     temp[[1]] = isActualizedTS(Soybean_CropYearObjects[[i]], Soybean_CropYearObjects[[i + 1]], Soybean_CropYearObjects[[i + 2]], Soybean_FuturesMarket, MY = TRUE)
-  #     Soybean_CropYearObjects[[i]] = temp[[1]][[1]]
-  #     Soybean_CropYearObjects[[i + 1]] = temp[[1]][[2]]
-  #     Soybean_CropYearObjects[[i + 2]] = temp[[1]][[3]]
-  #   }
-  #   
-  #   for(i in (length(Soybean_CropYearObjects) - 1):length(Soybean_CropYearObjects)){
-  #     Soybean_CropYearObjects[[i]] = isActualizedTS(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = TRUE)
-  #   }
-  # }
+
+  # Multi-year loading
+  if("Marketing Year MY" %in% names(Soybean_CropYearObjects[[1]])){
+    for(i in 1:(length(Soybean_CropYearObjects) - 2)) {
+      temp = list()
+      temp[[1]] = isActualizedTS(Soybean_CropYearObjects[[i]], Soybean_CropYearObjects[[i + 1]], Soybean_CropYearObjects[[i + 2]], Soybean_FuturesMarket, MY = TRUE)
+      Soybean_CropYearObjects[[i]] = temp[[1]][[1]]
+      Soybean_CropYearObjects[[i + 1]] = temp[[1]][[2]]
+      Soybean_CropYearObjects[[i + 2]] = temp[[1]][[3]]
+    }
+
+    for(i in (length(Soybean_CropYearObjects) - 1):length(Soybean_CropYearObjects)){
+      Soybean_CropYearObjects[[i]] = isActualizedTS(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = TRUE)
+    }
+  }
 }
