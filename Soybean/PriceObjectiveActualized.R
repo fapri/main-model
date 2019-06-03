@@ -35,13 +35,6 @@ getPercentSold = function(actualizedSales){
   }
 }
 
-# cropYear = Soybean_CropYearObjects[[i]]
-# cropYear1 = Soybean_CropYearObjects[[i + 1]]
-# cropYear2 = Soybean_CropYearObjects[[i + 2]]
-# futuresMarket = Soybean_FuturesMarket
-# MY = TRUE
-
-
 # Finds actualized Price Objective sales
 isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
   priceObjectiveActualized = isActualizedPresent(cropYear)
@@ -601,21 +594,19 @@ if(type == "soybean"){
   for(i in 1:length(Soybean_CropYearObjects)){
     Soybean_CropYearObjects[[i]] = isActualizedPO(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = FALSE)
   }
-  
-  # PAUSED UNTIL NC FUTURES ARE OBTAINED FROM TRACNK 'N TRADE
-  
-  # if("Marketing Year MY" %in% names(Soybean_CropYearObjects[[1]])){
-  #   # Multi-year loading
-  #   for(i in 1:(length(Soybean_CropYearObjects) - 2)) {
-  #     temp = list()
-  #     temp[[1]] = isActualizedPO(Soybean_CropYearObjects[[i]], Soybean_CropYearObjects[[i + 1]], Soybean_CropYearObjects[[i + 2]], Soybean_FuturesMarket, MY = TRUE)
-  #     Soybean_CropYearObjects[[i]] = temp[[1]][[1]]
-  #     Soybean_CropYearObjects[[i + 1]] = temp[[1]][[2]]
-  #     Soybean_CropYearObjects[[i + 2]] = temp[[1]][[3]]
-  #   }
-  #   
-  #   for(i in (length(Soybean_CropYearObjects) - 1):length(Soybean_CropYearObjects)){
-  #     Soybean_CropYearObjects[[i]] = isActualizedPO(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = TRUE)
-  #   }
-  # }
+
+  if("Marketing Year MY" %in% names(Soybean_CropYearObjects[[1]])){
+    # Multi-year loading
+    for(i in 1:(length(Soybean_CropYearObjects) - 2)) {
+      temp = list()
+      temp[[1]] = isActualizedPO(Soybean_CropYearObjects[[i]], Soybean_CropYearObjects[[i + 1]], Soybean_CropYearObjects[[i + 2]], Soybean_FuturesMarket, MY = TRUE)
+      Soybean_CropYearObjects[[i]] = temp[[1]][[1]]
+      Soybean_CropYearObjects[[i + 1]] = temp[[1]][[2]]
+      Soybean_CropYearObjects[[i + 2]] = temp[[1]][[3]]
+    }
+
+    for(i in (length(Soybean_CropYearObjects) - 1):length(Soybean_CropYearObjects)){
+      Soybean_CropYearObjects[[i]] = isActualizedPO(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = TRUE)
+    }
+  }
 }
