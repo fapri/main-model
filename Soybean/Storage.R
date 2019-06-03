@@ -3,7 +3,6 @@
 # Storage
 
 # NOT COMPATABLE WITH CORN BUT COULD EASILY BE
-# ALL MULTIYEAR CALCULATIONS ARE INSERTED BUT COMMENTED OUT
 
 # All prices are now being extracted in their actualization functions
 
@@ -109,26 +108,26 @@ for(i in 1:length(Soybean_CropYearObjects)){
   Soybean_CropYearObjects[[i]]$`PO Actualized` = fillStorage(Soybean_CropYearObjects[[i]][["PO Actualized"]],
                                                           Soybean_CropYearObjects[[i]][["Marketing Year"]],
                                                           Soybean_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
-  # # Price Objective Multi Year
-  # Soybean_CropYearObjects[[i]]$`PO Actualized MY` = fillStorage(Soybean_CropYearObjects[[i]][["PO Actualized MY"]],
-  #                                                            Soybean_CropYearObjects[[i]][["Marketing Year"]],
-  #                                                            Soybean_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
+  # Price Objective Multi Year
+  Soybean_CropYearObjects[[i]]$`PO Actualized MY` = fillStorage(Soybean_CropYearObjects[[i]][["PO Actualized MY"]],
+                                                             Soybean_CropYearObjects[[i]][["Marketing Year"]],
+                                                             Soybean_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
   # Trailing Stop
   Soybean_CropYearObjects[[i]]$`TS Actualized` = fillStorage(Soybean_CropYearObjects[[i]][["TS Actualized"]],
                                                           Soybean_CropYearObjects[[i]][["Marketing Year"]],
                                                           Soybean_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
-  # # Trailing Stop Multi Year
-  # Soybean_CropYearObjects[[i]]$`TS Actualized MY` = fillStorage(Soybean_CropYearObjects[[i]][["TS Actualized MY"]],
-  #                                                            Soybean_CropYearObjects[[i]][["Marketing Year"]],
-  #                                                            Soybean_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
+  # Trailing Stop Multi Year
+  Soybean_CropYearObjects[[i]]$`TS Actualized MY` = fillStorage(Soybean_CropYearObjects[[i]][["TS Actualized MY"]],
+                                                             Soybean_CropYearObjects[[i]][["Marketing Year"]],
+                                                             Soybean_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
   # Seasonal Sales
   Soybean_CropYearObjects[[i]]$`SS Actualized` = fillStorage(Soybean_CropYearObjects[[i]][["SS Actualized"]],
                                                           Soybean_CropYearObjects[[i]][["Marketing Year"]],
                                                           Soybean_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
-  # # Seasonal Sales Multi Year
-  # Soybean_CropYearObjects[[i]]$`SS Actualized MY` = fillStorage(Soybean_CropYearObjects[[i]][["SS Actualized MY"]],
-  #                                                            Soybean_CropYearObjects[[i]][["Marketing Year"]],
-  #                                                            Soybean_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
+  # Seasonal Sales Multi Year
+  Soybean_CropYearObjects[[i]]$`SS Actualized MY` = fillStorage(Soybean_CropYearObjects[[i]][["SS Actualized MY"]],
+                                                             Soybean_CropYearObjects[[i]][["Marketing Year"]],
+                                                             Soybean_CropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
 }
 
 # Returns storage adjusted averages
@@ -391,25 +390,25 @@ colnames(POfinalizedPrices) = c("Crop Year", "noStorageAvg", "storageAdjAvg", "p
                                 "postharvestAverage", "postharvestAverageStorage", "preharvestPercent", 
                                 "postharvestPercent")
 
-# # Price Objective Multi Year
-# POfinalizedPricesMY = data.frame(matrix(nrow = length(Soybean_CropYearObjects), ncol = 8))
-# colnames(POfinalizedPricesMY) = colnames(POfinalizedPrices)
+# Price Objective Multi Year
+POfinalizedPricesMY = data.frame(matrix(nrow = length(Soybean_CropYearObjects), ncol = 8))
+colnames(POfinalizedPricesMY) = colnames(POfinalizedPrices)
 
 # Trailing Stop
 TSfinalizedPrices = data.frame(matrix(nrow = length(Soybean_CropYearObjects), ncol = 8))
 colnames(TSfinalizedPrices) = colnames(POfinalizedPrices)
 
-# # Trailing Stop Multi Year
-# TSfinalizedPricesMY = data.frame(matrix(nrow = length(Soybean_CropYearObjects), ncol = 8))
-# colnames(TSfinalizedPricesMY) = colnames(POfinalizedPrices)
+# Trailing Stop Multi Year
+TSfinalizedPricesMY = data.frame(matrix(nrow = length(Soybean_CropYearObjects), ncol = 8))
+colnames(TSfinalizedPricesMY) = colnames(POfinalizedPrices)
 
 #Seasonal Sales
 SSfinalizedPrices = data.frame(matrix(nrow = length(Soybean_CropYearObjects), ncol = 8))
 colnames(SSfinalizedPrices) =colnames(POfinalizedPrices)
 
-# # Seasonal Sales Multi Year
-# SSfinalizedPricesMY = data.frame(matrix(nrow = length(Soybean_CropYearObjects), ncol = 8))
-# colnames(SSfinalizedPricesMY) = colnames(POfinalizedPrices)
+# Seasonal Sales Multi Year
+SSfinalizedPricesMY = data.frame(matrix(nrow = length(Soybean_CropYearObjects), ncol = 8))
+colnames(SSfinalizedPricesMY) = colnames(POfinalizedPrices)
 
 for (i in 1:length(Soybean_CropYearObjects)){
   # Price Objective
@@ -421,18 +420,18 @@ for (i in 1:length(Soybean_CropYearObjects)){
   Soybean_CropYearObjects[[i]]$`PO Actualized` = POtemp[[1]]
   Soybean_CropYearObjects[[i]]$`Sales Summary` = POtemp[[2]]
   POfinalizedPrices[i,] = POtemp[[3]]
-  
-  # # Price Objective Multi Year
-  # jan1 = paste("01-01", toString(year(mdy(Soybean_CropYearObjects[[i]]$`Start Date`)) - 2), sep="-")
-  # POintervalPreMY = interval(mdy(jan1), int_end(Soybean_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPre))
-  # POtempMY = finalizeStorage(Soybean_CropYearObjects[[i]]$`PO Actualized MY`,
-  #                            Soybean_CropYears$CropYear[i],
-  #                            POintervalPreMY,
-  #                            Soybean_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPost)
-  # 
-  # Soybean_CropYearObjects[[i]]$`PO Actualized MY` = POtempMY[[1]]
-  # Soybean_CropYearObjects[[i]]$`PO Sales Summary MY` = POtempMY[[2]]
-  # POfinalizedPricesMY[i,] = POtempMY[[3]]
+
+  # Price Objective Multi Year
+  jan1 = paste("01-01", toString(year(mdy(Soybean_CropYearObjects[[i]]$`Start Date`)) - 2), sep="-")
+  POintervalPreMY = interval(mdy(jan1), int_end(Soybean_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPre))
+  POtempMY = finalizeStorage(Soybean_CropYearObjects[[i]]$`PO Actualized MY`,
+                             Soybean_CropYears$CropYear[i],
+                             POintervalPreMY,
+                             Soybean_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPost)
+
+  Soybean_CropYearObjects[[i]]$`PO Actualized MY` = POtempMY[[1]]
+  Soybean_CropYearObjects[[i]]$`PO Sales Summary MY` = POtempMY[[2]]
+  POfinalizedPricesMY[i,] = POtempMY[[3]]
   
   # Trailing Stop
   TStemp = finalizeStorage(Soybean_CropYearObjects[[i]]$`TS Actualized`,
@@ -444,17 +443,17 @@ for (i in 1:length(Soybean_CropYearObjects)){
   Soybean_CropYearObjects[[i]]$`TS Sales Summary` = TStemp[[2]]
   TSfinalizedPrices[i,] = TStemp[[3]]
   
-  # # Trailing Stop Multi Year
-  # jan1 = paste("01-01", toString(year(mdy(Soybean_CropYearObjects[[i]]$`Start Date`)) - 2), sep="-")
-  # TSintervalPreMY = interval(mdy(jan1), int_end(Soybean_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPre))
-  # TStempMY = finalizeStorage(Soybean_CropYearObjects[[i]]$`TS Actualized MY`,
-  #                            Soybean_CropYears$CropYear[i],
-  #                            TSintervalPreMY,
-  #                            Soybean_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPost)
-  # 
-  # Soybean_CropYearObjects[[i]]$`TS Actualized MY` = TStempMY[[1]]
-  # Soybean_CropYearObjects[[i]]$`TS Sales Summary MY` = TStempMY[[2]]
-  # TSfinalizedPricesMY[i,] = TStempMY[[3]]
+  # Trailing Stop Multi Year
+  jan1 = paste("01-01", toString(year(mdy(Soybean_CropYearObjects[[i]]$`Start Date`)) - 2), sep="-")
+  TSintervalPreMY = interval(mdy(jan1), int_end(Soybean_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPre))
+  TStempMY = finalizeStorage(Soybean_CropYearObjects[[i]]$`TS Actualized MY`,
+                             Soybean_CropYears$CropYear[i],
+                             TSintervalPreMY,
+                             Soybean_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPost)
+
+  Soybean_CropYearObjects[[i]]$`TS Actualized MY` = TStempMY[[1]]
+  Soybean_CropYearObjects[[i]]$`TS Sales Summary MY` = TStempMY[[2]]
+  TSfinalizedPricesMY[i,] = TStempMY[[3]]
   
   #Seasonal Sales
   SStemp = finalizeStorage(Soybean_CropYearObjects[[i]]$`SS Actualized`,
@@ -466,32 +465,32 @@ for (i in 1:length(Soybean_CropYearObjects)){
   Soybean_CropYearObjects[[i]]$`SS Sales Summary` = SStemp[[2]]
   SSfinalizedPrices[i,] = SStemp[[3]]
   
-  # # Seasonal Sales Multi Year
-  # jan1 = paste("01-01", toString(year(mdy(Soybean_CropYearObjects[[i]]$`Start Date`)) - 2), sep="-")
-  # SSintervalPreMY = interval(mdy(jan1), int_end(Soybean_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPre))
-  # SStempMY = finalizeStorage(Soybean_CropYearObjects[[i]]$`SS Actualized MY`,
-  #                            Soybean_CropYears$CropYear[i],
-  #                            SSintervalPreMY,
-  #                            Soybean_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPost)
-  # 
-  # Soybean_CropYearObjects[[i]]$`SS Actualized MY` = SStempMY[[1]]
-  # Soybean_CropYearObjects[[i]]$`SS Sales Summary MY` = SStempMY[[2]]
-  # SSfinalizedPricesMY[i,] = SStempMY[[3]]
+  # Seasonal Sales Multi Year
+  jan1 = paste("01-01", toString(year(mdy(Soybean_CropYearObjects[[i]]$`Start Date`)) - 2), sep="-")
+  SSintervalPreMY = interval(mdy(jan1), int_end(Soybean_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPre))
+  SStempMY = finalizeStorage(Soybean_CropYearObjects[[i]]$`SS Actualized MY`,
+                             Soybean_CropYears$CropYear[i],
+                             SSintervalPreMY,
+                             Soybean_CropYearObjects[[i]]$`Pre/Post Interval`$intervalPost)
+
+  Soybean_CropYearObjects[[i]]$`SS Actualized MY` = SStempMY[[1]]
+  Soybean_CropYearObjects[[i]]$`SS Sales Summary MY` = SStempMY[[2]]
+  SSfinalizedPricesMY[i,] = SStempMY[[3]]
 }
 
 POfinalizedPrices$`Crop Year` = Soybean_CropYears$CropYear
-# POfinalizedPricesMY$`Crop Year` = Soybean_CropYears$CropYear
+POfinalizedPricesMY$`Crop Year` = Soybean_CropYears$CropYear
 TSfinalizedPrices$`Crop Year` = Soybean_CropYears$CropYear
-# TSfinalizedPricesMY$`Crop Year` = Soybean_CropYears$CropYear
+TSfinalizedPricesMY$`Crop Year` = Soybean_CropYears$CropYear
 SSfinalizedPrices$`Crop Year` = Soybean_CropYears$CropYear
-# SSfinalizedPricesMY$`Crop Year` = Soybean_CropYears$CropYear
+SSfinalizedPricesMY$`Crop Year` = Soybean_CropYears$CropYear
 
 finalizedPriceObject = list("POfinalizedPrices" = POfinalizedPrices,
-                            # "POfinalizedPricesMY" = POfinalizedPricesMY,
+                            "POfinalizedPricesMY" = POfinalizedPricesMY,
                             "TSfinalizedPrices" = TSfinalizedPrices, 
-                            # "TSfinalizedPricesMY" = TSfinalizedPricesMY,
-                            "SSfinalizedPrices" = SSfinalizedPrices
-                            #, "SSfinalizedPricesMY" = SSfinalizedPricesMY
+                            "TSfinalizedPricesMY" = TSfinalizedPricesMY,
+                            "SSfinalizedPrices" = SSfinalizedPrices,
+                            "SSfinalizedPricesMY" = SSfinalizedPricesMY
 )
 
 makeStorageTable = function(finalizedPrices){
@@ -511,11 +510,11 @@ makeStorageTable = function(finalizedPrices){
 
 for (i in 1:length(Soybean_CropYearObjects)){
   Soybean_CropYearObjects[[i]]$`PO Storage` = makeStorageTable(POfinalizedPrices)
-  # Soybean_CropYearObjects[[i]]$`PO Storage MY` = makeStorageTable(POfinalizedPricesMY)
+  Soybean_CropYearObjects[[i]]$`PO Storage MY` = makeStorageTable(POfinalizedPricesMY)
   Soybean_CropYearObjects[[i]]$`TS Storage` = makeStorageTable(TSfinalizedPrices)
-  # Soybean_CropYearObjects[[i]]$`TS Storage MY` = makeStorageTable(TSfinalizedPricesMY)
+  Soybean_CropYearObjects[[i]]$`TS Storage MY` = makeStorageTable(TSfinalizedPricesMY)
   Soybean_CropYearObjects[[i]]$`SS Storage` = makeStorageTable(SSfinalizedPrices)
-  # Soybean_CropYearObjects[[i]]$`SS Storage MY` = makeStorageTable(SSfinalizedPricesMY)
+  Soybean_CropYearObjects[[i]]$`SS Storage MY` = makeStorageTable(SSfinalizedPricesMY)
 }
 
 makeResultsTable = function(finalizedPrices){
@@ -534,20 +533,22 @@ makeResultsTable = function(finalizedPrices){
   resultsTable$`No Storage`[1] = ((resultsTable$`No Storage`[2] * (preharvestSum * 0.01)) + (resultsTable$`No Storage`[3] * (postharvestSum * 0.01)))/ ((preharvestSum + postharvestSum) * 0.01)
   resultsTable$`Storage`[1] = ((resultsTable$`Storage`[2] * (preharvestSum * 0.01)) + (resultsTable$`Storage`[3] * (postharvestSum * 0.01)))/ ((preharvestSum + postharvestSum) * 0.01)
   
-  resultsTable$`No Storage`[4] = 4.75
+  # USDA Average price inputs
+  if(type == "corn"){
+    resultsTable$`No Storage`[4] = 4.75
+  }
+  else if(type == "soybean"){
+    resultsTable$`No Storage`[4] = NA
+  }
+  
   resultsTable$`Storage`[4] = NA
   
   return(resultsTable)
 }
 
 finalizedPriceObject[["POResultsTable"]] = makeResultsTable(finalizedPriceObject[[1]])
-finalizedPriceObject[["TSResultsTable"]] = makeResultsTable(finalizedPriceObject[[2]])
-finalizedPriceObject[["SSResultsTable"]] = makeResultsTable(finalizedPriceObject[[3]])
-
-
-# finalizedPriceObject[["POResultsTable"]] = makeResultsTable(finalizedPriceObject[[1]])
-# finalizedPriceObject[["POResultsTableMY"]] = makeResultsTable(finalizedPriceObject[[2]])
-# finalizedPriceObject[["TSResultsTable"]] = makeResultsTable(finalizedPriceObject[[3]])
-# finalizedPriceObject[["TSResultsTableMY"]] = makeResultsTable(finalizedPriceObject[[4]])
-# finalizedPriceObject[["SSResultsTable"]] = makeResultsTable(finalizedPriceObject[[5]])
-# finalizedPriceObject[["SSResultsTableMY"]] = makeResultsTable(finalizedPriceObject[[6]])
+finalizedPriceObject[["POResultsTableMY"]] = makeResultsTable(finalizedPriceObject[[2]])
+finalizedPriceObject[["TSResultsTable"]] = makeResultsTable(finalizedPriceObject[[3]])
+finalizedPriceObject[["TSResultsTableMY"]] = makeResultsTable(finalizedPriceObject[[4]])
+finalizedPriceObject[["SSResultsTable"]] = makeResultsTable(finalizedPriceObject[[5]])
+finalizedPriceObject[["SSResultsTableMY"]] = makeResultsTable(finalizedPriceObject[[6]])
