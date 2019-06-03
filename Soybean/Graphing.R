@@ -157,14 +157,14 @@ if (type == "soybean"){
                                                          Soybean_CropYearObjects[[i]]$`PO Actualized`,
                                                          POTitle)
     
-    # POMYTitle = "Price Objective with Multi-Year"
-    # names(Soybean_CropYearObjects[[i]]$`Marketing Year MY`) = names(Soybean_CropYearObjects[[i]]$`Marketing Year`)
-    # Soybean_CropYearObjects[[i]]$POMYPlot = plotMarketingYear(Soybean_CropYearObjects[[i]]$`Crop Year`,
-    #                                                        mdy(Soybean_CropYearObjects[[i]]$`Start Date`),
-    #                                                        mdy(Soybean_CropYearObjects[[i]]$`Stop Date`),
-    #                                                        Soybean_CropYearObjects[[i]]$`Marketing Year`,
-    #                                                        Soybean_CropYearObjects[[i]]$`PO Actualized MY`,
-    #                                                        POMYTitle)
+    POMYTitle = "Price Objective with Multi-Year"
+    names(Soybean_CropYearObjects[[i]]$`Marketing Year MY`) = names(Soybean_CropYearObjects[[i]]$`Marketing Year`)
+    Soybean_CropYearObjects[[i]]$POMYPlot = plotMarketingYear(Soybean_CropYearObjects[[i]]$`Crop Year`,
+                                                           mdy(Soybean_CropYearObjects[[i]]$`Start Date`),
+                                                           mdy(Soybean_CropYearObjects[[i]]$`Stop Date`),
+                                                           Soybean_CropYearObjects[[i]]$`Marketing Year`,
+                                                           Soybean_CropYearObjects[[i]]$`PO Actualized MY`,
+                                                           POMYTitle)
     
     TSTitle = "Trailing Stop w/o Multi-Year"
     Soybean_CropYearObjects[[i]]$TSPlot = plotMarketingYear(Soybean_CropYearObjects[[i]]$`Crop Year`,
@@ -173,13 +173,13 @@ if (type == "soybean"){
                                                          Soybean_CropYearObjects[[i]]$`Marketing Year`,
                                                          Soybean_CropYearObjects[[i]]$`TS Actualized`,
                                                          TSTitle)
-    # TSMYTitle = "Trailing Stop with Multi-Year"
-    # Soybean_CropYearObjects[[i]]$TSMYPlot = plotMarketingYear(Soybean_CropYearObjects[[i]]$`Crop Year`,
-    #                                                        mdy(Soybean_CropYearObjects[[i]]$`Start Date`),
-    #                                                        mdy(Soybean_CropYearObjects[[i]]$`Stop Date`),
-    #                                                        Soybean_CropYearObjects[[i]]$`Marketing Year`,
-    #                                                        Soybean_CropYearObjects[[i]]$`TS Actualized MY`,
-    #                                                        TSMYTitle)
+    TSMYTitle = "Trailing Stop with Multi-Year"
+    Soybean_CropYearObjects[[i]]$TSMYPlot = plotMarketingYear(Soybean_CropYearObjects[[i]]$`Crop Year`,
+                                                           mdy(Soybean_CropYearObjects[[i]]$`Start Date`),
+                                                           mdy(Soybean_CropYearObjects[[i]]$`Stop Date`),
+                                                           Soybean_CropYearObjects[[i]]$`Marketing Year`,
+                                                           Soybean_CropYearObjects[[i]]$`TS Actualized MY`,
+                                                           TSMYTitle)
     
     SSTitle = "Seasonal Sales w/o Multi-Year"
     Soybean_CropYearObjects[[i]]$SSPlot = plotMarketingYear(Soybean_CropYearObjects[[i]]$`Crop Year`,
@@ -189,12 +189,12 @@ if (type == "soybean"){
                                                          Soybean_CropYearObjects[[i]]$`SS Actualized`,
                                                          SSTitle)
     
-    # SSMYTitle = "Seasonal Sales with Multi-Year"
-    # Soybean_CropYearObjects[[i]]$SSMYPlot = plotMarketingYear(Soybean_CropYearObjects[[i]]$`Crop Year`,
-    #                                                        mdy(Soybean_CropYearObjects[[i]]$`Start Date`),
-    #                                                        mdy(Soybean_CropYearObjects[[i]]$`Stop Date`),
-    #                                                        Soybean_CropYearObjects[[i]]$`Marketing Year`,
-    #                                                        Soybean_CropYearObjects[[i]]$`SS Actualized MY`,
-    #                                                        SSMYTitle)
+    SSMYTitle = "Seasonal Sales with Multi-Year"
+    Soybean_CropYearObjects[[i]]$SSMYPlot = plotMarketingYear(Soybean_CropYearObjects[[i]]$`Crop Year`,
+                                                           mdy(Soybean_CropYearObjects[[i]]$`Start Date`),
+                                                           mdy(Soybean_CropYearObjects[[i]]$`Stop Date`),
+                                                           Soybean_CropYearObjects[[i]]$`Marketing Year`,
+                                                           Soybean_CropYearObjects[[i]]$`SS Actualized MY`,
+                                                           SSMYTitle)
   }
 }
