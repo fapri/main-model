@@ -207,7 +207,7 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
         #check if preharvest
         if(triggers$Date[tRow] %within% intervalPre) {
           #check if sale was made in last 7 days. min() makes sure the closest day is being checked. This is intergral for MY sales
-          if(nrow(trailingStopActualized) == 0 || min(abs(difftime(triggers$Date[tRow], trailingStopActualized$Date[nrow(trailingStopActualized)]))) >= 7) {
+          if(nrow(trailingStopActualized) == 0 || min(abs(difftime(triggers$Date[tRow], trailingStopActualized$Date))) >= 7) {
             #if < 50% sold preharvest
             if(totalSold < totalSoldMax) {
               #check if this was the first sale. If so, then there wont be any old percentlies to check
