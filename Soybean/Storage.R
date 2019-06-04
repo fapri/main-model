@@ -521,7 +521,7 @@ makeResultsTable = function(finalizedPrices){
   resultsTable = data.frame(matrix(nrow = 4, ncol = 3))
   colnames(resultsTable) = c(" ", "No Storage", "Storage")
   
-  resultsTable$` ` =  c("Total Avg Price", "Pre-Harvest Avg Price", "Post-Harvest Avg Price", "USDA Avergage (Basis Adjusted)")
+  resultsTable$` ` =  c("Total Avg Price", "Pre-Harvest Avg Price", "Post-Harvest Avg Price", "USDA Average (Basis Adjusted)")
   resultsTable$`No Storage`[2] = weighted.mean(finalizedPrices$preharvestAverage, finalizedPrices$preharvestPercent)
   resultsTable$`No Storage`[3] = weighted.mean(finalizedPrices$postharvestAverage, finalizedPrices$postharvestPercent)
   resultsTable$`Storage`[2] = weighted.mean(finalizedPrices$preharvestAverage, finalizedPrices$preharvestPercent)
@@ -538,7 +538,7 @@ makeResultsTable = function(finalizedPrices){
     resultsTable$`No Storage`[4] = 4.75
   }
   else if(type == "soybean"){
-    resultsTable$`No Storage`[4] = NA
+    resultsTable$`No Storage`[4] = 11.41
   }
   
   resultsTable$`Storage`[4] = NA
