@@ -285,8 +285,8 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                   }
                 } 
                 
+                #if trigger is the first one we can just make the sale
                 else {
-                  #if trigger is the first one we can just make the sale
                   #TS, ATH, TDH at 10% increments
                   totalSold = totalSold + 10
                   trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
@@ -299,9 +299,10 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                   trailingStopActualized = arrange(trailingStopActualized, Date)
                 }
               }
-            } #check if postharvest
+            } 
           } 
           
+          #check if postharvest
           else if(triggers$Date[tRow] %within% intervalPost) {
             #if > 0% of crop remains
             if(totalSold < 100) {
@@ -331,9 +332,8 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                         trailingStopActualized = arrange(trailingStopActualized, Date)
                       }
                     } 
-                    
+                    #if trigger date is in an unrestricted interval or ATH/TDH we can just make the sale
                     else {
-                      #if trigger date is in an unrestricted interval or ATH/TDH we can just make the sale
                       #TS, ATH, TDH at 10% increments
                       totalSold = totalSold + 10
                       trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow],
@@ -437,9 +437,8 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
         }
       } 
       
+      # SEASONAL SALES
       else if(totalSold > 0 && !(marketingYear$Date[row] %in% trailingStopActualized$Date)) {
-        # SEASONAL SALES
-        # else if we sold 60% of crop or less
         # if price < 70 percentile
         if(marketingYear$Percentile[row] < 70) {
           # if day not within 7 days of last sale
