@@ -6,9 +6,7 @@
 isActualizedPresent = function(cropYear){
   if ("TS Actualized MY" %in% names(cropYear)){
     return(cropYear[["TS Actualized MY"]])
-  }
-  
-  else{
+  } else{
     trailingStopActualized = data.frame(matrix(ncol = 7, nrow = 0))
     colnames(trailingStopActualized) = c("Date", "Previous Percentile", "Percentile", "Type", "PercentSold", "TotalSold", "Price")
     return(trailingStopActualized)
@@ -18,9 +16,7 @@ isActualizedPresent = function(cropYear){
 getTotalSold = function(actualizedSales){
   if(nrow(actualizedSales) == 0){
     return(0)
-  }
-  
-  else{
+  } else{
     return(last(actualizedSales$Total.Sold))
   }
 }
@@ -28,9 +24,7 @@ getTotalSold = function(actualizedSales){
 getPercentSold = function(actualizedSales){
   if(nrow(actualizedSales) == 0){
     return(0)
-  }
-  
-  else{
+  } else{
     return(last(actualizedSales$Percent.Sold))
   }
 }
@@ -88,23 +82,54 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
   
   if(totalSold > 0){
     totalSoldMax = 60
-  }
-  else{
+  } else{
     totalSoldMax = 50
   }
-  
-  if(!is.null(cropYear1)){
-    #Multi-Year Sales
-    for(row in 1:nrow(marketingYear1)) {
-      if(marketingYear$Date[row] %in% multiyearTriggers$Date) {
-        mytRow = which(marketingYear$Date[row] == multiyearTriggers$Date)
-        futuresMarketRow = which(futuresMarket$Date == marketingYear$Date[row])
-        
-        if(!(multiyearTriggers$Date[mytRow] %within% interval4)){
-          if(!(nrow(trailingStopActualized1year) == 0)){
-            if(abs(difftime(multiyearTriggers$Date[mytRow], trailingStopActualized1year$Date[nrow(trailingStopActualized1year)])) >= 7) {
-              if(multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High"){
-                if(totalSold1year < 60){
+
+  if(is.null(cropYear1) || !is.null(cropYear1)){
+    for(row in 1:nrow(marketingYear)) {
+      if(!is.null(cropYear1)){
+        if(row <= nrow(marketingYear1)){
+          if(marketingYear$Date[row] %in% multiyearTriggers$Date) {
+            mytRow = which(marketingYear$Date[row] == multiyearTriggers$Date)
+            futuresMarketRow = which(futuresMarket$Date == marketingYear$Date[row])
+            
+            if(!(multiyearTriggers$Date[mytRow] %within% interval4)){
+              if(!(nrow(trailingStopActualized1year) == 0)){
+                if(abs(difftime(multiyearTriggers$Date[mytRow], trailingStopActualized1year$Date[nrow(trailingStopActualized1year)])) >= 7) {
+                  if(multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High"){
+                    if(totalSold1year < 60){
+                      totalSold1year = totalSold1year + 10
+                      trailingStopActualized1year = rbind(trailingStopActualized1year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
+                                                                                                  "Previous Percentile" = multiyearTriggers$Previous.Percentile[mytRow],
+                                                                                                  "Percentile" = multiyearTriggers$Percentile[mytRow],
+                                                                                                  "Type" = "Multi-Year",
+                                                                                                  "Percent Sold" = 10,
+                                                                                                  "Total Sold" = totalSold1year,
+                                                                                                  "Price" = NC1yr[futuresMarketRow]))
+                      
+                      if(multiyearTriggers$Date[mytRow] %within% interval1 || multiyearTriggers$Date[mytRow] %within% interval2){
+                        if(nrow(trailingStopActualized) == 0 || min(abs(difftime(multiyearTriggers$Date[mytRow], trailingStopActualized$Date))) >= 7){
+                          if(totalSold < 60){  
+                            tRow = which(marketingYear$Date[row] == triggers$Date)
+                            totalSold = totalSold + 10
+                            trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
+                                                                                              "Previous Percentile" = triggers$Previous.Percentile[tRow],
+                                                                                              "Percentile" = triggers$Percentile[tRow],
+                                                                                              "Type" = triggers$Type[tRow],
+                                                                                              "Percent Sold" = 10,
+                                                                                              "Total Sold" = totalSold,
+                                                                                              "Price" = NC[futuresMarketRow]))
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              
+              else{            
+                if(multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High"){
                   totalSold1year = totalSold1year + 10
                   trailingStopActualized1year = rbind(trailingStopActualized1year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
                                                                                               "Previous Percentile" = multiyearTriggers$Previous.Percentile[mytRow],
@@ -115,59 +140,52 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                                                                                               "Price" = NC1yr[futuresMarketRow]))
                   
                   if(multiyearTriggers$Date[mytRow] %within% interval1 || multiyearTriggers$Date[mytRow] %within% interval2){
-                    tRow = which(marketingYear$Date[row] == triggers$Date)
-                    totalSold = totalSold + 10
-                    trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
-                                                                                      "Previous Percentile" = triggers$Previous.Percentile[tRow],
-                                                                                      "Percentile" = triggers$Percentile[tRow],
-                                                                                      "Type" = triggers$Type[tRow],
-                                                                                      "Percent Sold" = 10,
-                                                                                      "Total Sold" = totalSold,
-                                                                                      "Price" = NC[futuresMarketRow]))
+                    if(nrow(trailingStopActualized) == 0 || min(abs(difftime(multiyearTriggers$Date[mytRow], trailingStopActualized$Date))) >= 7){
+                      if(totalSold < 60){  
+                        tRow = which(marketingYear$Date[row] == triggers$Date)
+                        totalSold = totalSold + 10
+                        trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
+                                                                                          "Previous Percentile" = triggers$Previous.Percentile[tRow],
+                                                                                          "Percentile" = triggers$Percentile[tRow],
+                                                                                          "Type" = triggers$Type[tRow],
+                                                                                          "Percent Sold" = 10,
+                                                                                          "Total Sold" = totalSold,
+                                                                                          "Price" = NC[futuresMarketRow]))
+                      }
+                    }
                   }
-                }
+                }  
               }
             }
           }
-          else{            
-            if(multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High"){
-              totalSold1year = totalSold1year + 10
-              trailingStopActualized1year = rbind(trailingStopActualized1year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
-                                                                                          "Previous Percentile" = multiyearTriggers$Previous.Percentile[mytRow],
-                                                                                          "Percentile" = multiyearTriggers$Percentile[mytRow],
-                                                                                          "Type" = "Multi-Year",
-                                                                                          "Percent Sold" = 10,
-                                                                                          "Total Sold" = totalSold1year,
-                                                                                          "Price" = NC1yr[futuresMarketRow]))
-              
-              if(multiyearTriggers$Date[mytRow] %within% interval1 || multiyearTriggers$Date[mytRow] %within% interval2){
-                tRow = which(marketingYear$Date[row] == triggers$Date)
-                totalSold = totalSold + 10
-                trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
-                                                                                  "Previous Percentile" = triggers$Previous.Percentile[tRow],
-                                                                                  "Percentile" = triggers$Percentile[tRow],
-                                                                                  "Type" = triggers$Type[tRow],
-                                                                                  "Percent Sold" = 10,
-                                                                                  "Total Sold" = totalSold,
-                                                                                  "Price" = NC[futuresMarketRow]))
-              }
-            }  
-          }
         }
-      }
-    }
-    
-    #Multi - Year Sales
-    for(row in 1:nrow(marketingYear2)) {
-      if(marketingYear$Date[row] %in% multiyearTriggers$Date) {
-        mytRow = which(marketingYear$Date[row] == multiyearTriggers$Date)
-        futuresMarketRow = which(marketingYear$Date[row] == futuresMarket$Date)
         
-        if(!(multiyearTriggers$Date[mytRow] %within% interval4)){
-          if(nrow(trailingStopActualized2year) != 0){
-            if(abs(difftime(multiyearTriggers$Date[mytRow], trailingStopActualized2year$Date[nrow(trailingStopActualized2year)])) >= 7) {
-              if(multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High"){
-                if(totalSold2year < 60){
+        #Keep going 
+        if(row <= nrow(marketingYear2)){
+          if(marketingYear$Date[row] %in% multiyearTriggers$Date) {
+            mytRow = which(marketingYear$Date[row] == multiyearTriggers$Date)
+            futuresMarketRow = which(marketingYear$Date[row] == futuresMarket$Date)
+            
+            if(!(multiyearTriggers$Date[mytRow] %within% interval4)){
+              if(nrow(trailingStopActualized2year) != 0){
+                if(abs(difftime(multiyearTriggers$Date[mytRow], trailingStopActualized2year$Date[nrow(trailingStopActualized2year)])) >= 7) {
+                  if(multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High"){
+                    if(totalSold2year < 60){
+                      totalSold2year = totalSold2year + 10
+                      trailingStopActualized2year = rbind(trailingStopActualized2year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
+                                                                                                  "Previous Percentile" = multiyearTriggers$Previous.Percentile[mytRow],
+                                                                                                  "Percentile" = multiyearTriggers$Percentile[mytRow],
+                                                                                                  "Type" = "Multi-Year",
+                                                                                                  "Percent Sold" = 10,
+                                                                                                  "Total Sold" = totalSold2year,
+                                                                                                  "Price" = NC2yr[futuresMarketRow]))
+                    }
+                  }
+                }
+              }
+              
+              else{
+                if(multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High"){
                   totalSold2year = totalSold2year + 10
                   trailingStopActualized2year = rbind(trailingStopActualized2year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
                                                                                               "Previous Percentile" = multiyearTriggers$Previous.Percentile[mytRow],
@@ -180,45 +198,62 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
               }
             }
           }
-          else{
-            if(multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High"){
-              totalSold2year = totalSold2year + 10
-              trailingStopActualized2year = rbind(trailingStopActualized2year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
-                                                                                          "Previous Percentile" = multiyearTriggers$Previous.Percentile[mytRow],
-                                                                                          "Percentile" = multiyearTriggers$Percentile[mytRow],
-                                                                                          "Type" = "Multi-Year",
-                                                                                          "Percent Sold" = 10,
-                                                                                          "Total Sold" = totalSold2year,
-                                                                                          "Price" = NC2yr[futuresMarketRow]))
-            }
-          }
         }
       }
-    }
-  }
-  
-  
-  if(is.null(cropYear1) || !is.null(cropYear1)){
-    for(row in 1:nrow(marketingYear)) {
+      
       #check if the day is a trigger date and if the sale was already actualized in the multiyear sales
-      if(marketingYear$Date[row] %in% triggers$Date && !(marketingYear$Date[row] %in% trailingStopActualized$Date)) {
-        #find trigger row
-        tRow = which(marketingYear$Date[row] == triggers$Date)
-        #check if preharvest
-        if(triggers$Date[tRow] %within% intervalPre) {
-          #check if sale was made in last 7 days. min() makes sure the closest day is being checked. This is intergral for MY sales
-          if(nrow(trailingStopActualized) == 0 || min(abs(difftime(triggers$Date[tRow], trailingStopActualized$Date))) >= 7) {
-            #if < 50% sold preharvest
-            if(totalSold < totalSoldMax) {
-              #check if this was the first sale. If so, then there wont be any old percentlies to check
-              if(dim(trailingStopActualized)[1] != 0) {
-                #check if trigger date is in a restricted interval. Also check Ten Day high because they are unrestricted.
-                if(triggers$Date[tRow] %within% interval1 && triggers$Type[tRow] != "Ten Day High" && triggers$Type[tRow] != "All Time High" && triggers$Type[tRow] != "Seasonal") {
-                  tempRows = NA
-                  #create a list to get the actualized sales rows within an interval. This will be used to ensure 1 sale per percentile
-                  tempRows = which(trailingStopActualized$Date %within% interval1 & trailingStopActualized$Type == "Trailing Stop")
-                  #check if a sale was made in that percentile
-                  if(!(triggers$Previous.Percentile[tRow] %in% trailingStopActualized$Previous.Percentile[tempRows])) {
+      if(marketingYear$Date[row] %in% triggers$Date){
+        if(!(marketingYear$Date[row] %in% trailingStopActualized$Date)) {
+          #find trigger row
+          tRow = which(marketingYear$Date[row] == triggers$Date)
+          #check if preharvest
+          if(triggers$Date[tRow] %within% intervalPre) {
+            #check if sale was made in last 7 days. min() makes sure the closest day is being checked. This is intergral for MY sales
+            if(nrow(trailingStopActualized) == 0 || min(abs(difftime(triggers$Date[tRow], trailingStopActualized$Date))) >= 7) {
+              #if < 50% sold preharvest
+              if(totalSold < totalSoldMax) {
+                #check if this was the first sale. If so, then there wont be any old percentlies to check
+                if(dim(trailingStopActualized)[1] != 0) {
+                  #check if trigger date is in a restricted interval. Also check Ten Day high because they are unrestricted.
+                  if(triggers$Date[tRow] %within% interval1 && triggers$Type[tRow] != "Ten Day High" && triggers$Type[tRow] != "All Time High" && triggers$Type[tRow] != "Seasonal") {
+                    tempRows = NA
+                    #create a list to get the actualized sales rows within an interval. This will be used to ensure 1 sale per percentile
+                    tempRows = which(trailingStopActualized$Date %within% interval1 & trailingStopActualized$Type == "Trailing Stop")
+                    #check if a sale was made in that percentile
+                    if(!(triggers$Previous.Percentile[tRow] %in% trailingStopActualized$Previous.Percentile[tempRows])) {
+                      #TS, ATH, TDH at 10% increments
+                      totalSold = totalSold + 10
+                      if (MY == TRUE && totalSold > tail(trailingStopActualized$Total.Sold, 1)){
+                        trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
+                                                                                          "Previous Percentile" = triggers$Previous.Percentile[tRow],
+                                                                                          "Percentile" = triggers$Percentile[tRow],
+                                                                                          "Type" = triggers$Type[tRow],
+                                                                                          "Percent Sold" = 10,
+                                                                                          "Total Sold" = totalSold,
+                                                                                          "Price" = marketingYear$`Price`[row]))
+                        trailingStopActualized = arrange(trailingStopActualized, Date)
+                        percentSold = 0
+                        for (i in 1:nrow(trailingStopActualized)){
+                          trailingStopActualized$Total.Sold[i] = percentSold + trailingStopActualized$Percent.Sold[i]
+                          percentSold = trailingStopActualized$Total.Sold[i]
+                        }
+                      }
+                      
+                      else{
+                        trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
+                                                                                          "Previous Percentile" = triggers$Previous.Percentile[tRow],
+                                                                                          "Percentile" = triggers$Percentile[tRow],
+                                                                                          "Type" = triggers$Type[tRow],
+                                                                                          "Percent Sold" = 10,
+                                                                                          "Total Sold" = totalSold,
+                                                                                          "Price" = marketingYear$`Price`[row]))
+                        trailingStopActualized = arrange(trailingStopActualized, Date)
+                      }
+                    }
+                  }
+                  
+                  else {
+                    #if trigger date is in an unrestricted interval or ATH/TDH we can just make the sale
                     #TS, ATH, TDH at 10% increments
                     totalSold = totalSold + 10
                     if (MY == TRUE && totalSold > tail(trailingStopActualized$Total.Sold, 1)){
@@ -235,7 +270,8 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                         trailingStopActualized$Total.Sold[i] = percentSold + trailingStopActualized$Percent.Sold[i]
                         percentSold = trailingStopActualized$Total.Sold[i]
                       }
-                    }
+                    } 
+                    
                     else{
                       trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                         "Previous Percentile" = triggers$Previous.Percentile[tRow],
@@ -245,46 +281,150 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                                                                                         "Total Sold" = totalSold,
                                                                                         "Price" = marketingYear$`Price`[row]))
                       trailingStopActualized = arrange(trailingStopActualized, Date)
-                    }
+                    }                  
                   }
-                }
-                #if trigger date is in an unrestricted interval or ATH/TDH we can just make the sale
+                } 
+                
                 else {
+                  #if trigger is the first one we can just make the sale
                   #TS, ATH, TDH at 10% increments
                   totalSold = totalSold + 10
-                  if (MY == TRUE && totalSold > tail(trailingStopActualized$Total.Sold, 1)){
-                    trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
-                                                                                      "Previous Percentile" = triggers$Previous.Percentile[tRow],
-                                                                                      "Percentile" = triggers$Percentile[tRow],
-                                                                                      "Type" = triggers$Type[tRow],
-                                                                                      "Percent Sold" = 10,
-                                                                                      "Total Sold" = totalSold,
-                                                                                      "Price" = marketingYear$`Price`[row]))
-                    trailingStopActualized = arrange(trailingStopActualized, Date)
-                    percentSold = 0
-                    for (i in 1:nrow(trailingStopActualized)){
-                      trailingStopActualized$Total.Sold[i] = percentSold + trailingStopActualized$Percent.Sold[i]
-                      percentSold = trailingStopActualized$Total.Sold[i]
-                    }
-                  }
-                  else{
-                    trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
-                                                                                      "Previous Percentile" = triggers$Previous.Percentile[tRow],
-                                                                                      "Percentile" = triggers$Percentile[tRow],
-                                                                                      "Type" = triggers$Type[tRow],
-                                                                                      "Percent Sold" = 10,
-                                                                                      "Total Sold" = totalSold,
-                                                                                      "Price" = marketingYear$`Price`[row]))
-                    trailingStopActualized = arrange(trailingStopActualized, Date)
-                  }                  
+                  trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
+                                                                                    "Previous Percentile" = triggers$Previous.Percentile[tRow],
+                                                                                    "Percentile" = triggers$Percentile[tRow],
+                                                                                    "Type" = triggers$Type[tRow],
+                                                                                    "Percent Sold" = 10,
+                                                                                    "Total Sold" = totalSold,
+                                                                                    "Price" = marketingYear$`Price`[row]))
+                  trailingStopActualized = arrange(trailingStopActualized, Date)
                 }
               }
-              #if trigger is the first one we can just make the sale
+            } #check if postharvest
+          } 
+          
+          else if(triggers$Date[tRow] %within% intervalPost) {
+            #if > 0% of crop remains
+            if(totalSold < 100) {
+              #Check if any sales have been made yet
+              if(nrow(trailingStopActualized) != 0) {
+                #if day not within 7 days of last sale
+                if(abs(difftime(triggers$Date[tRow], trailingStopActualized$Date[nrow(trailingStopActualized)])) >= 7){
+                  #if >=10% of crop remains
+                  if(totalSold <= 90) {
+                    #check if this percentile has had a sale yet. Also Check Ten Day high because they are unrestricted
+                    if(triggers$Date[tRow] %within% interval3 && triggers$Type[tRow] != "Ten Day High" && triggers$Type[tRow] != "All Time High" && triggers$Type[tRow] != "Seasonal" && triggers$Type[tRow] != "End of Year Trailing Stop") {
+                      
+                      tempRows = NA
+                      #create a list to get the actualized sales rows within an interval. This will be used to ensure 1 sale per percentile
+                      tempRows = which(trailingStopActualized$Date %within% interval3 & trailingStopActualized$Type == "Trailing Stop")
+                      #check if a sale was made in that percentile. 
+                      if(!(triggers$Previous.Percentile[tRow] %in% trailingStopActualized$Previous.Percentile[tempRows])) {
+                        #TS, ATH, TDH at 10% increments
+                        totalSold = totalSold + 10
+                        trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
+                                                                                          "Previous Percentile" = triggers$Previous.Percentile[tRow],
+                                                                                          "Percentile" = triggers$Percentile[tRow],
+                                                                                          "Type" = triggers$Type[tRow],
+                                                                                          "Percent Sold" = 10,
+                                                                                          "Total Sold" = totalSold,
+                                                                                          "Price" = marketingYear$`Price`[row]))
+                        trailingStopActualized = arrange(trailingStopActualized, Date)
+                      }
+                    } 
+                    
+                    else {
+                      #if trigger date is in an unrestricted interval or ATH/TDH we can just make the sale
+                      #TS, ATH, TDH at 10% increments
+                      totalSold = totalSold + 10
+                      trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow],
+                                                                                        "Previous Percentile" = triggers$Previous.Percentile[tRow],
+                                                                                        "Percentile" = triggers$Percentile[tRow],
+                                                                                        "Type" = triggers$Type[tRow],
+                                                                                        "Percent Sold" = 10,
+                                                                                        "Total Sold" = totalSold,
+                                                                                        "Price" = marketingYear$`Price`[row]))
+                      trailingStopActualized = arrange(trailingStopActualized, Date)
+                    }
+                  }
+                } 
+                
+                else if (month(marketingYear$Date[row]) >= 6){
+                  if (triggers$Type[tRow] == "End of Year Trailing Stop"){
+                    if (triggers$Percentile[tRow] >= 60){
+                      if(totalSold <= 90){
+                        percentSold = (100 - totalSold)
+                        totalSold = totalSold + percentSold
+                        trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow],
+                                                                                          "Previous Percentile" = triggers$Previous.Percentile[tRow],
+                                                                                          "Percentile" = triggers$Percentile[tRow],
+                                                                                          "Type" = triggers$Type[tRow],
+                                                                                          "Percent Sold" = percentSold,
+                                                                                          "Total Sold" = totalSold,
+                                                                                          "Price" = marketingYear$`Price`[row]))
+                        trailingStopActualized = arrange(trailingStopActualized, Date)
+                      }
+                      
+                      else if (marketingYear$Percentile[row] == 90 && marketingYear$Percentile[row - 1] == 95){
+                        percentSold = (100 - totalSold) / 4
+                        totalSold = totalSold + percentSold
+                        trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow],
+                                                                                          "Previous Percentile" = triggers$Previous.Percentile[tRow],
+                                                                                          "Percentile" = triggers$Percentile[tRow],
+                                                                                          "Type" = triggers$Type[tRow],
+                                                                                          "Percent Sold" = percentSold,
+                                                                                          "Total Sold" = totalSold,
+                                                                                          "Price" = marketingYear$`Price`[row]))
+                        trailingStopActualized = arrange(trailingStopActualized, Date)
+                      } 
+                      
+                      else if (marketingYear$Percentile[row] == 80 && marketingYear$Percentile[row - 1] == 90){
+                        percentSold = (100 - totalSold) / 3
+                        totalSold = totalSold + percentSold
+                        trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow],
+                                                                                          "Previous Percentile" = triggers$Previous.Percentile[tRow],
+                                                                                          "Percentile" = triggers$Percentile[tRow],
+                                                                                          "Type" = triggers$Type[tRow],
+                                                                                          "Percent Sold" = percentSold,
+                                                                                          "Total Sold" = totalSold,
+                                                                                          "Price" = marketingYear$`Price`[row]))
+                        trailingStopActualized = arrange(trailingStopActualized, Date)
+                      } 
+                      
+                      else if (marketingYear$Percentile[row] == 70 && marketingYear$Percentile[row - 1] == 80){
+                        percentSold = (100 - totalSold) / 2
+                        totalSold = totalSold + percentSold
+                        trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
+                                                                                          "Previous Percentile" = triggers$Previous.Percentile[tRow],
+                                                                                          "Percentile" = triggers$Percentile[tRow],
+                                                                                          "Type" = triggers$Type[tRow],
+                                                                                          "Percent Sold" = percentSold,
+                                                                                          "Total Sold" = totalSold,
+                                                                                          "Price" = marketingYear$`Price`[row]))
+                        trailingStopActualized = arrange(trailingStopActualized, Date)
+                      }
+                      
+                      else if (marketingYear$Percentile[row] == 60 && marketingYear$Percentile[row - 1] == 70){
+                        percentSold = (100 - totalSold) / 1
+                        totalSold = totalSold + percentSold
+                        trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow],
+                                                                                          "Previous Percentile" = triggers$Previous.Percentile[tRow],
+                                                                                          "Percentile" = triggers$Percentile[tRow],
+                                                                                          "Type" = triggers$Type[tRow],
+                                                                                          "Percent Sold" = percentSold,
+                                                                                          "Total Sold" = totalSold,
+                                                                                          "Price" = marketingYear$`Price`[row]))
+                        trailingStopActualized = arrange(trailingStopActualized, Date)
+                      }
+                    }
+                  }
+                }
+              } 
+              
               else {
+                #if trigger is the first one we can just make the sale
                 #TS, ATH, TDH at 10% increments
                 totalSold = totalSold + 10
                 trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
-                                                                                  "Previous Percentile" = triggers$Previous.Percentile[tRow],
                                                                                   "Percentile" = triggers$Percentile[tRow],
                                                                                   "Type" = triggers$Type[tRow],
                                                                                   "Percent Sold" = 10,
@@ -295,129 +435,11 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
             }
           }
         }
-        
-        #check if postharvest
-        else if(triggers$Date[tRow] %within% intervalPost) {
-          #if > 0% of crop remains
-          if(totalSold < 100) {
-            #Check if any sales have been made yet
-            if(nrow(trailingStopActualized) != 0) {
-              #if day not within 7 days of last sale
-              if(abs(difftime(triggers$Date[tRow], trailingStopActualized$Date[nrow(trailingStopActualized)])) >= 7){
-                #if >=10% of crop remains
-                if(totalSold <= 90) {
-                  #check if this percentile has had a sale yet. Also Check Ten Day high because they are unrestricted
-                  if(triggers$Date[tRow] %within% interval3 && triggers$Type[tRow] != "Ten Day High" && triggers$Type[tRow] != "All Time High" && triggers$Type[tRow] != "Seasonal" && triggers$Type[tRow] != "End of Year Trailing Stop") {
-                    
-                    tempRows = NA
-                    #create a list to get the actualized sales rows within an interval. This will be used to ensure 1 sale per percentile
-                    tempRows = which(trailingStopActualized$Date %within% interval3 & trailingStopActualized$Type == "Trailing Stop")
-                    #check if a sale was made in that percentile. 
-                    if(!(triggers$Previous.Percentile[tRow] %in% trailingStopActualized$Previous.Percentile[tempRows])) {
-                      #TS, ATH, TDH at 10% increments
-                      totalSold = totalSold + 10
-                      trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
-                                                                                        "Previous Percentile" = triggers$Previous.Percentile[tRow],
-                                                                                        "Percentile" = triggers$Percentile[tRow],
-                                                                                        "Type" = triggers$Type[tRow],
-                                                                                        "Percent Sold" = 10,
-                                                                                        "Total Sold" = totalSold,
-                                                                                        "Price" = marketingYear$`Price`[row]))
-                      trailingStopActualized = arrange(trailingStopActualized, Date)
-                    }
-                  }
-                  #if trigger date is in an unrestricted interval or ATH/TDH we can just make the sale
-                  else {
-                    #TS, ATH, TDH at 10% increments
-                    totalSold = totalSold + 10
-                    trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow],
-                                                                                      "Previous Percentile" = triggers$Previous.Percentile[tRow],
-                                                                                      "Percentile" = triggers$Percentile[tRow],
-                                                                                      "Type" = triggers$Type[tRow],
-                                                                                      "Percent Sold" = 10,
-                                                                                      "Total Sold" = totalSold,
-                                                                                      "Price" = marketingYear$`Price`[row]))
-                    trailingStopActualized = arrange(trailingStopActualized, Date)
-                  }
-                }
-              }
-              
-              else if (month(marketingYear$Date[row]) == 6){
-                if (triggers$Type[tRow] == "End of Year Trailing Stop"){
-                  if (triggers$Percentile[tRow] >= 60){
-                    if (marketingYear$Percentile[row] == 90 && marketingYear$Percentile[row - 1] == 95){
-                      percentSold = (100 - totalSold) / 4
-                      totalSold = totalSold + percentSold
-                      trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow],
-                                                                                        "Previous Percentile" = triggers$Previous.Percentile[tRow],
-                                                                                        "Percentile" = triggers$Percentile[tRow],
-                                                                                        "Type" = triggers$Type[tRow],
-                                                                                        "Percent Sold" = percentSold,
-                                                                                        "Total Sold" = totalSold,
-                                                                                        "Price" = marketingYear$`Price`[row]))
-                      trailingStopActualized = arrange(trailingStopActualized, Date)
-                    }
-                    
-                    else if (marketingYear$Percentile[row] == 80 && marketingYear$Percentile[row - 1] == 90){
-                      percentSold = (100 - totalSold) / 3
-                      totalSold = totalSold + percentSold
-                      trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow],
-                                                                                        "Previous Percentile" = triggers$Previous.Percentile[tRow],
-                                                                                        "Percentile" = triggers$Percentile[tRow],
-                                                                                        "Type" = triggers$Type[tRow],
-                                                                                        "Percent Sold" = percentSold,
-                                                                                        "Total Sold" = totalSold,
-                                                                                        "Price" = marketingYear$`Price`[row]))
-                      trailingStopActualized = arrange(trailingStopActualized, Date)
-                    }
-                    
-                    else if (marketingYear$Percentile[row] == 70 && marketingYear$Percentile[row - 1] == 80){
-                      percentSold = (100 - totalSold) / 2
-                      totalSold = totalSold + percentSold
-                      trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
-                                                                                        "Previous Percentile" = triggers$Previous.Percentile[tRow],
-                                                                                        "Percentile" = triggers$Percentile[tRow],
-                                                                                        "Type" = triggers$Type[tRow],
-                                                                                        "Percent Sold" = percentSold,
-                                                                                        "Total Sold" = totalSold,
-                                                                                        "Price" = marketingYear$`Price`[row]))
-                      trailingStopActualized = arrange(trailingStopActualized, Date)
-                    }
-                    
-                    else if (marketingYear$Percentile[row] == 60 && marketingYear$Percentile[row - 1] == 70){
-                      percentSold = (100 - totalSold) / 1
-                      totalSold = totalSold + percentSold
-                      trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow],
-                                                                                        "Previous Percentile" = triggers$Previous.Percentile[tRow],
-                                                                                        "Percentile" = triggers$Percentile[tRow],
-                                                                                        "Type" = triggers$Type[tRow],
-                                                                                        "Percent Sold" = percentSold,
-                                                                                        "Total Sold" = totalSold,
-                                                                                        "Price" = marketingYear$`Price`[row]))
-                      trailingStopActualized = arrange(trailingStopActualized, Date)
-                    }
-                  }
-                }
-              }
-            }
-            #if trigger is the first one we can just make the sale
-            else {
-              #TS, ATH, TDH at 10% increments
-              totalSold = totalSold + 10
-              trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
-                                                                                "Percentile" = triggers$Percentile[tRow],
-                                                                                "Type" = triggers$Type[tRow],
-                                                                                "Percent Sold" = 10,
-                                                                                "Total Sold" = totalSold,
-                                                                                "Price" = marketingYear$`Price`[row]))
-              trailingStopActualized = arrange(trailingStopActualized, Date)
-            }
-          }
-        }
-      }
-      # SEASONAL SALES
-      # else if we sold 60% of crop or less
-      else if(totalSold > 0) {
+      } 
+      
+      else if(totalSold > 0 && !(marketingYear$Date[row] %in% trailingStopActualized$Date)) {
+        # SEASONAL SALES
+        # else if we sold 60% of crop or less
         # if price < 70 percentile
         if(marketingYear$Percentile[row] < 70) {
           # if day not within 7 days of last sale
@@ -441,7 +463,8 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                                                                                       "Price" = marketingYear$`Price`[row]))
                     trailingStopActualized = arrange(trailingStopActualized, Date)
                   }
-                }
+                } 
+                
                 else if(day == 20 || day == 21 || day == 22 || day == 23) {
                   if (totalSold <= 70) {
                     # seasonal sales must be at least 10%
@@ -458,6 +481,7 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                   }
                 }
               }
+              
               else if(month(marketingYear$Date[row]) == 6 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
                 # if the day is within a seasonal sale date
                 day = day(marketingYear$Date[row])
@@ -476,6 +500,7 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                     trailingStopActualized = arrange(trailingStopActualized, Date)
                   }
                 }
+                
                 else if(day == 20 || day == 21 || day == 22 || day == 23) {
                   if(totalSold <= 90) {
                     #seasonal sales must be at least 10%
@@ -514,6 +539,7 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                     trailingStopActualized = arrange(trailingStopActualized, Date)
                   }
                 }
+                
                 else if(day == 20 || day == 21 || day == 22 || day == 23) {
                   if (totalSold <= 70) {
                     # seasonal sales must be at least 10%
@@ -530,6 +556,7 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                   }
                 }
               }
+              
               else if(month(marketingYear$Date[row]) == 7 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
                 # if the day is within a seasonal sale date
                 day = day(marketingYear$Date[row])
@@ -548,6 +575,7 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                     trailingStopActualized = arrange(trailingStopActualized, Date)
                   }
                 }
+                
                 else if(day == 20 || day == 21 || day == 22 || day == 23) {
                   if(totalSold <= 90) {
                     #seasonal sales must be at least 10%
@@ -578,6 +606,7 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
       cropYear2[['TS Actualized MY']] = trailingStopActualized2year
       actualizedList = list(cropYear, cropYear1, cropYear2)
     }
+    
     else{
       actualizedList = cropYear
     }
@@ -618,7 +647,7 @@ if (type == "soybean"){
   for(i in 1:length(Soybean_CropYearObjects)){
     Soybean_CropYearObjects[[i]] = isActualizedTS(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = FALSE)
   }
-
+  
   # Multi-year loading
   if("Marketing Year MY" %in% names(Soybean_CropYearObjects[[1]])){
     for(i in 1:(length(Soybean_CropYearObjects) - 2)) {
@@ -628,7 +657,7 @@ if (type == "soybean"){
       Soybean_CropYearObjects[[i + 1]] = temp[[1]][[2]]
       Soybean_CropYearObjects[[i + 2]] = temp[[1]][[3]]
     }
-
+    
     for(i in (length(Soybean_CropYearObjects) - 1):length(Soybean_CropYearObjects)){
       Soybean_CropYearObjects[[i]] = isActualizedTS(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = TRUE)
     }
