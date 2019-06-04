@@ -2,3 +2,6 @@ TrailingStopActaulized: 10% Sales, no margin for days
 TrailingStopActualizedV2: 20% Sales at 90th percentile, no margin for days
 TrailingStopActualizedV3: 20% Sales at 90th percentile, 3 day margin after breaking percentile
 TrailingStopActualizedV4: 20% Sales at 90th percentile, 5% drop from baselines
+
+
+
