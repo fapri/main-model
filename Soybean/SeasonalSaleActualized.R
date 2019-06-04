@@ -106,22 +106,34 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2, futuresMarket,MY){
               if(multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High"){
                 if(totalSold1year < 60){
                   totalSold1year = totalSold1year + 10
+                  if(type == "soybean"){
+                    price = futuresMarket$NovNC1yr[futuresMarketRow]
+                  }
+                  if(type == "corn"){
+                    price = futuresMarket$DecNC1yr[futuresMarketRow]
+                  }
                   seasonalSaleActualized1year = rbind(seasonalSaleActualized1year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
                                                                                               "Percentile" = multiyearTriggers$Percentile[mytRow],
                                                                                               "Type" = "Multi-Year",
                                                                                               "Percent Sold" = 10,
                                                                                               "Total Sold" = totalSold1year,
-                                                                                              "Price" = futuresMarket$NovNC1yr[futuresMarketRow]))
+                                                                                              "Price" = price))
                   
                   if(multiyearTriggers$Date[mytRow] %within% interval1 || multiyearTriggers$Date[mytRow] %within% interval2){
                     tRow = which(marketingYear$Date[row] == triggers$Date)
                     totalSold = totalSold + 10
+                    if(type == "soybean"){
+                      price = futuresMarket$NovNC[futuresMarketRow]
+                    }
+                    if(type == "corn"){
+                      price = futuresMarket$DecNC[futuresMarketRow]
+                    }
                     seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                       "Percentile" = triggers$Percentile[tRow],
                                                                                       "Type" = triggers$Type[tRow],
                                                                                       "Percent Sold" = 10,
                                                                                       "Total Sold" = totalSold,
-                                                                                      "Price" = futuresMarket$NovNC[futuresMarketRow]))
+                                                                                      "Price" = price))
                   }
                 }
               }
@@ -130,22 +142,34 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2, futuresMarket,MY){
           else{            
             if(multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High"){
               totalSold1year = totalSold1year + 10
+              if(type == "soybean"){
+                price = futuresMarket$NovNC1yr[futuresMarketRow]
+              }
+              if(type == "corn"){
+                price = futuresMarket$DecNC1yr[futuresMarketRow]
+              }
               seasonalSaleActualized1year = rbind(seasonalSaleActualized1year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
                                                                                           "Percentile" = multiyearTriggers$Percentile[mytRow],
                                                                                           "Type" = "Multi-Year",
                                                                                           "Percent Sold" = 10,
                                                                                           "Total Sold" = totalSold1year,
-                                                                                          "Price" = futuresMarket$NovNC1yr[futuresMarketRow]))
+                                                                                          "Price" = price))
               
               if(multiyearTriggers$Date[mytRow] %within% interval1 || multiyearTriggers$Date[mytRow] %within% interval2){
                 tRow = which(marketingYear$Date[row] == triggers$Date)
                 totalSold = totalSold + 10
+                if(type == "soybean"){
+                  price = futuresMarket$NovNC[futuresMarketRow]
+                }
+                if(type == "corn"){
+                  price = futuresMarket$DecNC[futuresMarketRow]
+                }
                 seasonalSaleActualized = rbind(seasonalSaleActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                   "Percentile" = triggers$Percentile[tRow],
                                                                                   "Type" = triggers$Type[tRow],
                                                                                   "Percent Sold" = 10,
                                                                                   "Total Sold" = totalSold,
-                                                                                  "Price" = futuresMarket$NovNC[futuresMarketRow]))
+                                                                                  "Price" = price))
               }
             }  
           }
@@ -165,12 +189,18 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2, futuresMarket,MY){
               if(multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High"){
                 if(totalSold2year < 60){
                   totalSold2year = totalSold2year + 10
+                  if(type == "soybean"){
+                    price = futuresMarket$NovNC2yr[futuresMarketRow]
+                  }
+                  if(type == "corn"){
+                    price = futuresMarket$DecNC2yr[futuresMarketRow]
+                  }
                   seasonalSaleActualized2year = rbind(seasonalSaleActualized2year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
                                                                                               "Percentile" = multiyearTriggers$Percentile[mytRow],
                                                                                               "Type" = "Multi-Year",
                                                                                               "Percent Sold" = 10,
                                                                                               "Total Sold" = totalSold2year,
-                                                                                              "Price" = futuresMarket$NovNC2yr[futuresMarketRow]))
+                                                                                              "Price" = price))
                 }
               }
             }
@@ -178,12 +208,18 @@ isActualizedSSMY = function(cropYear, cropYear1, cropYear2, futuresMarket,MY){
           else{
             if(multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High"){
               totalSold2year = totalSold2year + 10
+              if(type == "soybean"){
+                price = futuresMarket$NovNC2yr[futuresMarketRow]
+              }
+              if(type == "corn"){
+                price = futuresMarket$DecNC2yr[futuresMarketRow]
+              }
               seasonalSaleActualized2year = rbind(seasonalSaleActualized2year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
                                                                                           "Percentile" = multiyearTriggers$Percentile[mytRow],
                                                                                           "Type" = "Multi-Year",
                                                                                           "Percent Sold" = 10,
                                                                                           "Total Sold" = totalSold2year,
-                                                                                          "Price" = futuresMarket$NovNC2yr[futuresMarketRow]))
+                                                                                          "Price" = price))
             }
           }
         }
