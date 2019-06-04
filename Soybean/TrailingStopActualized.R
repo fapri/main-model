@@ -35,32 +35,36 @@ getPercentSold = function(actualizedSales){
   }
 }
 
-increasePercentSold = function(triggerType, percentile, total){
-  if(triggerType == "Trailing Stop" && percentile == "90" && total <= "80"){
-    return(20)
-  }
-  else{
-    return(10)
-  }
-}
-
-# threeDayMinimum = function(triggerType, p, p1, p2, p3){
-#   if(triggerType == "Trailing Stop"){
-#     if(p == p1 & p == p2 & p == p3){
-#       return(TRUE)
-#     }
-#     else{
-#       return(FALSE)
-#     }
-#   } else{
-#     return(TRUE)
+# increasePercentSold = function(triggerType, percentile, total){
+#   if(triggerType == "Trailing Stop" && percentile == "90" && total <= "80"){
+#     return(20)
+#   }
+#   else{
+#     return(10)
 #   }
 # }
 
+increasePercentSold = function(triggerType, percentile, total){
+    return(10)
+}
 
 threeDayMinimum = function(triggerType, p, p1, p2, p3){
+  if(triggerType == "Trailing Stop"){
+    if(p == p1 & p == p2 & p == p3){
       return(TRUE)
+    }
+    else{
+      return(FALSE)
+    }
+  } else{
+    return(TRUE)
+  }
 }
+
+
+# threeDayMinimum = function(triggerType, p, p1, p2, p3){
+#       return(TRUE)
+# }
 
 
 
