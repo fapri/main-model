@@ -238,6 +238,56 @@ ui <- shinyUI(
                                      )
                                    )
                                  )
+                        ),
+                        # MODEL VERSION 3
+                        tabPanel("Base Model V3",
+                                 fluidPage(
+                                   fluidRow(
+                                     plotOutput('TSdistPlotV3'),
+                                     style = "padding-bottom:50px"
+                                   ),
+                                   
+                                   tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                                   
+                                   sidebarLayout(
+                                     sidebarPanel(
+                                       fluidRow(selectInput('yearTSV3','Crop Year', choices = u.n, width = "100%"),
+                                                column(12, dataTableOutput('TSstorageTablesV3')),
+                                                tags$style(type="text/css", '#TSstorageTablesV3 tfoot {display:none;}'))
+                                     ),
+                                     mainPanel(
+                                       fluidRow(
+                                         dataTableOutput('TSsummaryTablesV3'),
+                                         style = "padding-bottom:100px")
+                                       
+                                     )
+                                   )
+                                 )
+                        ),
+                        tabPanel("Multi-Year V3",
+                                 fluidPage(
+                                   fluidRow(
+                                     plotOutput('TSMYdistPlotV3'),
+                                     style = "padding-bottom:50px"
+                                   ),
+                                   
+                                   tags$style(type="text/css", '#TSMYsummaryTablesV3 tfoot {display:none;}'),
+                                   
+                                   sidebarLayout(
+                                     sidebarPanel(
+                                       fluidRow(selectInput('yearTSMYV3','Crop Year', choices = u.n, width = "100%"),
+                                                column(12, dataTableOutput('TSMYstorageTablesV3')),
+                                                tags$style(type="text/css", '#TSMYstorageTablesV3 tfoot {display:none;}'))
+                                       
+                                     ),
+                                     mainPanel(
+                                       fluidRow(
+                                         dataTableOutput('TSMYsummaryTablesV3'),
+                                         style = "padding-bottom:100px")
+                                       
+                                     )
+                                   )
+                                 )
                         )
              ),
              navbarMenu("Seasonal Sales",
@@ -1250,6 +1300,291 @@ server <- shinyServer(function(input,output,session){
   # Trailing Stop VERSION 3
   #################################################################################################
   
+  
+  output$TSdistPlotV3 <- renderPlot({
+    if (input$yearTSV3 == "2008-09"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[1]]$TSPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[1]]$TSPlot
+      }
+    }
+    
+    else if (input$yearTSV3 == "2009-10"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[2]]$TSPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[2]]$TSPlot
+      }
+    }
+    
+    else if (input$yearTSV3 == "2010-11"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[3]]$TSPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[3]]$TSPlot
+      }
+    }
+    
+    else if (input$yearTSV3 == "2011-12"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[4]]$TSPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[4]]$TSPlot
+      }
+    }
+    
+    else if (input$yearTSV3 == "2012-13"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[5]]$TSPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[5]]$TSPlot
+      }
+    }
+    
+    else if (input$yearTSV3 == "2013-14"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[6]]$TSPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[6]]$TSPlot
+      }
+    }
+    
+    else if (input$yearTSV3 == "2014-15"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[7]]$TSPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[7]]$TSPlot
+      }
+    }
+    
+    else if (input$yearTSV3 == "2015-16"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[8]]$TSPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[8]]$TSPlot
+      }
+    }
+    
+    else if (input$yearTSV3 == "2016-17"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[9]]$TSPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[9]]$TSPlot
+      }
+    }
+  })
+  
+  output$TSstorageTablesV3 = renderDataTable({
+    if (input$yearTSV3 == "2008-09"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[1]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[1]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSV3 == "2009-10"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[2]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[2]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSV3 == "2010-11"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[3]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[3]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSV3 == "2011-12"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[4]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[4]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSV3 == "2012-13"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[5]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[5]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSV3 == "2013-14"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[6]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[6]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSV3 == "2014-15"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[7]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[7]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSV3 == "2015-16"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[8]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[8]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSV3 == "2016-17"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[9]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[9]]$`TS Storage`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+  })
+  
+  output$TSsummaryTablesV3 = renderDataTable({
+    if (input$yearTSV3 == "2008-09") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[1]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[1]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSV3 == "2009-10") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[2]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[2]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSV3 == "2010-11") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[3]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[3]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSV3 == "2011-12") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[4]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[4]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSV3 == "2012-13") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[5]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[5]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSV3 == "2013-14") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[6]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[6]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSV3 == "2014-15") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[7]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[7]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSV3 == "2015-16") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[8]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[8]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSV3 == "2016-17") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[9]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[9]]$`TS Sales Summary`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+  })
   
   output$TSfinalPriceTableV3 = renderDataTable({
     if (input$cropType == "corn"){
@@ -2472,9 +2807,294 @@ server <- shinyServer(function(input,output,session){
   
   
   #################################################################################################
-  # Trailing Stop With Multi Year VERSION 2
+  # Trailing Stop With Multi Year VERSION 3
   #################################################################################################
   
+  
+  output$TSMYdistPlotV3 <- renderPlot({
+    if (input$yearTSMYV3 == "2008-09"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[1]]$TSMYPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[1]]$TSMYPlot
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2009-10"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[2]]$TSMYPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[2]]$TSMYPlot
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2010-11"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[3]]$TSMYPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[3]]$TSMYPlot
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2011-12"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[4]]$TSMYPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[4]]$TSMYPlot
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2012-13"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[5]]$TSMYPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[5]]$TSMYPlot
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2013-14"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[6]]$TSMYPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[6]]$TSMYPlot
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2014-15"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[7]]$TSMYPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[7]]$TSMYPlot
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2015-16"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[8]]$TSMYPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[8]]$TSMYPlot
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2016-17"){
+      if (input$cropType == "corn"){
+        Corn_CropYearObjects[[9]]$TSMYPlot
+      }
+      else if (input$cropType == "soybean"){
+        Soybean_CropYearObjectsV3[[9]]$TSMYPlot
+      }
+    }
+  })
+  
+  output$TSMYstorageTablesV3 = renderDataTable({
+    if (input$yearTSMYV3 == "2008-09"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[1]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[1]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2009-10"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[2]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[2]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2010-11"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[3]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[3]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2011-12"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[4]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[4]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2012-13"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[5]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[5]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2013-14"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[6]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[6]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2014-15"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[7]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[7]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2015-16"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[8]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[8]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2016-17"){
+      if(input$cropType == "corn") {
+        as.datatable(getTables(Corn_CropYearObjects[[9]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if(input$cropType == "soybean") {
+        as.datatable(getTables(Soybean_CropYearObjectsV3[[9]]$`TS Storage MY`), rownames = FALSE,
+                     caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+  })
+  
+  output$TSMYsummaryTablesV3 = renderDataTable({
+    if (input$yearTSMYV3 == "2008-09") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[1]]$`TS Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[1]]$`TS Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2009-10") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[2]]$`TS Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[2]]$`TS Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2010-11") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[3]]$`TS Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[3]]$`TS Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2011-12") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[4]]$`TS Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[4]]$`TS Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2012-13") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[5]]$`TS Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[5]]$`TS Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2013-14") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[6]]$`TS Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[6]]$`TS Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2014-15") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[7]]$`TS Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[7]]$`TS Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2015-16") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[8]]$`TS Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[8]]$`TS Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+    
+    else if (input$yearTSMYV3 == "2016-17") {
+      if (input$cropType == "corn"){
+        as.datatable(getSalesTable(Corn_CropYearObjects[[9]]$`PO Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+      else if (input$cropType == "soybean"){
+        as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[9]]$`PO Sales Summary MY`), rownames = FALSE,
+                     caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      }
+    }
+  })
   
   output$TSMYfinalPriceTableV3 = renderDataTable({
     if (input$cropType == "corn"){
