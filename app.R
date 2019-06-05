@@ -19,6 +19,11 @@ Soybean_CropYearObjectsV2 = appObjectsSoybeanV2[[1]]
 Soybean_CropYearsV2 = appObjectsSoybeanV2[[2]]
 finalizedPriceObjectSoybeanV2 = appObjectsSoybeanV2[[3]]
 
+appObjectsSoybeanV3 = readRDS("appObjectsSoybeanV3.rds")
+Soybean_CropYearObjectsV3 = appObjectsSoybeanV3[[1]]
+Soybean_CropYearsV3 = appObjectsSoybeanV3[[2]]
+finalizedPriceObjectSoybeanV3 = appObjectsSoybeanV3[[3]]
+
 u.n <-  Corn_CropYears$CropYear
 names(u.n) <- u.n
 
@@ -299,35 +304,28 @@ ui <- shinyUI(
                             ".tables {align: center; width: 100px}"
                           )
                         ),
-                        # tags$div(class="title", titlePanel("Without Multi-Year Sales")),
-                        # splitLayout(cellWidths = c("33%", "33%", "33%"), dataTableOutput("finalPriceTable"), 
-                        #             dataTableOutput("TSfinalPriceTable"), dataTableOutput("SSfinalPriceTable")),
-                        # splitLayout(cellWidths = "33%", align="center", dataTableOutput("TSfinalPriceTableV2")),
-                        # tags$div(class="title", titlePanel("With Multi-Year Sales")),
-                        # splitLayout(cellWidths = c("33%", "33%", "33%"), dataTableOutput("POMYfinalPriceTable"), 
-                        #             dataTableOutput("TSMYfinalPriceTable"), dataTableOutput("SSMYfinalPriceTable")),
-                        # 
-                        # # tags$div(class="title", titlePanel("Without Multi-Year Sales")),
-                        # # splitLayout(dataTableOutput("TSfinalPriceTableV2"),
-                        # # tags$div(class="title", titlePanel("With Multi-Year Sales")),
-                        # splitLayout(cellWidths = "33%", align="center", dataTableOutput("TSMYfinalPriceTableV2"))
+                        tags$div(class="title", titlePanel("Without Multi-Year Sales")),
+                        splitLayout(cellWidths = c("33%", "33%", "33%"), dataTableOutput("finalPriceTable"),
+                                    dataTableOutput("TSfinalPriceTable"), dataTableOutput("SSfinalPriceTable")),
+                        splitLayout(cellWidths = "33%", align="center", dataTableOutput("TSfinalPriceTableV2"), dataTableOutput("TSfinalPriceTableV3")),
+                        tags$div(class="title", titlePanel("With Multi-Year Sales")),
+                        splitLayout(cellWidths = c("33%", "33%", "33%"), dataTableOutput("POMYfinalPriceTable"),
+                                    dataTableOutput("TSMYfinalPriceTable"), dataTableOutput("SSMYfinalPriceTable")),
+                        splitLayout(cellWidths = "33%", align="center", dataTableOutput("TSMYfinalPriceTableV2"), dataTableOutput("TSMYfinalPriceTableV3"))
                         
-                        
-                        fluidRow(
-                          #Change column(x, for desired width
-                          column(12,
-                                 tags$div(class="title", titlePanel("Without Multi-Year Sales")),
-                                 div(style = "display: inline-block; width: 33%;", dataTableOutput("finalPriceTable"), height=150, width=150),
-                                 div(style = "display: inline-block; width: 33%;", dataTableOutput("TSfinalPriceTable"), height=150, width=150),
-                                 div(style = "display: inline-block; width: 33%;", dataTableOutput("SSfinalPriceTable"), height=150, width=150),
-                                 tags$div(class = "table", dataTableOutput("TSfinalPriceTableV2")),
-                                 tags$div(class="title", titlePanel("With Multi-Year Sales")),
-                                 div(style = "display: inline-block; width: 33%;", dataTableOutput("POMYfinalPriceTable"), height=150, width=150),
-                                 div(style = "display: inline-block; width: 33%;", dataTableOutput("TSMYfinalPriceTable"), height=150, width=150),
-                                 div(style = "display: inline-block; width: 33%;", dataTableOutput("SSMYfinalPriceTable"), height=150, width=150),
-                                 div(style = "display: inline-block; width: 33%;", dataTableOutput("TSMYfinalPriceTableV2"), height=150, width=150)))
-                        
-                        
+                        # fluidRow(
+                        #   #Change column(x, for desired width
+                        #   column(12,
+                        #          tags$div(class="title", titlePanel("Without Multi-Year Sales")),
+                        #          div(style = "display: inline-block; width: 33%;", dataTableOutput("finalPriceTable"), height=150, width=150),
+                        #          div(style = "display: inline-block; width: 33%;", dataTableOutput("TSfinalPriceTable"), height=150, width=150),
+                        #          div(style = "display: inline-block; width: 33%;", dataTableOutput("SSfinalPriceTable"), height=150, width=150),
+                        #          tags$div(class = "table", dataTableOutput("TSfinalPriceTableV2")),
+                        #          tags$div(class="title", titlePanel("With Multi-Year Sales")),
+                        #          div(style = "display: inline-block; width: 33%;", dataTableOutput("POMYfinalPriceTable"), height=150, width=150),
+                        #          div(style = "display: inline-block; width: 33%;", dataTableOutput("TSMYfinalPriceTable"), height=150, width=150),
+                        #          div(style = "display: inline-block; width: 33%;", dataTableOutput("SSMYfinalPriceTable"), height=150, width=150),
+                        #          div(style = "display: inline-block; width: 33%;", dataTableOutput("TSMYfinalPriceTableV2"), height=150, width=150)))
                       )
              ),
              tabPanel("About Our Strategies",
@@ -946,6 +944,7 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  
   #################################################################################################
   # Trailing Stop VERSION 2
   #################################################################################################
@@ -1245,6 +1244,24 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Trailing Stop V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
+  
+  
+  #################################################################################################
+  # Trailing Stop VERSION 3
+  #################################################################################################
+  
+  
+  output$TSfinalPriceTableV3 = renderDataTable({
+    if (input$cropType == "corn"){
+      NULL
+    }
+    else if (input$cropType == "soybean"){
+      as.datatable(getTables(finalizedPriceObjectSoybeanV3$TSResultsTable), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
   
   
   #################################################################################################
@@ -2450,6 +2467,22 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "soybean"){
       as.datatable(getTables(finalizedPriceObjectSoybeanV2$TSResultsTableMY), rownames = FALSE,
                    caption = tags$caption("Trailing Stop V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Trailing Stop With Multi Year VERSION 2
+  #################################################################################################
+  
+  
+  output$TSMYfinalPriceTableV3 = renderDataTable({
+    if (input$cropType == "corn"){
+      NULL
+    }
+    else if (input$cropType == "soybean"){
+      as.datatable(getTables(finalizedPriceObjectSoybeanV3$TSResultsTableMY), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
   
