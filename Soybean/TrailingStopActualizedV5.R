@@ -29,7 +29,23 @@ getPercentSold = function(actualizedSales){
   }
 }
 
-# triggerType = triggers$Type[tRow]
+isDumpDate == function(type, month, day, year, stopYear){
+  if(type == "corn"){
+    if(month == 5 && year == stopYear){
+      if(day == 20 || day == 21 || day == 22 || day == 23) {
+        return(FALSE)
+      }
+    }
+  } else if(type == "soybean"){
+    if(month == 7 && year == stopYear){
+      if(day == 20 || day == 21 || day == 22 || day == 23) {
+        return(FALSE)
+      }
+    }
+  } else{
+    return(TRUE)
+  }
+}
 
 # Implements correct percent sold for TS
 variablePercentSold = function(triggerType, postHarvestPercent){
@@ -494,7 +510,7 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
       
       # SEASONAL SALES
       else if(totalSold > 0 && !(marketingYear$Date[row] %in% trailingStopActualized$Date) && 
-              !(month(marketingYear$Date[row]) == 7 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`)))) {
+              isDumpDate(type, month(marketingYear$Date[row]), day(marketingYear$Date[row]), year(marketingYear$Date[row]), year(mdy(cropYear$`Stop Date`)))){
         # if price < 70 percentile
         if(marketingYear$Percentile[row] < 70) {
           # if day not within 7 days of last sale
