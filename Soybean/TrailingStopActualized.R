@@ -425,6 +425,7 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                 #TS, ATH, TDH at 10% increments
                 totalSold = totalSold + 10
                 trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
+                                                                                  "Previous Percentile" = triggers$Previous.Percentile[tRow],
                                                                                   "Percentile" = triggers$Percentile[tRow],
                                                                                   "Type" = triggers$Type[tRow],
                                                                                   "Percent Sold" = 10,
