@@ -4,6 +4,7 @@
 # Actualized
 # V6
 
+# Check if sales have been actualized for this crop year yet. Useful in MY sales
 isActualizedPresent = function(cropYear){
   if ("TS Actualized MY" %in% names(cropYear)){
     return(cropYear[["TS Actualized MY"]])
@@ -14,6 +15,7 @@ isActualizedPresent = function(cropYear){
   }
 }
 
+# Returns the current total sold for a given year
 getTotalSold = function(actualizedSales){
   if(nrow(actualizedSales) == 0){
     return(0)
@@ -22,6 +24,7 @@ getTotalSold = function(actualizedSales){
   }
 }
 
+# Returns what percent was sold in the last
 getPercentSold = function(actualizedSales){
   if(nrow(actualizedSales) == 0){
     return(0)
@@ -30,6 +33,7 @@ getPercentSold = function(actualizedSales){
   }
 }
 
+# Returns True for dump days, 5/20 or 7/20
 isDumpDate = function(type, month, day, year, stopYear){
   if(type == "corn"){
     if(month == 5 && year == stopYear){
@@ -55,13 +59,6 @@ isDumpDate = function(type, month, day, year, stopYear){
     return(FALSE)
   }
 }
-
-# i = 1
-# cropYear = Soybean_CropYearObjects[[i]]
-# cropYear1 = Soybean_CropYearObjects[[i + 1]]
-# cropYear2 = Soybean_CropYearObjects[[i + 2]]
-# futuresMarket = Soybean_FuturesMarket
-# MY = TRUE
 
 # Finds actualized Trailing Stop sales
 isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){

@@ -2,7 +2,9 @@
 # Trailing Stop
 # Multi Year
 # Actualized
+# V2
 
+# Check if sales have been actualized for this crop year yet. Useful in MY sales
 isActualizedPresent = function(cropYear){
   if ("TS Actualized MY" %in% names(cropYear)){
     return(cropYear[["TS Actualized MY"]])
@@ -13,6 +15,7 @@ isActualizedPresent = function(cropYear){
   }
 }
 
+# Returns the current total sold for a given year
 getTotalSold = function(actualizedSales){
   if(nrow(actualizedSales) == 0){
     return(0)
@@ -21,6 +24,7 @@ getTotalSold = function(actualizedSales){
   }
 }
 
+# Returns what percent was sold in the last
 getPercentSold = function(actualizedSales){
   if(nrow(actualizedSales) == 0){
     return(0)
