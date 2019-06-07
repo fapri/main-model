@@ -1,17 +1,11 @@
-######################
-Trigger Scripts
-######################
+# Trigger Scripts
 
 TrailingStop: Our base model. When the price passes through a baseline, a sale is triggered
     
 TrailingStopV3: A new marketing year, "Marketing Year Adjusted" is created where new baselines are calculated at 1%
     lower than the FAPRI baselines. Sales are triggered when the market passes through these new baselines.
 
-
-
-######################
-Actualizion Scripts
-######################
+# Actualizion Scripts
 
 TrailingStopActualized: 10% Sales
 
