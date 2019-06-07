@@ -25,10 +25,11 @@ TrailingStopActualizedV3: 20% Sales at 90th percentile, 3 day buffer
     
 TrailingStopActualizedV4: 20% Sales at 90th percentile, 5% drop from baselines
 
-TrailingStopActualizedV5: 20% Sales at 90th percentile, July 20th dump date, each TS sale is at 20% of whatever 
+TrailingStopActualizedV5: 20% Sales at 90th percentile, July 20th dump date (June for Corn), each TS sale is at 20% of whatever 
     is on Sept 1st. (ex. if 50% of crop remains, TS sales will be made at 10%) 
     
 TrailingStopActualizedV6: 10% Sales, July 20th dump date
     
 TrailingStopActualizedV7: 20% Sales at 90th percentile, July 20th dump date
+
 
