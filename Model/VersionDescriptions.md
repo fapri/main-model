@@ -22,5 +22,3 @@ TrailingStopActualizedV5: 20% Sales at 90th percentile, July 20th dump date (Jun
 TrailingStopActualizedV6: 10% Sales, July 20th dump date
     
 TrailingStopActualizedV7: 20% Sales at 90th percentile, July 20th dump date
-
-
