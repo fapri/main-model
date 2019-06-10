@@ -1,3 +1,4 @@
+
 # Trigger Scripts
 
 #### TrailingStop: 
@@ -8,20 +9,26 @@ A new marketing year, "Marketing Year Adjusted" is created where new baselines a
 
 # Actualization Scripts
 
+#### PriceObjectiveActualized: 
+10% Sales
+
+#### PriceObjectiveActualizedV2: 
+20% Sales at 90th percentile
+
 #### TrailingStopActualized: 
 10% Sales
 
 #### TrailingStopActualizedV2: 
 20% Sales at 90th percentile
 
-#### TrailingStopActualizedV3: 
+#### TrailingStopActualizedV3: ARCHIVED
 20% Sales at 90th percentile, 3 day buffer, Current percentile must be lower than percentiles for last 3 days
 
-#### TrailingStopActualizedV4: 
+#### TrailingStopActualizedV4: ARCHIVED
 20% Sales at 90th percentile, 5% drop from baselines
 
 #### TrailingStopActualizedV5: 
-20% Sales at 90th percentile, July 20th dump date (June for Corn), each TS sale is at 20% of whatever is on Sept 1st. (ex. if 50% of crop remains, TS sales will be made at 10%) 
+July 20th dump date (June for Corn), each TS sale is at 20% of whatever is on Sept 1st. (ex. if 50% of crop remains, TS sales will be made at 10%) 
 
 #### TrailingStopActualizedV6: 
 10% Sales, July 20th dump date    
