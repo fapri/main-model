@@ -54,16 +54,23 @@ variablePercentSold = function(triggerType, postHarvestPercent){
 
 # Returns the percentage that post-harvest Trailing Stop sales should be made at
 getPostHarvestPercent = function(postHarvestPercent, actualizedSales, intervalPost, total){
+  # check if postHarvestPercent has been calculated yet
   if(is.null(postHarvestPercent)){
+    # check if any sales have been actualzed yet
     if(nrow(actualizedSales) > 0){
+      # check if this is the first post harvest sale
       if(length(which(actualizedSales$Date %within% intervalPost)) == 0){
         percent = (100 - total) * 0.20
         return(percent)
       }
-    } else {
+    } 
+    # if no sales have been actualized by the post harvest, we need to sell at 20%
+    else {
       return(20)
     }
-  } else{
+  } 
+  # if postHarvestPercent has already been calculated we can just return it
+  else{
     return(postHarvestPercent)
   }
 }
