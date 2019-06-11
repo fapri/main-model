@@ -347,20 +347,11 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                 else if (month(marketingYear$Date[row]) >= 6){
                   if (triggers$Type[tRow] == "End of Year Trailing Stop"){
                     if (triggers$Percentile[tRow] >= 60){
-                      if(totalSold <= 90){
-                        percentSold = (100 - totalSold)
-                        totalSold = totalSold + percentSold
-                        priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow],
-                                                                                              "Percentile" = triggers$Percentile[tRow],
-                                                                                              "Type" = triggers$Type[tRow],
-                                                                                              "Percent Sold" = percentSold,
-                                                                                              "Total Sold" = totalSold,
-                                                                                              "Price" = marketingYear$`Price`[row]))
-                        priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
-                      }
-                      
-                      else if (triggers$Percentile[tRow] == 90 && triggers$Percentile[tRow - 1] == 95){
+                      if (triggers$Percentile[tRow] == 90 && triggers$Percentile[tRow - 1] == 95){
                         percentSold = (100 - totalSold) / 4
+                        if(percentSold < 10){
+                          percentSold = (100 - totalSold)
+                        }
                         totalSold = totalSold + percentSold
                         priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                               "Percentile" = triggers$Percentile[tRow],
@@ -373,6 +364,9 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                       
                       else if (triggers$Percentile[tRow] == 80 && triggers$Percentile[tRow - 1] == 90){
                         percentSold = (100 - totalSold) / 3
+                        if(percentSold < 10){
+                          percentSold = (100 - totalSold)
+                        }
                         totalSold = totalSold + percentSold
                         priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                               "Percentile" = triggers$Percentile[tRow],
@@ -385,6 +379,9 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                       
                       else if (triggers$Percentile[tRow] == 70 && triggers$Percentile[tRow - 1] == 80){
                         percentSold = (100 - totalSold) / 2
+                        if(percentSold < 10){
+                          percentSold = (100 - totalSold)
+                        }
                         totalSold = totalSold + percentSold
                         priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                               "Percentile" = triggers$Percentile[tRow],
