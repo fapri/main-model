@@ -216,32 +216,43 @@ ui <- shinyUI(
                                  )
                         )
              ),
-             navbarMenu("Trailing Stop",
-                        tabPanel("Base Model",         
-                                 fluidPage(
-                                   fluidRow(
-                                     plotOutput('TSdistPlot'),
-                                     style = "padding-bottom:50px"
-                                   ),
-                                   
-                                   tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
-                                   
-                                   sidebarLayout(
-                                     sidebarPanel(
-                                       fluidRow(selectInput('yearTS','Crop Year', choices = u.n, width = "100%"),
-                                                column(12, dataTableOutput('TSstorageTables')),
-                                                tags$style(type="text/css", '#TSstorageTables tfoot {display:none;}'))
-                                     ),
-                                     mainPanel(
-                                       fluidRow(
-                                         dataTableOutput('TSsummaryTables'),
-                                         style = "padding-bottom:100px")
-                                       
-                                     )
-                                   )
-                                 )
+             tabPanel("Trailing Stop",
+                      fluidPage(
+                        selectInput(
+                          "TSstrategy", "Trailing Stop Strategy",
+                          c(Base = "base",
+                            "Multi-Year" = "multiyear",
+                            "Version 2" = "V2",
+                            "Multi-Year Version 2" = "MYV2",
+                            "Version 3" = "V3",
+                            "Multi-Year Version 3" = "MYV3")),
+                        conditionalPanel(
+                          condition = "input.TSstrategy == 'base'",         
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('TSdistPlot'),
+                              style = "padding-bottom:50px"
+                            ),
+                            
+                            tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearTS','Crop Year', choices = u.n, width = "100%"),
+                                         column(12, dataTableOutput('TSstorageTables')),
+                                         tags$style(type="text/css", '#TSstorageTables tfoot {display:none;}'))
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('TSsummaryTables'),
+                                  style = "padding-bottom:100px")
+                                
+                              )
+                            )
+                          )
                         ),
-                        tabPanel("Multi-Year",
+                        conditionalPanel(
+                          condition = "input.TSstrategy == 'multiyear'",
                                  fluidPage(
                                    fluidRow(
                                      plotOutput('TSMYdistPlot'),
@@ -267,7 +278,8 @@ ui <- shinyUI(
                                  )
                         ),
                         # MODEL VERSION 2
-                        tabPanel("Base Model V2",
+                        conditionalPanel(
+                          condition = "input.TSstrategy == 'V2'",
                                  fluidPage(
                                    fluidRow(
                                      plotOutput('TSdistPlotV2'),
@@ -291,7 +303,8 @@ ui <- shinyUI(
                                    )
                                  )
                         ),
-                        tabPanel("Multi-Year V2",
+                        conditionalPanel(
+                          condition = "input.TSstrategy == 'MYV2'",
                                  fluidPage(
                                    fluidRow(
                                      plotOutput('TSMYdistPlotV2'),
@@ -317,7 +330,8 @@ ui <- shinyUI(
                                  )
                         ),
                         # MODEL VERSION 3
-                        tabPanel("Base Model V3",
+                        conditionalPanel(
+                          condition = "input.TSstrategy == 'V3'",
                                  fluidPage(
                                    fluidRow(
                                      plotOutput('TSdistPlotV3'),
@@ -341,7 +355,8 @@ ui <- shinyUI(
                                    )
                                  )
                         ),
-                        tabPanel("Multi-Year V3",
+                        conditionalPanel(
+                          condition = "input.TSstrategy == 'MYV3'",
                                  fluidPage(
                                    fluidRow(
                                      plotOutput('TSMYdistPlotV3'),
@@ -366,58 +381,67 @@ ui <- shinyUI(
                                    )
                                  )
                         )
+                      )
              ),
-             navbarMenu("Seasonal Sales",
-                        tabPanel("Base Model",         
-                                 fluidPage(
-                                   fluidRow(
-                                     plotOutput('SSdistPlot'),
-                                     style = "padding-bottom:50px"
-                                   ),
-                                   
-                                   tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
-                                   
-                                   sidebarLayout(
-                                     sidebarPanel(
-                                       fluidRow(selectInput('yearSS','Crop Year', choices = u.n, width = "100%"),
-                                                column(12, dataTableOutput('SSstorageTables')),
-                                                tags$style(type="text/css", '#SSstorageTables tfoot {display:none;}'))
-                                     ),
-                                     mainPanel(
-                                       fluidRow(
-                                         dataTableOutput('SSsummaryTables'),
-                                         style = "padding-bottom:100px")
-                                       
-                                     )
-                                     
-                                   )
-                                 )
+             tabPanel("Seasonal Sales",
+                      fluidPage(
+                        selectInput(
+                          "SSstrategy", "Seasonal Sales Strategy",
+                          c(Base = "base",
+                            MultiYear = "multiyear")),
+                        conditionalPanel(
+                          condition = "input.SSstrategy == 'base'",         
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('SSdistPlot'),
+                              style = "padding-bottom:50px"
+                            ),
+                            
+                            tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearSS','Crop Year', choices = u.n, width = "100%"),
+                                         column(12, dataTableOutput('SSstorageTables')),
+                                         tags$style(type="text/css", '#SSstorageTables tfoot {display:none;}'))
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('SSsummaryTables'),
+                                  style = "padding-bottom:100px")
+                                
+                              )
+                              
+                            )
+                          )
                         ),
-                        tabPanel("Multi-Year",
-                                 fluidPage(
-                                   fluidRow(
-                                     plotOutput('SSMYdistPlot'),
-                                     style = "padding-bottom:50px"
-                                   ),
-                                   
-                                   tags$style(type="text/css", '#TSMYsummaryTables tfoot {display:none;}'),
-                                   
-                                   sidebarLayout(
-                                     sidebarPanel(
-                                       fluidRow(selectInput('yearSSMY','Crop Year', choices = u.n, width = "100%"),
-                                                column(12, dataTableOutput('SSMYstorageTables')),
-                                                tags$style(type="text/css", '#SSMYstorageTables tfoot {display:none;}'))
-                                       
-                                     ),
-                                     mainPanel(
-                                       fluidRow(
-                                         dataTableOutput('SSMYsummaryTables'),
-                                         style = "padding-bottom:100px")
-                                       
-                                     )
-                                   )
-                                 )
+                        conditionalPanel(
+                          condition = "input.SSstrategy == 'multiyear'",
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('SSMYdistPlot'),
+                              style = "padding-bottom:50px"
+                            ),
+                            
+                            tags$style(type="text/css", '#TSMYsummaryTables tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearSSMY','Crop Year', choices = u.n, width = "100%"),
+                                         column(12, dataTableOutput('SSMYstorageTables')),
+                                         tags$style(type="text/css", '#SSMYstorageTables tfoot {display:none;}'))
+                                
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('SSMYsummaryTables'),
+                                  style = "padding-bottom:100px")
+                                
+                              )
+                            )
+                          )
                         )
+                      )
              ),
              tabPanel("Strategy Results",
                       fluidPage(
@@ -443,7 +467,7 @@ ui <- shinyUI(
                         #             dataTableOutput("SSMYfinalPriceTable"),
                         #             dataTableOutput("TSMYfinalPriceTableV2"),
                         #             dataTableOutput("TSMYfinalPriceTableV3"))
-
+                        
                         fluidRow(
                           # Without Multi Year
                           column(12,
@@ -639,7 +663,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Price Objective V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop
@@ -852,7 +876,7 @@ server <- shinyServer(function(input,output,session){
   #################################################################################################
   # Trailing Stop VERSION 5
   #################################################################################################
-
+  
   
   output$TSfinalPriceTableV5 = renderDataTable({
     if (input$cropType == "Corn"){
@@ -1128,7 +1152,7 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
-
+  
   #################################################################################################
   # Trailing Stop With Multi Year
   #################################################################################################
