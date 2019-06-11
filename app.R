@@ -24,6 +24,16 @@ Soybean_CropYearObjectsV3 = appObjectsSoybeanV3[[1]]
 Soybean_CropYearsV3 = appObjectsSoybeanV3[[2]]
 finalizedPriceObjectSoybeanV3 = appObjectsSoybeanV3[[3]]
 
+appObjectsSoybeanV4 = readRDS("appObjectsSoybeanV4.rds")
+Soybean_CropYearObjectsV4 = appObjectsSoybeanV4[[1]]
+Soybean_CropYearsV4 = appObjectsSoybeanV4[[2]]
+finalizedPriceObjectSoybeanV4 = appObjectsSoybeanV4[[3]]
+
+appObjectsSoybeanV5 = readRDS("appObjectsSoybeanV5.rds")
+Soybean_CropYearObjectsV5 = appObjectsSoybeanV5[[1]]
+Soybean_CropYearsV5 = appObjectsSoybeanV5[[2]]
+finalizedPriceObjectSoybeanV5 = appObjectsSoybeanV5[[3]]
+
 u.n <-  Corn_CropYears$CropYear
 names(u.n) <- u.n
 
