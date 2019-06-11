@@ -552,3 +552,10 @@ finalizedPriceObject[["TSResultsTable"]] = makeResultsTable(finalizedPriceObject
 finalizedPriceObject[["TSResultsTableMY"]] = makeResultsTable(finalizedPriceObject[[4]])
 finalizedPriceObject[["SSResultsTable"]] = makeResultsTable(finalizedPriceObject[[5]])
 finalizedPriceObject[["SSResultsTableMY"]] = makeResultsTable(finalizedPriceObject[[6]])
+
+finalizedPriceObject[["AllResultsTable"]] = cbind(finalizedPriceObject[["POResultsTable"]][1:3, 1:3], 
+                                                  finalizedPriceObject[["POResultsTableMY"]][1:3, 2:3],
+                                                  finalizedPriceObject[["TSResultsTable"]][1:3, 2:3], 
+                                                  finalizedPriceObject[["TSResultsTableMY"]][1:3, 2:3],
+                                                  finalizedPriceObject[["SSResultsTable"]][1:3, 2:3], 
+                                                  finalizedPriceObject[["SSResultsTableMY"]][1:3, 2:3])
