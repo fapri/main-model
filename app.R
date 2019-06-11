@@ -30,7 +30,6 @@ names(u.n) <- u.n
 typeList <- c("Corn", "Soybeans")
 names(typeList) = typeList
 
-
 getTables = function(data) {
   data = cbind(" " = data[,1], round(data[, 2:3], digits = 2))
   table = formattable(data, 
@@ -60,6 +59,35 @@ getTables = function(data) {
                                                                    "padding" = "5px",
                                                                    "font.weight" = "bold",  
                                                                    "text-align" = "left"))))
+  return(table)
+}
+
+getFirstSummaryTable = function(data) {
+  data = cbind(" " = data[,1], round(data[, 2:3], digits = 2))
+  table = formattable(data, 
+                      align = "c",
+                      list(~ formatter("span",
+                                       style = x ~ style(display = "block",
+                                                         "border-radius" = "0px",
+                                                         "padding" = "0px",
+                                                         "text-align" = "center")),
+                           `Total Avg Price` = formatter("span",
+                                                         style = x ~ style(color = "white", background = "gray")),
+                           `Pre-Harvest Avg Price` = formatter("span",
+                                                               style = x ~ style(color = "white", background = "blue")),
+                           `Post-Harvest Avg Price` = formatter("span",
+                                                                style = x ~ style(color = "white", background = "green")),
+                           ` ` = formatter("span", style = ~ style(display = "block",
+                                                                   "border-radius" = "0px",
+                                                                   "padding" = "0px",
+                                                                   "font.weight" = "bold",  
+                                                                   "text-align" = "left"))))
+  return(table)
+}
+
+getRemainingSummaryTables = function(data) {
+  data = round(data[,], digits = 2)
+  table = formattable(data, align = "c")
   return(table)
 }
 
@@ -356,28 +384,41 @@ ui <- shinyUI(
                             ".tables {align: center; width: 100px}"
                           )
                         ),
-                        tags$div(class="title", titlePanel("Without Multi-Year Sales")),
-                        splitLayout(cellWidths = c("33%", "33%", "33%"), dataTableOutput("finalPriceTable"),
-                                    dataTableOutput("TSfinalPriceTable"), dataTableOutput("SSfinalPriceTable")),
-                        splitLayout(cellWidths = "33%", align="center", dataTableOutput("TSfinalPriceTableV2"), dataTableOutput("TSfinalPriceTableV3")),
-                        tags$div(class="title", titlePanel("With Multi-Year Sales")),
-                        splitLayout(cellWidths = c("33%", "33%", "33%"), dataTableOutput("POMYfinalPriceTable"),
-                                    dataTableOutput("TSMYfinalPriceTable"), dataTableOutput("SSMYfinalPriceTable")),
-                        splitLayout(cellWidths = "33%", align="center", dataTableOutput("TSMYfinalPriceTableV2"), dataTableOutput("TSMYfinalPriceTableV3"))
-                        
-                        # fluidRow(
-                        #   #Change column(x, for desired width
-                        #   column(12,
-                        #          tags$div(class="title", titlePanel("Without Multi-Year Sales")),
-                        #          div(style = "display: inline-block; width: 33%;", dataTableOutput("finalPriceTable"), height=150, width=150),
-                        #          div(style = "display: inline-block; width: 33%;", dataTableOutput("TSfinalPriceTable"), height=150, width=150),
-                        #          div(style = "display: inline-block; width: 33%;", dataTableOutput("SSfinalPriceTable"), height=150, width=150),
-                        #          tags$div(class = "table", dataTableOutput("TSfinalPriceTableV2")),
-                        #          tags$div(class="title", titlePanel("With Multi-Year Sales")),
-                        #          div(style = "display: inline-block; width: 33%;", dataTableOutput("POMYfinalPriceTable"), height=150, width=150),
-                        #          div(style = "display: inline-block; width: 33%;", dataTableOutput("TSMYfinalPriceTable"), height=150, width=150),
-                        #          div(style = "display: inline-block; width: 33%;", dataTableOutput("SSMYfinalPriceTable"), height=150, width=150),
-                        #          div(style = "display: inline-block; width: 33%;", dataTableOutput("TSMYfinalPriceTableV2"), height=150, width=150)))
+                        # tags$div(class="title", titlePanel("Without Multi-Year Sales")),
+                        # splitLayout( dataTableOutput("finalPriceTable")),
+                        #              dataTableOutput("TSfinalPriceTable"),
+                        #              dataTableOutput("SSfinalPriceTable"),
+                        #              dataTableOutput("TSfinalPriceTableV2"),
+                        #              dataTableOutput("TSfinalPriceTableV3")),
+                        # tags$div(class="title", titlePanel("With Multi-Year Sales")),
+                        # splitLayout( dataTableOutput("POMYfinalPriceTable"),
+                        #             dataTableOutput("TSMYfinalPriceTable"),
+                        #             dataTableOutput("SSMYfinalPriceTable"),
+                        #             dataTableOutput("TSMYfinalPriceTableV2"),
+                        #             dataTableOutput("TSMYfinalPriceTableV3"))
+
+                        fluidRow(
+                          # Without Multi Year
+                          column(12,
+                                 tags$div(class="title", titlePanel("Without Multi-Year Sales")),
+                                 div(style = "display: inline-block;", dataTableOutput("finalPriceTable"), height=150, width=150)),
+                          column(12,
+                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTable"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV2"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV3"), height=150, width=150)),
+                          column(12,
+                                 div(style = "display: inline-block;", dataTableOutput("SSfinalPriceTable"), height=150, width=150)),
+                          
+                          # With Multi Year
+                          column(12,
+                                 tags$div(class="title", titlePanel("Without Multi-Year Sales")),
+                                 div(style = "display: inline-block;", dataTableOutput("POMYfinalPriceTable"), height=150, width=150)),
+                          column(12,
+                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTable"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV2"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV3"), height=150, width=150)),
+                          column(12,
+                                 div(style = "display: inline-block;", dataTableOutput("SSMYfinalPriceTable"), height=150, width=150)))
                       )
              ),
              tabPanel("About Our Strategies",
@@ -457,11 +498,11 @@ server <- shinyServer(function(input,output,session){
   
   output$finalPriceTable = renderDataTable({
     if (input$cropType == "Corn"){
-      as.datatable(getTables(finalizedPriceObject$POResultsTable), rownames = FALSE, 
+      as.datatable(getFirstSummaryTable(finalizedPriceObject$POResultsTable), rownames = FALSE, 
                    caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
-      as.datatable(getTables(finalizedPriceObjectSoybeanBase$POResultsTable), rownames = FALSE, 
+      as.datatable(getFirstSummaryTable(finalizedPriceObjectSoybeanBase$POResultsTable), rownames = FALSE, 
                    caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
@@ -519,11 +560,11 @@ server <- shinyServer(function(input,output,session){
   
   output$TSfinalPriceTable = renderDataTable({
     if (input$cropType == "Corn"){
-      as.datatable(getTables(finalizedPriceObject$TSResultsTable), rownames = FALSE, 
+      as.datatable(getFirstSummaryTable(finalizedPriceObject$TSResultsTable), rownames = FALSE, 
                    caption = tags$caption("Trailing Stop", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
-      as.datatable(getTables(finalizedPriceObjectSoybeanBase$TSResultsTable), rownames = FALSE, 
+      as.datatable(getFirstSummaryTable(finalizedPriceObjectSoybeanBase$TSResultsTable), rownames = FALSE, 
                    caption = tags$caption("Trailing Stop", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
@@ -583,7 +624,7 @@ server <- shinyServer(function(input,output,session){
       NULL
     }
     else if (input$cropType == "Soybeans"){
-      as.datatable(getTables(finalizedPriceObjectSoybeanV2$TSResultsTable), rownames = FALSE,
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV2$TSResultsTable[,2:3]), rownames = FALSE,
                    caption = tags$caption("Trailing Stop V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
@@ -653,7 +694,7 @@ server <- shinyServer(function(input,output,session){
       NULL
     }
     else if (input$cropType == "Soybeans"){
-      as.datatable(getTables(finalizedPriceObjectSoybeanV3$TSResultsTable), rownames = FALSE,
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3$TSResultsTable[,2:3]), rownames = FALSE,
                    caption = tags$caption("Trailing Stop V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
@@ -710,11 +751,11 @@ server <- shinyServer(function(input,output,session){
   
   output$SSfinalPriceTable = renderDataTable({
     if (input$cropType == "Corn"){
-      as.datatable(getTables(finalizedPriceObject$SSResultsTable), rownames = FALSE, 
+      as.datatable(getFirstSummaryTable(finalizedPriceObject$SSResultsTable), rownames = FALSE, 
                    caption = tags$caption("Seasonal Sales", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
-      as.datatable(getTables(finalizedPriceObjectSoybeanBase$SSResultsTable), rownames = FALSE, 
+      as.datatable(getFirstSummaryTable(finalizedPriceObjectSoybeanBase$SSResultsTable), rownames = FALSE, 
                    caption = tags$caption("Seasonal Sales", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
@@ -771,11 +812,11 @@ server <- shinyServer(function(input,output,session){
   
   output$POMYfinalPriceTable = renderDataTable({
     if (input$cropType == "Corn"){
-      as.datatable(getTables(finalizedPriceObject$POResultsTableMY), rownames = FALSE, 
+      as.datatable(getFirstSummaryTable(finalizedPriceObject$POResultsTableMY), rownames = FALSE, 
                    caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
-      as.datatable(getTables(finalizedPriceObjectSoybeanBase$POResultsTableMY), rownames = FALSE, 
+      as.datatable(getFirstSummaryTable(finalizedPriceObjectSoybeanBase$POResultsTableMY), rownames = FALSE, 
                    caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
@@ -833,11 +874,11 @@ server <- shinyServer(function(input,output,session){
   
   output$TSMYfinalPriceTable = renderDataTable({
     if (input$cropType == "Corn"){
-      as.datatable(getTables(finalizedPriceObject$TSResultsTableMY), rownames = FALSE, 
+      as.datatable(getFirstSummaryTable(finalizedPriceObject$TSResultsTableMY), rownames = FALSE, 
                    caption = tags$caption("Trailing Stop", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
-      as.datatable(getTables(finalizedPriceObjectSoybeanBase$TSResultsTableMY), rownames = FALSE, 
+      as.datatable(getFirstSummaryTable(finalizedPriceObjectSoybeanBase$TSResultsTableMY), rownames = FALSE, 
                    caption = tags$caption("Trailing Stop", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
@@ -897,7 +938,7 @@ server <- shinyServer(function(input,output,session){
       NULL
     }
     else if (input$cropType == "Soybeans"){
-      as.datatable(getTables(finalizedPriceObjectSoybeanV2$TSResultsTableMY), rownames = FALSE,
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV2$TSResultsTableMY[,2:3]), rownames = FALSE,
                    caption = tags$caption("Trailing Stop V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
@@ -957,7 +998,7 @@ server <- shinyServer(function(input,output,session){
       NULL
     }
     else if (input$cropType == "Soybeans"){
-      as.datatable(getTables(finalizedPriceObjectSoybeanV3$TSResultsTableMY), rownames = FALSE,
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3$TSResultsTableMY[,2:3]), rownames = FALSE,
                    caption = tags$caption("Trailing Stop V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
@@ -1014,11 +1055,11 @@ server <- shinyServer(function(input,output,session){
   
   output$SSMYfinalPriceTable = renderDataTable({
     if (input$cropType == "Corn"){
-      as.datatable(getTables(finalizedPriceObject$SSResultsTableMY), rownames = FALSE, 
+      as.datatable(getFirstSummaryTable(finalizedPriceObject$SSResultsTableMY), rownames = FALSE, 
                    caption = tags$caption("Seasonal Sales", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
-      as.datatable(getTables(finalizedPriceObjectSoybeanBase$SSResultsTableMY), rownames = FALSE, 
+      as.datatable(getFirstSummaryTable(finalizedPriceObjectSoybeanBase$SSResultsTableMY), rownames = FALSE, 
                    caption = tags$caption("Seasonal Sales", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
