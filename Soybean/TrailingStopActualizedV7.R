@@ -52,17 +52,17 @@ isDumpDate = function(type, month, day, year, stopYear){
       } else{
         return(FALSE)
       }
-    }else{
+    } else{
       return(FALSE)
     }
   } else if(type == "soybean"){
     if(month == 7 && year == stopYear){
       if(day == 20 || day == 21 || day == 22 || day == 23) {
         return(TRUE)
-      }else{
+      } else{
         return(FALSE)
       }
-    }else{
+    } else{
       return(FALSE)
     }
   } else{
