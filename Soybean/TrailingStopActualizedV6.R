@@ -382,21 +382,11 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                 else if (month(marketingYear$Date[row]) >= 6){
                   if (triggers$Type[tRow] == "End of Year Trailing Stop"){
                     if (triggers$Percentile[tRow] >= 60){
-                      if(totalSold <= 90){
-                        percentSold = (100 - totalSold)
-                        totalSold = totalSold + percentSold
-                        trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow],
-                                                                                          "Previous Percentile" = triggers$Previous.Percentile[tRow],
-                                                                                          "Percentile" = triggers$Percentile[tRow],
-                                                                                          "Type" = triggers$Type[tRow],
-                                                                                          "Percent Sold" = percentSold,
-                                                                                          "Total Sold" = totalSold,
-                                                                                          "Price" = marketingYear$`Price`[row]))
-                        trailingStopActualized = arrange(trailingStopActualized, Date)
-                      }
-                      
-                      else if (marketingYear$Percentile[row] == 90 && marketingYear$Percentile[row - 1] == 95){
+                      if (marketingYear$Percentile[row] == 90 && marketingYear$Percentile[row - 1] == 95){
                         percentSold = (100 - totalSold) / 4
+                        if(percentSold < 10){
+                          percentSold = (100 - totalSold)
+                        }
                         totalSold = totalSold + percentSold
                         trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow],
                                                                                           "Previous Percentile" = triggers$Previous.Percentile[tRow],
@@ -410,6 +400,9 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                       
                       else if (marketingYear$Percentile[row] == 80 && marketingYear$Percentile[row - 1] == 90){
                         percentSold = (100 - totalSold) / 3
+                        if(percentSold < 10){
+                          percentSold = (100 - totalSold)
+                        }
                         totalSold = totalSold + percentSold
                         trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow],
                                                                                           "Previous Percentile" = triggers$Previous.Percentile[tRow],
@@ -423,6 +416,9 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                       
                       else if (marketingYear$Percentile[row] == 70 && marketingYear$Percentile[row - 1] == 80){
                         percentSold = (100 - totalSold) / 2
+                        if(percentSold < 10){
+                          percentSold = (100 - totalSold)
+                        }
                         totalSold = totalSold + percentSold
                         trailingStopActualized = rbind(trailingStopActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                           "Previous Percentile" = triggers$Previous.Percentile[tRow],
