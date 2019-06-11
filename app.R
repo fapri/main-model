@@ -34,6 +34,43 @@ Soybean_CropYearObjectsV5 = appObjectsSoybeanV5[[1]]
 Soybean_CropYearsV5 = appObjectsSoybeanV5[[2]]
 finalizedPriceObjectSoybeanV5 = appObjectsSoybeanV5[[3]]
 
+
+
+
+
+appObjectsSoybeanV3Base = readRDS("appObjectsSoybeanV3Base.rds")
+Soybean_CropYearObjectsV3Base = appObjectsSoybeanV3Base[[1]]
+Soybean_CropYearsV3Base = appObjectsSoybeanV3Base[[2]]
+finalizedPriceObjectSoybeanV3Base = appObjectsSoybeanV3Base[[3]]
+
+appObjectsSoybeanV3V2 = readRDS("appObjectsSoybeanV3V2.rds")
+Soybean_CropYearObjectsV3V2 = appObjectsSoybeanV3V2[[1]]
+Soybean_CropYearsV3V2 = appObjectsSoybeanV3V2[[2]]
+finalizedPriceObjectSoybeanV3V2 = appObjectsSoybeanV3V2[[3]]
+
+appObjectsSoybeanV3V3 = readRDS("appObjectsSoybeanV3V3.rds")
+Soybean_CropYearObjectsV3V3 = appObjectsSoybeanV3V3[[1]]
+Soybean_CropYearsV3V3 = appObjectsSoybeanV3V3[[2]]
+finalizedPriceObjectSoybeanV3V3 = appObjectsSoybeanV3V3[[3]]
+
+appObjectsSoybeanV3V4 = readRDS("appObjectsSoybeanV3V4.rds")
+Soybean_CropYearObjectsV3V4 = appObjectsSoybeanV3V4[[1]]
+Soybean_CropYearsV3V4 = appObjectsSoybeanV3V4[[2]]
+finalizedPriceObjectSoybeanV3V4 = appObjectsSoybeanV3V4[[3]]
+
+appObjectsSoybeanV3V5 = readRDS("appObjectsSoybeanV3V5.rds")
+Soybean_CropYearObjectsV3V5 = appObjectsSoybeanV3V5[[1]]
+Soybean_CropYearsV3V5 = appObjectsSoybeanV3V5[[2]]
+finalizedPriceObjectSoybeanV3V5 = appObjectsSoybeanV3V5[[3]]
+
+
+
+
+
+
+
+
+
 u.n <-  Corn_CropYears$CropYear
 names(u.n) <- u.n
 
@@ -411,22 +448,44 @@ ui <- shinyUI(
                           # Without Multi Year
                           column(12,
                                  tags$div(class="title", titlePanel("Without Multi-Year Sales")),
-                                 div(style = "display: inline-block;", dataTableOutput("finalPriceTable"), height=150, width=150)),
+                                 div(style = "display: inline-block;", dataTableOutput("finalPriceTable"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("POfinalPriceTableV2"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("POfinalPriceTableV3"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("POfinalPriceTableV4"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("POfinalPriceTableV5"), height=150, width=150)),
                           column(12,
                                  div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTable"), height=150, width=150),
                                  div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV2"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV3"), height=150, width=150)),
+                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV3"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV4"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV5"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV3Base"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV3V2"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV3V3"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV3V4"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV3V5"), height=150, width=150)),
                           column(12,
                                  div(style = "display: inline-block;", dataTableOutput("SSfinalPriceTable"), height=150, width=150)),
                           
                           # With Multi Year
                           column(12,
                                  tags$div(class="title", titlePanel("Without Multi-Year Sales")),
-                                 div(style = "display: inline-block;", dataTableOutput("POMYfinalPriceTable"), height=150, width=150)),
+                                 div(style = "display: inline-block;", dataTableOutput("POMYfinalPriceTable"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("POMYfinalPriceTableV2"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("POMYfinalPriceTableV3"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("POMYfinalPriceTableV4"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("POMYfinalPriceTableV5"), height=150, width=150)),
                           column(12,
                                  div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTable"), height=150, width=150),
                                  div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV2"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV3"), height=150, width=150)),
+                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV3"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV4"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV5"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV3Base"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV3V2"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV3V3"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV3V4"), height=150, width=150),
+                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV3V5"), height=150, width=150)),
                           column(12,
                                  div(style = "display: inline-block;", dataTableOutput("SSMYfinalPriceTable"), height=150, width=150)))
                       )
@@ -517,6 +576,70 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  
+  #################################################################################################
+  # Price Objective VERSION 2
+  #################################################################################################
+  
+  
+  output$POfinalPriceTableV2 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV2$POResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Price Objective V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Price Objective VERSION 3
+  #################################################################################################
+  
+  
+  output$POfinalPriceTableV3 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3$POResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Price Objective V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Price Objective VERSION 4
+  #################################################################################################
+  
+  
+  output$POfinalPriceTableV4 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV4$POResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Price Objective V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Price Objective VERSION 5
+  #################################################################################################
+  
+  
+  output$POfinalPriceTableV5 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV5$POResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Price Objective V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+
   
   #################################################################################################
   # Trailing Stop
@@ -711,6 +834,118 @@ server <- shinyServer(function(input,output,session){
   
   
   #################################################################################################
+  # Trailing Stop VERSION 4
+  #################################################################################################
+  
+  
+  output$TSfinalPriceTableV4 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV4$TSResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Trailing Stop VERSION 5
+  #################################################################################################
+
+  
+  output$TSfinalPriceTableV5 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV5$TSResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Trailing Stop VERSION 3/BASE
+  #################################################################################################
+  
+  
+  output$TSfinalPriceTableV3Base = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3Base$TSResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/Base", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Trailing Stop VERSION 3/V2
+  #################################################################################################
+  
+  
+  output$TSfinalPriceTableV3V2 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V2$TSResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Trailing Stop VERSION 3/V3
+  #################################################################################################
+  
+  
+  output$TSfinalPriceTableV3V3 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V3$TSResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Trailing Stop VERSION 3/V4
+  #################################################################################################
+  
+  
+  output$TSfinalPriceTableV3V4 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V4$TSResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Trailing Stop VERSION 3/V5
+  #################################################################################################
+  
+  
+  output$TSfinalPriceTableV3V5 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V5$TSResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
   # Seasonal Sales
   #################################################################################################
   
@@ -832,6 +1067,68 @@ server <- shinyServer(function(input,output,session){
   })
   
   
+  #################################################################################################
+  # Price Objective Multi Year VERSION 2
+  #################################################################################################
+  
+  
+  output$POMYfinalPriceTableV2 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV2$POResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Price Objective V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  #################################################################################################
+  # Price Objective Multi Year VERSION 3
+  #################################################################################################
+  
+  
+  output$POMYfinalPriceTableV3 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3$POResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Price Objective V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  #################################################################################################
+  # Price Objective Multi Year VERSION 4
+  #################################################################################################
+  
+  
+  output$POMYfinalPriceTableV4 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV4$POResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Price Objective V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Price Objective Multi Year VERSION 5
+  #################################################################################################
+  
+  
+  output$POMYfinalPriceTableV5 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV5$POResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Price Objective V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+
   #################################################################################################
   # Trailing Stop With Multi Year
   #################################################################################################
@@ -1010,6 +1307,118 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3$TSResultsTableMY[,2:3]), rownames = FALSE,
                    caption = tags$caption("Trailing Stop V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Trailing Stop Multi Year VERSION 4
+  #################################################################################################
+  
+  
+  output$TSMYfinalPriceTableV4 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV4$TSResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Trailing Stop Multi Year VERSION 5
+  #################################################################################################
+  
+  
+  output$TSMYfinalPriceTableV5 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV5$TSResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Trailing Stop Multi Year VERSION 3/BASE
+  #################################################################################################
+  
+  
+  output$TSMYfinalPriceTableV3Base = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3Base$TSResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/Base", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Trailing Stop Multi Year VERSION 3/V2
+  #################################################################################################
+  
+  
+  output$TSMYfinalPriceTableV3V2 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V2$TSResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Trailing Stop Multi Year VERSION 3/V3
+  #################################################################################################
+  
+  
+  output$TSMYfinalPriceTableV3V3 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V3$TSResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Trailing Stop Multi Year VERSION 3/V4
+  #################################################################################################
+  
+  
+  output$TSMYfinalPriceTableV3V4 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V4$TSResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Trailing Stop Multi Year VERSION 3/V5
+  #################################################################################################
+  
+  
+  output$TSMYfinalPriceTableV3V5 = renderDataTable({
+    if (input$cropType == "Corn"){
+      NULL
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V5$TSResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
   
