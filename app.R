@@ -740,6 +740,13 @@ ui <- shinyUI(
                         )
                         
                         )
+                      )),
+             tabPanel("Version Descriptions",
+                      fluidPage(
+                        fluidRow(column(12, includeHTML("versions.html")
+                        )
+                        
+                        )
                       ))
   )
 ) 
