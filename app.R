@@ -2860,7 +2860,7 @@ server <- shinyServer(function(input,output,session){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV3Base[[yearTSMYV3Base()]]$`TS Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
-  })
+  }) 
   
   
   output$TSMYfinalPriceTableV3Base = renderDataTable({
