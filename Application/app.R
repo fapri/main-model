@@ -114,6 +114,84 @@ Soybean_CropYearsV3V5 = appObjectsSoybeanV3V5[[2]]
 finalizedPriceObjectSoybeanV3V5 = appObjectsSoybeanV3V5[[3]]
 
 
+
+POCorn = c("Base" = "base",
+           "Multi-Year" = "multiyear",
+           "Version 2" = "V2",
+           "Multi-Year Version 2" = "MYV2",
+           "Version 3" = "V3",
+           "Multi-Year Version 3" = "MYV3",
+           "Version 4" = "V4",
+           "Multi-Year Version 4"="MYV4",
+           "Version 5" = "V5",
+           "Multi-Year Version 5"="MYV5")
+
+POSoybean = c("Base" = "base",
+              "Multi-Year" = "multiyear",
+              "Version 2" = "V2",
+              "Multi-Year Version 2" = "MYV2",
+              "Version 3" = "V3",
+              "Multi-Year Version 3" = "MYV3",
+              "Version 4" = "V4",
+              "Multi-Year Version 4"="MYV4",
+              "Version 5" = "V5",
+              "Multi-Year Version 5"="MYV5")
+
+TSCorn = c(Base = "base",
+           "Multi-Year" = "multiyear",
+           "Version 2" = "V2",
+           "Multi-Year Version 2" = "MYV2",
+           "Version 3" = "V3",
+           "Multi-Year Version 3" = "MYV3",
+           "Version 4" = "V4",
+           "Multi-Year Version 4" = "MYV4",
+           "Version 5" = "V5",
+           "Multi-Year Version 5" = "MYV5",
+           "Version 3/Base" = "V3Base",
+           "Multi-Year Version 3/Base" = "MYV3Base",
+           "Version 3/V2" = "V3V2",
+           "Multi-Year Version 3/V2" = "MYV3V2",
+           "Version 3/V3" = "V3V3",
+           "Multi-Year Version 3/V3" = "MYV3V3",
+           "Version 3/V4" = "V3V4",
+           "Multi-Year Version 3/V4" = "MYV3V4",
+           "Version 3/V5" = "V3V5",
+           "Multi-Year Version 3/V5" = "MYV3V5")
+
+TSSoybean = c(Base = "base",
+              "Multi-Year" = "multiyear",
+              "Version 2" = "V2",
+              "Multi-Year Version 2" = "MYV2",
+              "Version 3" = "V3",
+              "Multi-Year Version 3" = "MYV3",
+              "Version 4" = "V4",
+              "Multi-Year Version 4" = "MYV4",
+              "Version 5" = "V5",
+              "Multi-Year Version 5" = "MYV5",
+              "Version 3/Base" = "V3Base",
+              "Multi-Year Version 3/Base" = "MYV3Base",
+              "Version 3/V2" = "V3V2",
+              "Multi-Year Version 3/V2" = "MYV3V2",
+              "Version 3/V3" = "V3V3",
+              "Multi-Year Version 3/V3" = "MYV3V3",
+              "Version 3/V4" = "V3V4",
+              "Multi-Year Version 3/V4" = "MYV3V4",
+              "Version 3/V5" = "V3V5",
+              "Multi-Year Version 3/V5" = "MYV3V5")
+
+SSCorn = c("Base" = "base",
+           "Multi-Year" = "multiyear")
+
+SSSoybean = c("Base" = "base",
+              "Multi-Year" = "multiyear")
+
+POVersions = list("Corn" = POCorn, "Soybeans" = POSoybean)
+TSVersions = list("Corn" = TSCorn, "Soybeans" = TSSoybean)
+SSVersions = list("Corn" = SSCorn, "Soybeans" = SSSoybean)
+
+
+
+
 u.n <-  Corn_CropYearsBase$CropYear
 names(u.n) <- u.n
 
@@ -209,16 +287,7 @@ ui <- shinyUI(
              ),
              tabPanel("Price Objective",
                       fluidPage(
-                        selectInput(
-                          "POstrategy", "Price Objective Strategy",
-                          c(Base = "base",
-                            "Multi-Year" = "multiyear",
-                            "Version 2" = "V2",
-                            "Multi-Year Version 2" = "MYV2",
-                            "Version 3" = "V3",
-                            "Multi-Year Version 3" = "MYV3",
-                            "Multi-Year Version 4"="MYV4",
-                            "Multi-Year Version 5"="MYV5")),
+                        selectInput(inputId = "POstrategy", label = "Select Price Objective Strategy", choices = NULL),
                         conditionalPanel(
                           condition = "input.POstrategy == 'base'",         
                           fluidPage(
@@ -481,29 +550,7 @@ ui <- shinyUI(
              ),
              tabPanel("Trailing Stop",
                       fluidPage(
-                        selectInput(
-                          "TSstrategy", "Trailing Stop Strategy",
-                          c(Base = "base",
-                            "Multi-Year" = "multiyear",
-                            "Version 2" = "V2",
-                            "Multi-Year Version 2" = "MYV2",
-                            "Version 3" = "V3",
-                            "Multi-Year Version 3" = "MYV3",
-                            "Version 4" = "V4",
-                            "Multi-Year Version 4" = "MYV4",
-                            "Version 5" = "V5",
-                            "Multi-Year Version 5" = "MYV5",
-                            "Version 3/Base" = "V3Base",
-                            "Multi-Year Version 3/Base" = "MYV3Base",
-                            "Version 3/V2" = "V3V2",
-                            "Multi-Year Version 3/V2" = "MYV3V2",
-                            "Version 3/V3" = "V3V3",
-                            "Multi-Year Version 3/V3" = "MYV3V3",
-                            "Version 3/V4" = "V3V4",
-                            "Multi-Year Version 3/V4" = "MYV3V4",
-                            "Version 3/V5" = "V3V5",
-                            "Multi-Year Version 3/V5" = "MYV3V5")
-                          ),
+                        selectInput(inputId = "TSstrategy", label = "Select Trailing Stop Strategy", choices = NULL),
                         conditionalPanel(
                           condition = "input.TSstrategy == 'base'",         
                           fluidPage(
@@ -1027,10 +1074,7 @@ ui <- shinyUI(
              ),
              tabPanel("Seasonal Sales",
                       fluidPage(
-                        selectInput(
-                          "SSstrategy", "Seasonal Sales Strategy",
-                          c(Base = "base",
-                            MultiYear = "multiyear")),
+                        selectInput(inputId = "SSstrategy", label = "Select Seasonal Sales Strategy", choices = NULL),
                         conditionalPanel(
                           condition = "input.SSstrategy == 'base'",         
                           fluidPage(
@@ -1175,6 +1219,31 @@ ui <- shinyUI(
 
 server <- shinyServer(function(input,output,session){
   
+  POchoices_versions <- reactive({
+    POchoices_versions <- POVersions[[input$cropType]]
+  })
+  
+  TSchoices_versions <- reactive({
+    TSchoices_versions <- TSVersions[[input$cropType]]
+  })
+  
+  SSchoices_versions <- reactive({
+    SSchoices_versions <- SSVersions[[input$cropType]]
+  })
+  
+  
+  observe({
+    updateSelectInput(session = session, inputId = "POstrategy", choices = POchoices_versions())
+  })
+  
+  observe({
+    updateSelectInput(session = session, inputId = "TSstrategy", choices = TSchoices_versions())
+  })
+  
+  observe({
+    updateSelectInput(session = session, inputId = "SSstrategy", choices = SSchoices_versions())
+  })
+  
   
   #################################################################################################
   # Price Objective
@@ -1199,7 +1268,7 @@ server <- shinyServer(function(input,output,session){
            "2015-16" = 8,
            "2016-17" = 9)
   })
-
+  
   output$distPlot <- renderPlot({
     if(input$cropType == "Corn"){
       Corn_CropYearObjectsBase[[yearPO()]]$POPlot
@@ -1208,7 +1277,7 @@ server <- shinyServer(function(input,output,session){
       Soybean_CropYearObjectsBase[[yearPO()]]$POPlot
     }
   })
-
+  
   output$storageTables = renderDataTable({
     if(input$cropType == "Corn"){
       as.datatable(getTables(Corn_CropYearObjectsBase[[yearPO()]]$`PO Storage`), rownames = FALSE, 
@@ -1219,7 +1288,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   output$summaryTables = renderDataTable({
     if(input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsBase[[yearPO()]]$`Sales Summary`), rownames = FALSE, 
@@ -1230,7 +1299,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   output$finalPriceTable = renderDataTable({
     if (input$cropType == "Corn"){
       as.datatable(getFirstSummaryTable(finalizedPriceObjectCornBase$POResultsTable), rownames = FALSE, 
@@ -1270,7 +1339,7 @@ server <- shinyServer(function(input,output,session){
       Soybean_CropYearObjectsV2[[yearPOV2()]]$POPlot
     }
   })
-
+  
   output$POstorageTablesV2 = renderDataTable({
     if(input$cropType == "Corn"){
       as.datatable(getTables(Corn_CropYearObjectsV2[[yearPOV2()]]$`PO Storage`), rownames = FALSE, 
@@ -1281,7 +1350,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   output$POsummaryTablesV2 = renderDataTable({
     if(input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsV2[[yearPOV2()]]$`Sales Summary`), rownames = FALSE, 
@@ -1292,7 +1361,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   output$POfinalPriceTableV2 = renderDataTable({
     if (input$cropType == "Corn"){
       NULL
@@ -1920,7 +1989,7 @@ server <- shinyServer(function(input,output,session){
   
   output$TSsummaryTablesV3V2 = renderDataTable({
     if (input$cropType == "Corn"){
-      as.datatable(getSalesTable(Corn_CropYearObjectsV3V2[[yearTSV3V3()]]$`TS Sales Summary`), rownames = FALSE, 
+      as.datatable(getSalesTable(Corn_CropYearObjectsV3V2[[yearTSV3V2()]]$`TS Sales Summary`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
@@ -2066,9 +2135,9 @@ server <- shinyServer(function(input,output,session){
   #################################################################################################
   # Trailing Stop VERSION 3/V5
   #################################################################################################
- 
   
-   yearTSV3V5 <- reactive({
+  
+  yearTSV3V5 <- reactive({
     switch(input$yearTSV3V5,
            "2008-09" = 1,
            "2009-10" = 2,
@@ -2902,7 +2971,7 @@ server <- shinyServer(function(input,output,session){
   })
   
   
-  output$TSMYsummaryTables3V2 = renderDataTable({
+  output$TSMYsummaryTablesV3V2 = renderDataTable({
     if (input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsV3V2[[yearTSMYV3V2()]]$`TS Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
