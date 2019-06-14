@@ -1364,7 +1364,8 @@ server <- shinyServer(function(input,output,session){
   
   output$POfinalPriceTableV2 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV2$POResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Price Objective V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV2$POResultsTable[,2:3]), rownames = FALSE,
@@ -1430,7 +1431,8 @@ server <- shinyServer(function(input,output,session){
   
   output$POfinalPriceTableV3 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3$POResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Price Objective V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3$POResultsTable[,2:3]), rownames = FALSE,
@@ -1496,7 +1498,8 @@ server <- shinyServer(function(input,output,session){
   
   output$POfinalPriceTableV4 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV4$POResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Price Objective V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV4$POResultsTable[,2:3]), rownames = FALSE,
@@ -1562,7 +1565,8 @@ server <- shinyServer(function(input,output,session){
   
   output$POfinalPriceTableV5 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV5$POResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Price Objective V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV5$POResultsTable[,2:3]), rownames = FALSE,
@@ -1685,7 +1689,8 @@ server <- shinyServer(function(input,output,session){
   
   output$TSfinalPriceTableV2 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV2$TSResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV2$TSResultsTable[,2:3]), rownames = FALSE,
@@ -1745,25 +1750,15 @@ server <- shinyServer(function(input,output,session){
   
   output$TSfinalPriceTableV3 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getTables(finalizedPriceObjectSoybeanV3$TSResultsTable), rownames = FALSE,
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3$TSResultsTable[,2:3]), rownames = FALSE,
                    caption = tags$caption("Trailing Stop V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
-  
-  output$TSfinalPriceTableV3 = renderDataTable({
-    if (input$cropType == "Corn"){
-      NULL
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3$TSResultsTable[,2:3]), rownames = FALSE,
                    caption = tags$caption("Trailing Stop V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
+
   
   #################################################################################################
   # Trailing Stop VERSION 4
@@ -1817,7 +1812,8 @@ server <- shinyServer(function(input,output,session){
   
   output$TSfinalPriceTableV4 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV4$TSResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV4$TSResultsTable[,2:3]), rownames = FALSE,
@@ -1879,7 +1875,8 @@ server <- shinyServer(function(input,output,session){
   
   output$TSfinalPriceTableV5 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV5$TSResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV5$TSResultsTable[,2:3]), rownames = FALSE,
@@ -1940,7 +1937,8 @@ server <- shinyServer(function(input,output,session){
   
   output$TSfinalPriceTableV3Base = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3Base$TSResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/Base", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3Base$TSResultsTable[,2:3]), rownames = FALSE,
@@ -2001,7 +1999,8 @@ server <- shinyServer(function(input,output,session){
   
   output$TSfinalPriceTableV3V2 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3V2$TSResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V2$TSResultsTable[,2:3]), rownames = FALSE,
@@ -2062,7 +2061,8 @@ server <- shinyServer(function(input,output,session){
   
   output$TSfinalPriceTableV3V3 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3V3$TSResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V3$TSResultsTable[,2:3]), rownames = FALSE,
@@ -2123,7 +2123,8 @@ server <- shinyServer(function(input,output,session){
   
   output$TSfinalPriceTableV3V4 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3V4$TSResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V4$TSResultsTable[,2:3]), rownames = FALSE,
@@ -2184,7 +2185,8 @@ server <- shinyServer(function(input,output,session){
   
   output$TSfinalPriceTableV3V5 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3V5$TSResultsTable[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V5$TSResultsTable[,2:3]), rownames = FALSE,
@@ -2369,7 +2371,8 @@ server <- shinyServer(function(input,output,session){
   
   output$POMYfinalPriceTableV2 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV2$POResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Price Objective V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV2$POResultsTableMY[,2:3]), rownames = FALSE,
@@ -2430,7 +2433,8 @@ server <- shinyServer(function(input,output,session){
   
   output$POMYfinalPriceTableV3 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3$POResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Price Objective V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3$POResultsTableMY[,2:3]), rownames = FALSE,
@@ -2491,7 +2495,8 @@ server <- shinyServer(function(input,output,session){
   
   output$POMYfinalPriceTableV4 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV4$POResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Price Objective V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV4$POResultsTableMY[,2:3]), rownames = FALSE,
@@ -2552,7 +2557,8 @@ server <- shinyServer(function(input,output,session){
   
   output$POMYfinalPriceTableV5 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV5$POResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Price Objective V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV5$POResultsTableMY[,2:3]), rownames = FALSE,
@@ -2676,7 +2682,8 @@ server <- shinyServer(function(input,output,session){
   
   output$TSMYfinalPriceTableV2 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV2$TSResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV2$TSResultsTableMY[,2:3]), rownames = FALSE,
@@ -2737,7 +2744,8 @@ server <- shinyServer(function(input,output,session){
   
   output$TSMYfinalPriceTableV3 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3$TSResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3$TSResultsTableMY[,2:3]), rownames = FALSE,
@@ -2799,7 +2807,8 @@ server <- shinyServer(function(input,output,session){
   
   output$TSMYfinalPriceTableV4 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV4$TSResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV4$TSResultsTableMY[,2:3]), rownames = FALSE,
@@ -2861,7 +2870,8 @@ server <- shinyServer(function(input,output,session){
   
   output$TSMYfinalPriceTableV5 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV5$TSResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV5$TSResultsTableMY[,2:3]), rownames = FALSE,
@@ -2923,7 +2933,8 @@ server <- shinyServer(function(input,output,session){
   
   output$TSMYfinalPriceTableV3Base = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3Base$TSResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/Base", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3Base$TSResultsTableMY[,2:3]), rownames = FALSE,
@@ -2985,7 +2996,8 @@ server <- shinyServer(function(input,output,session){
   
   output$TSMYfinalPriceTableV3V2 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3V2$TSResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V2$TSResultsTableMY[,2:3]), rownames = FALSE,
@@ -3047,7 +3059,8 @@ server <- shinyServer(function(input,output,session){
   
   output$TSMYfinalPriceTableV3V3 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3V3$TSResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V3$TSResultsTableMY[,2:3]), rownames = FALSE,
@@ -3109,7 +3122,8 @@ server <- shinyServer(function(input,output,session){
   
   output$TSMYfinalPriceTableV3V4 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3V4$TSResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V4$TSResultsTableMY[,2:3]), rownames = FALSE,
@@ -3171,7 +3185,8 @@ server <- shinyServer(function(input,output,session){
   
   output$TSMYfinalPriceTableV3V5 = renderDataTable({
     if (input$cropType == "Corn"){
-      NULL
+      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3V5$TSResultsTableMY[,2:3]), rownames = FALSE,
+                   caption = tags$caption("Trailing Stop V3/V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V5$TSResultsTableMY[,2:3]), rownames = FALSE,
