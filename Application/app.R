@@ -5,6 +5,18 @@ library(formattable)
 library(lubridate)
 
 
+
+# load(url("https://github.com/fapri/main-model/blob/soybean/triggers/Application/cornV1.RData?raw=true"))
+# load(url("https://github.com/fapri/main-model/blob/soybean/triggers/Application/cornV3.RData?raw=true"))
+# load(url("https://github.com/fapri/main-model/blob/soybean/triggers/Application/soybeanV1.RData?raw=true"))
+# load(url("https://github.com/fapri/main-model/blob/soybean/triggers/Application/soybeanV2.RData?raw=true"))
+
+# load("cornV1.RData")
+# load("cornV3.RData")
+# load("soybeanV1.RData")
+# load("soybeanV2.RData")
+
+
 # Corn Base/__
 appObjectsCornBase = readRDS("appObjectsCornBase.rds")
 Corn_CropYearObjectsBase = appObjectsCornBase[[1]]
@@ -1493,7 +1505,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Price Objective VERSION 2
@@ -1544,7 +1556,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Price Objective VERSION 3
@@ -1599,8 +1611,8 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
-
+  
+  
   #################################################################################################
   # Price Objective VERSION 4
   #################################################################################################
@@ -1654,7 +1666,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Price Objective VERSION 5
@@ -1709,7 +1721,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   
   #################################################################################################
@@ -1760,7 +1772,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop VERSION 2
@@ -1810,7 +1822,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop VERSION 3
@@ -1860,7 +1872,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop VERSION 4
@@ -1910,7 +1922,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop VERSION 5
@@ -1960,7 +1972,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop VERSION 3/BASE
@@ -2010,7 +2022,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop VERSION 3/V2
@@ -2060,7 +2072,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop VERSION 3/V3
@@ -2110,7 +2122,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop VERSION 3/V4
@@ -2160,7 +2172,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop VERSION 3/V5
@@ -2210,7 +2222,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Seasonal Sales
@@ -2260,7 +2272,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Price Objective With Multi Year
@@ -2310,7 +2322,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Price Objective Multi Year VERSION 2
@@ -2360,7 +2372,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Price Objective Multi Year VERSION 3
@@ -2410,7 +2422,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Price Objective Multi Year VERSION 4
@@ -2460,7 +2472,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Price Objective Multi Year VERSION 5
@@ -2510,7 +2522,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop With Multi Year
@@ -2561,7 +2573,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop With Multi Year VERSION 2
@@ -2611,7 +2623,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop With Multi Year VERSION 3
@@ -2661,7 +2673,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop Multi Year VERSION 4
@@ -2712,7 +2724,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop Multi Year VERSION 5
@@ -2763,7 +2775,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop Multi Year VERSION 3/BASE
@@ -2814,7 +2826,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   }) 
-
+  
   
   #################################################################################################
   # Trailing Stop Multi Year VERSION 3/V2 
@@ -2865,7 +2877,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop Multi Year VERSION 3/V3
@@ -2916,7 +2928,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop Multi Year VERSION 3/V4
@@ -2967,7 +2979,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Trailing Stop Multi Year VERSION 3/V5
@@ -3018,7 +3030,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-
+  
   
   #################################################################################################
   # Seasonal Sales With Multi Year
