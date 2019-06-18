@@ -114,7 +114,199 @@ Soybean_CropYearsV3V5 = appObjectsSoybeanV3V5[[2]]
 finalizedPriceObjectSoybeanV3V5 = appObjectsSoybeanV3V5[[3]]
 
 
+# Create strategy results tables
+priceObjectListCorn = list(finalizedPriceObjectCornBase,
+                           finalizedPriceObjectCornV2,
+                           finalizedPriceObjectCornV3,
+                           finalizedPriceObjectCornV4,
+                           finalizedPriceObjectCornV5,
+                           finalizedPriceObjectCornV3Base,
+                           finalizedPriceObjectCornV3V2,
+                           finalizedPriceObjectCornV3V3,
+                           finalizedPriceObjectCornV3V4,
+                           finalizedPriceObjectCornV3V5)
 
+priceObjectListSoybean = list(finalizedPriceObjectSoybeanBase,
+                              finalizedPriceObjectSoybeanV2,
+                              finalizedPriceObjectSoybeanV3,
+                              finalizedPriceObjectSoybeanV4,
+                              finalizedPriceObjectSoybeanV5,
+                              finalizedPriceObjectSoybeanV3Base,
+                              finalizedPriceObjectSoybeanV3V2,
+                              finalizedPriceObjectSoybeanV3V3,
+                              finalizedPriceObjectSoybeanV3V4,
+                              finalizedPriceObjectSoybeanV3V5)
+
+# These could be different for corn and soybean if we have different strategies
+versions = c("Base",
+             "V2",
+             "V3",
+             "V4",
+             "V5",
+             "V3Base",
+             "V3V2",
+             "V3V3",
+             "V3V4",
+             "V3V5")
+MYversions = c("Multiyear",
+               "MYV2",
+               "MYV3",
+               "MYV4",
+               "MYV5",
+               "MYV3Base",
+               "MYV3V2",
+               "MYV3V3",
+               "MYV3V4",
+               "MYV3V5")
+
+POversions = c("Base",
+               "Multiyear",
+               "V2",
+               "MYV2",
+               "V3",
+               "MYV3",
+               "V4",
+               "MYV4",
+               "V5",
+               "MYV5")
+
+nonMultiYearCorn = data.frame()
+multiYearCorn = data.frame()
+nonMultiYearSoybean = data.frame()
+multiYearSoybean = data.frame()
+
+getResults = function(strategy, resultsTable, resultsTableMY, strategyName, MY){
+  if(MY == FALSE){
+    if (nrow(resultsTable) == 0){
+      resultsTable = data.frame(matrix(nrow = 0, ncol = 7))
+      colnames(resultsTable) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
+                                 "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
+    }
+    
+    TS = which(names(strategy) == "TSResultsTable")
+    TSRow = cbind("Trailing Stop", 
+                  strategyName,
+                  strategy[[TS]][1, 2],
+                  strategy[[TS]][2, 2],
+                  strategy[[TS]][3, 2],
+                  strategy[[TS]][1, 3],
+                  strategy[[TS]][3, 3])
+    
+    
+    colnames(TSRow) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
+                        "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
+    
+    if(strategyName %in% POversions){
+      PO = which(names(strategy) == "POResultsTable")
+      PORow = cbind("Price Objective", 
+                    strategyName,
+                    strategy[[PO]][1, 2],
+                    strategy[[PO]][2, 2],
+                    strategy[[PO]][3, 2],
+                    strategy[[PO]][1, 3],
+                    strategy[[PO]][3, 3])
+      
+      colnames(PORow) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
+                          "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
+    } else{
+      PORow = NULL
+    }
+    
+    if(!("Seasonal Sales" %in% resultsTable$Strategy)){
+      SS = which(names(strategy) == "SSResultsTable")
+      
+      SSRow = cbind("Seasonal Sales", 
+                    strategyName,
+                    strategy[[SS]][1, 2],
+                    strategy[[SS]][2, 2],
+                    strategy[[SS]][3, 2],
+                    strategy[[SS]][1, 3],
+                    strategy[[SS]][3, 3])
+      
+      colnames(SSRow) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
+                          "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
+    } else{
+      SSRow = NULL
+    }
+    
+    resultsTable = rbind(resultsTable, PORow, TSRow, SSRow)
+    resultsTable = resultsTable[order(resultsTable$Strategy), ]
+    return(resultsTable)
+  }
+  
+  if(MY == TRUE){
+    if (nrow(resultsTableMY) == 0){
+      resultsTableMY = data.frame(matrix(nrow = 0, ncol = 7))
+      colnames(resultsTableMY) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
+                                   "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
+    }
+    
+    TSMY = which(names(strategy) == "TSResultsTableMY")
+    
+    TSMYRow = cbind("Trailing Stop", 
+                    strategyName,
+                    strategy[[TSMY]][1, 2],
+                    strategy[[TSMY]][2, 2],
+                    strategy[[TSMY]][3, 2],
+                    strategy[[TSMY]][1, 3],
+                    strategy[[TSMY]][3, 3])
+    
+    colnames(TSMYRow) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
+                          "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
+    
+    if(strategyName %in% POversions){
+      POMY = which(names(strategy) == "POResultsTableMY")
+      POMYRow = cbind("Price Objective", 
+                      strategyName,
+                      strategy[[POMY]][1, 2],
+                      strategy[[POMY]][2, 2],
+                      strategy[[POMY]][3, 2],
+                      strategy[[POMY]][1, 3],
+                      strategy[[POMY]][3, 3])
+      colnames(POMYRow) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
+                            "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
+    } else{
+      POMYRow = NULL
+    }
+    
+    if(!("Seasonal Sales" %in% resultsTableMY$Strategy)){
+      SSMY = which(names(strategy) == "SSResultsTableMY")
+      
+      SSMYRow = cbind("Seasonal Sales", 
+                      strategyName,
+                      strategy[[SSMY]][1, 2],
+                      strategy[[SSMY]][2, 2],
+                      strategy[[SSMY]][3, 2],
+                      strategy[[SSMY]][1, 3],
+                      strategy[[SSMY]][3, 3])
+      
+      colnames(SSMYRow) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
+                            "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
+    } else{
+      SSMYRow = NULL
+    }
+    
+    resultsTableMY = rbind(resultsTableMY, POMYRow, TSMYRow, SSMYRow)
+    resultsTableMY = resultsTableMY[order(resultsTableMY$Strategy), ]
+    return(resultsTableMY)
+  }
+}
+
+# Load the tables for later use
+for(i in 1:length(priceObjectListCorn)){
+  nonMultiYearCorn = data.frame(getResults(priceObjectListCorn[[i]], nonMultiYearCorn, multiYearCorn, versions[i], FALSE))
+  multiYearCorn = data.frame(getResults(priceObjectListCorn[[i]], nonMultiYearCorn, multiYearCorn, MYversions[i], TRUE))
+}
+
+for(i in 1:length(priceObjectListSoybean)){
+  nonMultiYearSoybean = data.frame(getResults(priceObjectListSoybean[[i]], nonMultiYearSoybean, multiYearSoybean, versions[i], FALSE))
+  multiYearSoybean = data.frame(getResults(priceObjectListSoybean[[i]], nonMultiYearSoybean, multiYearSoybean, MYversions[i], TRUE))
+  
+}
+
+
+
+# Load in values for dynamic drop down menus
 POCorn = c("Base" = "base",
            "Multi-Year" = "multiyear",
            "Version 2" = "V2",
@@ -189,14 +381,12 @@ POVersions = list("Corn" = POCorn, "Soybeans" = POSoybean)
 TSVersions = list("Corn" = TSCorn, "Soybeans" = TSSoybean)
 SSVersions = list("Corn" = SSCorn, "Soybeans" = SSSoybean)
 
-
-
-
 u.n <-  Corn_CropYearsBase$CropYear
 names(u.n) <- u.n
 
 typeList <- c("Corn", "Soybeans")
 names(typeList) = typeList
+
 
 getTables = function(data) {
   data = cbind(" " = data[,1], round(data[, 2:3], digits = 2))
@@ -272,6 +462,24 @@ getSalesTable = function(data) {
                                                                       "padding" = "5px",
                                                                       "font.weight" = "bold",  
                                                                       "text-align" = "left"))))
+  return(table)
+}
+
+getFullResultsTable = function(data) {
+  colnames(data) = c("Strategy", "Version", "Raw Average Price", "Pre-Harvest Average", "Post-Harvest Average", 
+                     "Storage-Adjusted Average", "Storage-Adjusted Post-Harvest Average")
+  data[,3:7] = lapply(data[3:7], function(x) as.numeric(as.character(x)))
+  rownames(data) <- c()
+  data = cbind(data[,1:2], round(data[, 3:7], digits = 2))
+  table = formattable(data, 
+                      align = "c",
+                      list(~ formatter("span",
+                                       style = x ~ style(display = "block",
+                                                         "border-radius" = "0px",
+                                                         "padding" = "0px",
+                                                         "text-align" = "center")),
+                           `Strategy` = formatter("span", style = x ~ style(font.weight = "bold")),
+                           `Version` = formatter("span", style = x ~ style(font.weight = "bold"))))
   return(table)
 }
 
@@ -1141,64 +1349,17 @@ ui <- shinyUI(
                             ".tables {align: center; width: 100px}"
                           )
                         ),
-                        # tags$div(class="title", titlePanel("Without Multi-Year Sales")),
-                        # splitLayout( dataTableOutput("finalPriceTable")),
-                        #              dataTableOutput("TSfinalPriceTable"),
-                        #              dataTableOutput("SSfinalPriceTable"),
-                        #              dataTableOutput("TSfinalPriceTableV2"),
-                        #              dataTableOutput("TSfinalPriceTableV3")),
-                        # tags$div(class="title", titlePanel("With Multi-Year Sales")),
-                        # splitLayout( dataTableOutput("POMYfinalPriceTable"),
-                        #             dataTableOutput("TSMYfinalPriceTable"),
-                        #             dataTableOutput("SSMYfinalPriceTable"),
-                        #             dataTableOutput("TSMYfinalPriceTableV2"),
-                        #             dataTableOutput("TSMYfinalPriceTableV3"))
                         
                         fluidRow(
-                          # Without Multi Year
-                          column(12,
-                                 tags$div(class="title", titlePanel("Without Multi-Year Sales")),
-                                 div(style = "display: inline-block;", dataTableOutput("finalPriceTable"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("POfinalPriceTableV2"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("POfinalPriceTableV3"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("POfinalPriceTableV4"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("POfinalPriceTableV5"), height=150, width=150)),
-                          column(12,
-                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTable"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV2"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV3"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV4"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV5"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV3Base"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV3V2"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV3V3"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV3V4"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSfinalPriceTableV3V5"), height=150, width=150)),
-                          column(12,
-                                 div(style = "display: inline-block;", dataTableOutput("SSfinalPriceTable"), height=150, width=150)),
                           
-                          # With Multi Year
-                          column(12,
+                          column(12, align = "center",
+                                 tags$div(class="title", titlePanel("Without Multi-Year Sales")),
+                                 div(style = "display: inline-block;", dataTableOutput("fullResultsTable")),
                                  tags$div(class="title", titlePanel("With Multi-Year Sales")),
-                                 div(style = "display: inline-block;", dataTableOutput("POMYfinalPriceTable"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("POMYfinalPriceTableV2"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("POMYfinalPriceTableV3"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("POMYfinalPriceTableV4"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("POMYfinalPriceTableV5"), height=150, width=150)),
-                          column(12,
-                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTable"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV2"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV3"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV4"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV5"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV3Base"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV3V2"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV3V3"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV3V4"), height=150, width=150),
-                                 div(style = "display: inline-block;", dataTableOutput("TSMYfinalPriceTableV3V5"), height=150, width=150)),
-                          column(12,
-                                 div(style = "display: inline-block;", dataTableOutput("SSMYfinalPriceTable"), height=150, width=150)))
-                      )
+                                 div(style = "display: inline-block; padding-bottom: 50px", dataTableOutput("fullResultsTableMY"))
+                          )
+                          
+                        ))
              ),
              tabPanel("About Our Strategies",
                       fluidPage(
@@ -1243,6 +1404,39 @@ server <- shinyServer(function(input,output,session){
   observe({
     updateSelectInput(session = session, inputId = "SSstrategy", choices = SSchoices_versions())
   })
+  
+  
+  
+  
+  
+  
+  
+  
+  output$fullResultsTable = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getFullResultsTable(nonMultiYearCorn), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getFullResultsTable(nonMultiYearSoybean), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+  
+  output$fullResultsTableMY = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getFullResultsTable(multiYearCorn), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getFullResultsTable(multiYearSoybean), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+  
+  
+  
+  
   
   
   #################################################################################################
@@ -1299,18 +1493,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  output$finalPriceTable = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getFirstSummaryTable(finalizedPriceObjectCornBase$POResultsTable), rownames = FALSE, 
-                   caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getFirstSummaryTable(finalizedPriceObjectSoybeanBase$POResultsTable), rownames = FALSE, 
-                   caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Price Objective VERSION 2
@@ -1361,18 +1544,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  output$POfinalPriceTableV2 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV2$POResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Price Objective V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV2$POResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Price Objective V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Price Objective VERSION 3
@@ -1427,20 +1599,8 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$POfinalPriceTableV3 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3$POResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Price Objective V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3$POResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Price Objective V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
-  
+
+
   #################################################################################################
   # Price Objective VERSION 4
   #################################################################################################
@@ -1494,19 +1654,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$POfinalPriceTableV4 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV4$POResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Price Objective V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV4$POResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Price Objective V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Price Objective VERSION 5
@@ -1561,18 +1709,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$POfinalPriceTableV5 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV5$POResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Price Objective V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV5$POResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Price Objective V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
+
   
   
   #################################################################################################
@@ -1623,19 +1760,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSfinalPriceTable = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getFirstSummaryTable(finalizedPriceObjectCornBase$TSResultsTable), rownames = FALSE, 
-                   caption = tags$caption("Trailing Stop", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getFirstSummaryTable(finalizedPriceObjectSoybeanBase$TSResultsTable), rownames = FALSE, 
-                   caption = tags$caption("Trailing Stop", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Trailing Stop VERSION 2
@@ -1685,19 +1810,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSfinalPriceTableV2 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV2$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV2$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Trailing Stop VERSION 3
@@ -1745,17 +1858,6 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[yearTSV3()]]$`TS Sales Summary`), rownames = FALSE,
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
-  output$TSfinalPriceTableV3 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
 
@@ -1808,20 +1910,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSfinalPriceTableV4 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV4$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV4$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
-  
+
   
   #################################################################################################
   # Trailing Stop VERSION 5
@@ -1871,19 +1960,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSfinalPriceTableV5 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV5$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV5$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Trailing Stop VERSION 3/BASE
@@ -1933,19 +2010,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSfinalPriceTableV3Base = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3Base$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/Base", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3Base$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/Base", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Trailing Stop VERSION 3/V2
@@ -1995,19 +2060,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSfinalPriceTableV3V2 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3V2$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V2$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Trailing Stop VERSION 3/V3
@@ -2057,19 +2110,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSfinalPriceTableV3V3 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3V3$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V3$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Trailing Stop VERSION 3/V4
@@ -2119,19 +2160,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSfinalPriceTableV3V4 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3V4$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V4$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Trailing Stop VERSION 3/V5
@@ -2181,19 +2210,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSfinalPriceTableV3V5 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3V5$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V5$TSResultsTable[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Seasonal Sales
@@ -2243,19 +2260,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$SSfinalPriceTable = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getFirstSummaryTable(finalizedPriceObjectCornBase$SSResultsTable), rownames = FALSE, 
-                   caption = tags$caption("Seasonal Sales", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getFirstSummaryTable(finalizedPriceObjectSoybeanBase$SSResultsTable), rownames = FALSE, 
-                   caption = tags$caption("Seasonal Sales", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Price Objective With Multi Year
@@ -2305,19 +2310,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$POMYfinalPriceTable = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getFirstSummaryTable(finalizedPriceObjectCornBase$POResultsTableMY), rownames = FALSE, 
-                   caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getFirstSummaryTable(finalizedPriceObjectSoybeanBase$POResultsTableMY), rownames = FALSE, 
-                   caption = tags$caption("Price Objective", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Price Objective Multi Year VERSION 2
@@ -2367,19 +2360,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$POMYfinalPriceTableV2 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV2$POResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Price Objective V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV2$POResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Price Objective V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Price Objective Multi Year VERSION 3
@@ -2429,19 +2410,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$POMYfinalPriceTableV3 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3$POResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Price Objective V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3$POResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Price Objective V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Price Objective Multi Year VERSION 4
@@ -2491,19 +2460,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$POMYfinalPriceTableV4 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV4$POResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Price Objective V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV4$POResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Price Objective V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Price Objective Multi Year VERSION 5
@@ -2553,19 +2510,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$POMYfinalPriceTableV5 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV5$POResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Price Objective V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV5$POResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Price Objective V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Trailing Stop With Multi Year
@@ -2616,19 +2561,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSMYfinalPriceTable = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getFirstSummaryTable(finalizedPriceObjectCornBase$TSResultsTableMY), rownames = FALSE, 
-                   caption = tags$caption("Trailing Stop", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getFirstSummaryTable(finalizedPriceObjectSoybeanBase$TSResultsTableMY), rownames = FALSE, 
-                   caption = tags$caption("Trailing Stop", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Trailing Stop With Multi Year VERSION 2
@@ -2678,19 +2611,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSMYfinalPriceTableV2 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV2$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV2$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Trailing Stop With Multi Year VERSION 3
@@ -2740,19 +2661,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSMYfinalPriceTableV3 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Trailing Stop Multi Year VERSION 4
@@ -2803,19 +2712,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSMYfinalPriceTableV4 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV4$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV4$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Trailing Stop Multi Year VERSION 5
@@ -2866,19 +2763,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSMYfinalPriceTableV5 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV5$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV5$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Trailing Stop Multi Year VERSION 3/BASE
@@ -2929,19 +2814,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   }) 
-  
-  
-  output$TSMYfinalPriceTableV3Base = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3Base$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/Base", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3Base$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/Base", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Trailing Stop Multi Year VERSION 3/V2 
@@ -2992,19 +2865,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSMYfinalPriceTableV3V2 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3V2$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V2$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/V2", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Trailing Stop Multi Year VERSION 3/V3
@@ -3055,19 +2916,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSMYfinalPriceTableV3V3 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3V3$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V3$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/V3", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Trailing Stop Multi Year VERSION 3/V4
@@ -3118,19 +2967,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSMYfinalPriceTableV3V4 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3V4$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V4$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/V4", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Trailing Stop Multi Year VERSION 3/V5
@@ -3181,19 +3018,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  output$TSMYfinalPriceTableV3V5 = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectCornV3V5$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getRemainingSummaryTables(finalizedPriceObjectSoybeanV3V5$TSResultsTableMY[,2:3]), rownames = FALSE,
-                   caption = tags$caption("Trailing Stop V3/V5", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
+
   
   #################################################################################################
   # Seasonal Sales With Multi Year
@@ -3241,17 +3066,6 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsBase[[yearSSMY()]]$`SS Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-  })
-  
-  output$SSMYfinalPriceTable = renderDataTable({
-    if (input$cropType == "Corn"){
-      as.datatable(getFirstSummaryTable(finalizedPriceObjectCornBase$SSResultsTableMY), rownames = FALSE, 
-                   caption = tags$caption("Seasonal Sales", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
-    }
-    else if (input$cropType == "Soybeans"){
-      as.datatable(getFirstSummaryTable(finalizedPriceObjectSoybeanBase$SSResultsTableMY), rownames = FALSE, 
-                   caption = tags$caption("Seasonal Sales", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
 })
