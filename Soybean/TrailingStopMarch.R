@@ -93,9 +93,7 @@ trailingStopTrigger = function(cropYear, featuresObject) {
     }
   }
   
-  cropYear[['TS Triggers']] = trailingStopTriggers
-  
-  return(cropYear)
+  return(trailingStopTriggers)
 }
 
 # Finds all of the trailing stop triggers for a given crop year
@@ -108,7 +106,11 @@ trailingStopTriggerMarch = function(cropYear, featuresObject) {
   
   EYTSInterval = interval(head(mdy(marketingYear$Date[june[juneOC]]), 1), mdy(marketingYear$Date[nrow(marketingYear)]))
   
-  for(row in 2:nrow(marketingYear)) {
+  intervalPre = cropYear$`Pre/Post Interval`$intervalPre
+  
+  preRows = which(mdy(marketingYear$Date) %within% intervalPre)
+  
+  for(row in 2:last(preRows)) {
     # Special case for Feb -> March
     if (month(mdy(marketingYear$Date[row])) == 3 && month(mdy(marketingYear$Date[row - 1])) == 2){
       if(marketingYear$MarPercentile[row - 1] != 95 && marketingYear$MarPercentile[row - 1] >= 70) {
@@ -130,7 +132,7 @@ trailingStopTriggerMarch = function(cropYear, featuresObject) {
           trailingStopTriggersMarch = rbind(trailingStopTriggersMarch, data.frame("Date" = marketingYear$Date[row], 
                                                                         "Previous Percentile" = marketingYear$MarPercentile[row - 1],
                                                                         "Percentile" = previousPercentileBelow,
-                                                                        "Type" = "Trailing Stop Special"))
+                                                                        "Type" = "Trailing Stop Special March"))
         }
       }
     }
@@ -145,60 +147,47 @@ trailingStopTriggerMarch = function(cropYear, featuresObject) {
         trailingStopTriggersMarch = rbind(trailingStopTriggersMarch, data.frame("Date" = marketingYear$Date[row], 
                                                                       "Previous Percentile" = marketingYear$MarPercentile[row - 1],
                                                                       "Percentile" = marketingYear$MarPercentile[row],
-                                                                      "Type" = "Trailing Stop"))
-      }
-      
-      else if ((mdy(marketingYear$Date[row]) %within% EYTSInterval)){ 
-        trailingStopTriggersMarch = rbind(trailingStopTriggersMarch, data.frame("Date" = marketingYear$Date[row], 
-                                                                      "Previous Percentile" = marketingYear$MarPercentile[row - 1],
-                                                                      "Percentile" = marketingYear$MarPercentile[row],
-                                                                      "Type" = "End of Year Trailing Stop"))
-      }
-    }
-    
-    else if (isTenDayHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$MarPercentile[row], 
-                          cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
-                          featuresObject$`95% of Ten Day High`, MY = FALSE)) {
-      trailingStopTriggersMarch = rbind(trailingStopTriggersMarch, data.frame("Date" = marketingYear$Date[row], 
-                                                                    "Previous Percentile" = marketingYear$MarPercentile[row - 1],
-                                                                    "Percentile" = marketingYear$MarPercentile[row],
-                                                                    "Type" = "Ten Day High"))
-    }
-    
-    else if (isAllTimeHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$MarPercentile[row],
-                           cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
-                           featuresObject$`95% of Ten Day High`, featuresObject$`All Time High`, MY = FALSE)) {
-      trailingStopTriggersMarch = rbind(trailingStopTriggersMarch, data.frame("Date" = marketingYear$Date[row], 
-                                                                    "Previous Percentile" = marketingYear$MarPercentile[row - 1],
-                                                                    "Percentile" = marketingYear$MarPercentile[row],
-                                                                    "Type" = "All Time High"))
+                                                                      "Type" = "Trailing Stop March"))
+      } 
     }
   }
   
-  cropYear[['TS Triggers March']] = trailingStopTriggersMarch
-  
-  return(cropYear)
+  return(trailingStopTriggersMarch)
+
 }
 
 if(type == "corn"){
   # Gets the price objective triggers for earch crop year
   # Gets the trailing stop triggers for earch crop year
   for(i in 1:length(Corn_CropYearObjects)) {
-    Corn_CropYearObjects[[i]] = trailingStopTrigger(Corn_CropYearObjects[[i]], Corn_FeaturesObject)
-    Corn_CropYearObjects[[i]]$`TS Triggers`$Date = mdy(Corn_CropYearObjects[[i]]$`TS Triggers`$Date)
+    trailingStopTriggers = trailingStopTrigger(Corn_CropYearObjects[[i]], Corn_FeaturesObject)
+    trailingStopTriggersMarch = trailingStopTriggerMarch(Corn_CropYearObjects[[i]], Corn_FeaturesObject)
     
-    Corn_CropYearObjects[[i]] = trailingStopTriggerMarch(Corn_CropYearObjects[[i]], Corn_FeaturesObject)
-    Corn_CropYearObjects[[i]]$`TS Triggers March`$Date = mdy(Corn_CropYearObjects[[i]]$`TS Triggers March`$Date)
+    allTriggers = rbind(trailingStopTriggersMarch, trailingStopTriggers)
+    allTriggers = allTriggers[order(allTriggers$Date), ]
+    # allTriggers = allTriggers[!duplicated(allTriggers$Date), ]
+    
+    
+    Corn_CropYearObjects[[i]]$`TS Triggers` = allTriggers
+    Corn_CropYearObjects[[i]]$`TS Triggers`$Date = mdy(Corn_CropYearObjects[[i]]$`TS Triggers`$Date)
   }
 }
 
 if(type == "soybean"){
   # Gets the price objective triggers for earch crop year
   for(i in 1:length(Soybean_CropYearObjects)) {
-    Soybean_CropYearObjects[[i]] = trailingStopTrigger(Soybean_CropYearObjects[[i]], Soybean_FeaturesObject)
-    Soybean_CropYearObjects[[i]]$`TS Triggers`$Date = mdy(Soybean_CropYearObjects[[i]]$`TS Triggers`$Date)
+    trailingStopTriggers = trailingStopTrigger(Soybean_CropYearObjects[[i]], Soybean_FeaturesObject)
+    trailingStopTriggersMarch = trailingStopTriggerMarch(Soybean_CropYearObjects[[i]], Soybean_FeaturesObject)
     
-    Soybean_CropYearObjects[[i]] = trailingStopTriggerMarch(Soybean_CropYearObjects[[i]], Soybean_FeaturesObject)
-    Soybean_CropYearObjects[[i]]$`TS Triggers March`$Date = mdy(Soybean_CropYearObjects[[i]]$`TS Triggers March`$Date)
+    allTriggers = rbind(trailingStopTriggersMarch, trailingStopTriggers)
+    allTriggers = allTriggers[order(allTriggers$Date), ]
+    # allTriggers = allTriggers[!duplicated(allTriggers$Date), ]
+    
+    
+    Soybean_CropYearObjects[[i]]$`TS Triggers` = allTriggers
+    Soybean_CropYearObjects[[i]]$`TS Triggers`$Date = mdy(Soybean_CropYearObjects[[i]]$`TS Triggers`$Date)
   }
 }
+
+
+
