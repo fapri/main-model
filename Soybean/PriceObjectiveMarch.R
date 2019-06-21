@@ -34,9 +34,9 @@ priceObjectiveTrigger = function(cropYear, featuresObject) {
         pricePreviousPercentileAbove = marketingYear[row, previousPercentileAbove]
         
         if(previousPercentileAbove == "70th") previousPercentileAbove = 70
-        if(previousPercentileAbove == "70th") previousPercentileAbove = 80
-        if(previousPercentileAbove == "70th") previousPercentileAbove = 90
-        if(previousPercentileAbove == "70th") previousPercentileAbove = 95
+        if(previousPercentileAbove == "80th") previousPercentileAbove = 80
+        if(previousPercentileAbove == "90th") previousPercentileAbove = 90
+        if(previousPercentileAbove == "95th") previousPercentileAbove = 95
         
         # Takes in price for percentile above prevous day, percentile above previous day, current day price
         if(isPriceObjectiveSpecial(pricePreviousPercentileAbove, marketingYear$Price[row])) {
@@ -82,17 +82,19 @@ priceObjectiveTrigger = function(cropYear, featuresObject) {
     }
   }
   
-  cropYear[['PO Triggers']] = priceObjectiveTriggers
-  
-  return(cropYear)
+  return(priceObjectiveTriggers)
 }
 
 # Finds all of the price objective triggers for a given crop year
 priceObjectiveTriggerMarch = function(cropYear, featuresObject) {
   priceObjectiveTriggersMarch = data.frame()
   marketingYear = cropYear[['Marketing Year']]
+
+  intervalPre = cropYear$`Pre/Post Interval`$intervalPre
   
-  for(row in 2:nrow(marketingYear)) {
+  preRows = which(mdy(marketingYear$Date) %within% intervalPre)
+  
+  for(row in 2:last(preRows)) {
     # Special case for Feb -> March
     if (month(mdy(marketingYear$Date[row])) == 3 && month(mdy(marketingYear$Date[row - 1])) == 2){
       if(marketingYear$MarPercentile[row - 1] != 95 && marketingYear$MarPercentile[row - 1] >= 60) {
@@ -113,7 +115,7 @@ priceObjectiveTriggerMarch = function(cropYear, featuresObject) {
         if(isPriceObjectiveSpecial(pricePreviousPercentileAbove, marketingYear$Price[row])) {
           priceObjectiveTriggersMarch = rbind(priceObjectiveTriggersMarch, data.frame("Date" = marketingYear$Date[row], 
                                                                             "Percentile" = previousPercentileAbove,
-                                                                            "Type" = "Price Objective Special"))
+                                                                            "Type" = "Price Objective Special March"))
         }
       }
     }
@@ -126,56 +128,41 @@ priceObjectiveTriggerMarch = function(cropYear, featuresObject) {
     else if(isPriceObjective(marketingYear$MarPercentile[row - 1], marketingYear$MarPercentile[row])) {
       priceObjectiveTriggersMarch = rbind(priceObjectiveTriggersMarch, data.frame("Date" = marketingYear$Date[row], 
                                                                         "Percentile" = marketingYear$MarPercentile[row],
-                                                                        "Type" = "Price Objective"))
-    }
-    
-    else if (isTenDayHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$MarPercentile[row], 
-                          cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
-                          featuresObject$`95% of Ten Day High`, MY = FALSE)) {
-      priceObjectiveTriggersMarch = rbind(priceObjectiveTriggersMarch, data.frame("Date" = marketingYear$Date[row], 
-                                                                        "Percentile" = marketingYear$MarPercentile[row],
-                                                                        "Type" = "Ten Day High"))
-    }
-    
-    else if (isAllTimeHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$MarPercentile[row],
-                           cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
-                           featuresObject$`95% of Ten Day High`, featuresObject$`All Time High`, MY = FALSE)) {
-      priceObjectiveTriggersMarch = rbind(priceObjectiveTriggersMarch, data.frame("Date" = marketingYear$Date[row], 
-                                                                        "Percentile" = marketingYear$MarPercentile[row],
-                                                                        "Type" = "All Time High"))
-    }
-    
-    else if (isEndYearTrailingStop(mdy(marketingYear$Date[row]), marketingYear$MarPercentile[row - 1], marketingYear$MarPercentile[row],
-                                   cropYear$`Pre/Post Interval`$intervalPost)) {
-      priceObjectiveTriggersMarch = rbind(priceObjectiveTriggersMarch, data.frame("Date" = marketingYear$Date[row], 
-                                                                        "Percentile" = marketingYear$MarPercentile[row],
-                                                                        "Type" = "End of Year Trailing Stop"))
+                                                                        "Type" = "Price Objective March"))
     }
   }
   
-  cropYear[['PO Triggers March']] = priceObjectiveTriggersMarch
-  
-  return(cropYear)
+  return(priceObjectiveTriggersMarch)
 }
 
 if(type == "corn"){
   # Gets the price objective triggers for earch crop year
   for(i in 1:length(Corn_CropYearObjects)) {
-    Corn_CropYearObjects[[i]] = priceObjectiveTrigger(Corn_CropYearObjects[[i]], Corn_FeaturesObject)
-    Corn_CropYearObjects[[i]]$`PO Triggers`$Date = mdy(Corn_CropYearObjects[[i]]$`PO Triggers`$Date)
+    priceObjectiveTriggers = priceObjectiveTrigger(Corn_CropYearObjects[[i]], Corn_FeaturesObject)
+    priceObjectiveTriggersMarch = priceObjectiveTriggerMarch(Corn_CropYearObjects[[i]], Corn_FeaturesObject)
     
-    Corn_CropYearObjects[[i]] = priceObjectiveTriggerMarch(Corn_CropYearObjects[[i]], Corn_FeaturesObject)
-    Corn_CropYearObjects[[i]]$`PO Triggers March`$Date = mdy(Corn_CropYearObjects[[i]]$`PO Triggers March`$Date)
+    allTriggers = rbind(priceObjectiveTriggersMarch, priceObjectiveTriggers)
+    allTriggers = allTriggers[order(allTriggers$Date), ]
+    # allTriggers = allTriggers[!duplicated(allTriggers$Date), ]
+    
+    
+    Corn_CropYearObjects[[i]]$`PO Triggers` = allTriggers
+    Corn_CropYearObjects[[i]]$`PO Triggers`$Date = mdy(Corn_CropYearObjects[[i]]$`PO Triggers`$Date)
   }
 }
 
 if(type == "soybean"){
   # Gets the price objective triggers for earch crop year
   for(i in 1:length(Soybean_CropYearObjects)) {
-    Soybean_CropYearObjects[[i]] = priceObjectiveTrigger(Soybean_CropYearObjects[[i]], Soybean_FeaturesObject)
-    Soybean_CropYearObjects[[i]]$`PO Triggers`$Date = mdy(Soybean_CropYearObjects[[i]]$`PO Triggers`$Date)
+    priceObjectiveTriggers = priceObjectiveTrigger(Soybean_CropYearObjects[[i]], Soybean_FeaturesObject)
+    priceObjectiveTriggersMarch = priceObjectiveTriggerMarch(Soybean_CropYearObjects[[i]], Soybean_FeaturesObject)
     
-    Soybean_CropYearObjects[[i]] = priceObjectiveTriggerMarch(Soybean_CropYearObjects[[i]], Soybean_FeaturesObject)
-    Soybean_CropYearObjects[[i]]$`PO Triggers March`$Date = mdy(Soybean_CropYearObjects[[i]]$`PO Triggers March`$Date)
+    allTriggers = rbind(priceObjectiveTriggersMarch, priceObjectiveTriggers)
+    allTriggers = allTriggers[order(allTriggers$Date), ]
+    # allTriggers = allTriggers[!duplicated(allTriggers$Date), ]
+    
+    
+    Soybean_CropYearObjects[[i]]$`PO Triggers` = allTriggers
+    Soybean_CropYearObjects[[i]]$`PO Triggers`$Date = mdy(Soybean_CropYearObjects[[i]]$`PO Triggers`$Date)
   }
 }
