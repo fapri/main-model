@@ -31,12 +31,12 @@ trailingStopTrigger = function(cropYear, featuresObject) {
     if (month(mdy(marketingYear$Date[row])) == 3 && month(mdy(marketingYear$Date[row - 1])) == 2){
       if(marketingYear$Percentile[row - 1] != 95 && marketingYear$Percentile[row - 1] >= 70) {
         
-        if(marketingYear$Percentile[row - 1] == 70) previousPercentileBelow = "60th"
-        if(marketingYear$Percentile[row - 1] == 80) previousPercentileBelow = "70th"
-        if(marketingYear$Percentile[row - 1] == 90) previousPercentileBelow = "80th"
-        if(marketingYear$Percentile[row - 1] == 95) previousPercentileBelow = "90th"
+        if(marketingYear$Percentile[row - 1] == 70) previousPercentileBelow = "70th"
+        if(marketingYear$Percentile[row - 1] == 80) previousPercentileBelow = "80th"
+        if(marketingYear$Percentile[row - 1] == 90) previousPercentileBelow = "90th"
+        if(marketingYear$Percentile[row - 1] == 95) previousPercentileBelow = "95th"
         
-        pricePreviousPercentileBelow = marketingYear[row, previousPercentileBelow]
+        pricePreviousPercentileBelow = marketingYear[row - 1, previousPercentileBelow]
         
         if(previousPercentileBelow == "60th") previousPercentileBelow = 60
         if(previousPercentileBelow == "70th") previousPercentileBelow = 70
@@ -115,12 +115,12 @@ trailingStopTriggerMarch = function(cropYear, featuresObject) {
     if (month(mdy(marketingYear$Date[row])) == 3 && month(mdy(marketingYear$Date[row - 1])) == 2){
       if(marketingYear$MarPercentile[row - 1] != 95 && marketingYear$MarPercentile[row - 1] >= 70) {
         
-        if(marketingYear$MarPercentile[row - 1] == 70) previousPercentileBelow = "60th"
-        if(marketingYear$MarPercentile[row - 1] == 80) previousPercentileBelow = "70th"
-        if(marketingYear$MarPercentile[row - 1] == 90) previousPercentileBelow = "80th"
-        if(marketingYear$MarPercentile[row - 1] == 95) previousPercentileBelow = "90th"
+        if(marketingYear$MarPercentile[row - 1] == 70) previousPercentileBelow = "70th"
+        if(marketingYear$MarPercentile[row - 1] == 80) previousPercentileBelow = "80th"
+        if(marketingYear$MarPercentile[row - 1] == 90) previousPercentileBelow = "90th"
+        if(marketingYear$MarPercentile[row - 1] == 95) previousPercentileBelow = "95th"
         
-        pricePreviousPercentileBelow = marketingYear[row, previousPercentileBelow]
+        pricePreviousPercentileBelow = marketingYear[row - 1, previousPercentileBelow]
         
         if(previousPercentileBelow == "60th") previousPercentileBelow = 60
         if(previousPercentileBelow == "70th") previousPercentileBelow = 70
@@ -165,9 +165,7 @@ if(type == "corn"){
     
     allTriggers = rbind(trailingStopTriggersMarch, trailingStopTriggers)
     allTriggers = allTriggers[order(allTriggers$Date), ]
-    # allTriggers = allTriggers[!duplicated(allTriggers$Date), ]
-    
-    
+
     Corn_CropYearObjects[[i]]$`TS Triggers` = allTriggers
     Corn_CropYearObjects[[i]]$`TS Triggers`$Date = mdy(Corn_CropYearObjects[[i]]$`TS Triggers`$Date)
   }
@@ -181,9 +179,7 @@ if(type == "soybean"){
     
     allTriggers = rbind(trailingStopTriggersMarch, trailingStopTriggers)
     allTriggers = allTriggers[order(allTriggers$Date), ]
-    # allTriggers = allTriggers[!duplicated(allTriggers$Date), ]
-    
-    
+
     Soybean_CropYearObjects[[i]]$`TS Triggers` = allTriggers
     Soybean_CropYearObjects[[i]]$`TS Triggers`$Date = mdy(Soybean_CropYearObjects[[i]]$`TS Triggers`$Date)
   }
