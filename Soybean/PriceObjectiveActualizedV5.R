@@ -287,6 +287,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                     tempRows = NA
                     #create a list to get the actualized sales rows within an interval. This will be used to ensure 1 sale per percentile
                     tempRows = which(priceObjectiveActualized$Date %within% interval1 & priceObjectiveActualized$Type == "Price Objective")
+                    tempRows = c(tempRows, which(priceObjectiveActualized$Date %within% interval1 & priceObjectiveActualized$Type == "Price Objective Special"))
                     #check if a sale was made in that percentile
                     if(!(triggers$Percentile[tRow] %in% priceObjectiveActualized$Percentile[tempRows])) {
                       currentPercentSold = variablePercentSold(triggers$Type[tRow], postHarvestPercent)
@@ -381,6 +382,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                       tempRows = NA
                       #create a list to get the actualized sales rows within an interval. This will be used to ensure 1 sale per percentile
                       tempRows = which(priceObjectiveActualized$Date %within% interval3 & priceObjectiveActualized$Type == "Price Objective")
+                      tempRows = c(tempRows, which(priceObjectiveActualized$Date %within% interval3 & priceObjectiveActualized$Type == "Price Objective Special"))
                       #check if a sale was made in that percentile. 
                       if(!(triggers$Percentile[tRow] %in% priceObjectiveActualized$Percentile[tempRows])) {
                         currentPercentSold = variablePercentSold(triggers$Type[tRow], postHarvestPercent)
