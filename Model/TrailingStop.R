@@ -31,12 +31,12 @@ trailingStopTrigger = function(cropYear, featuresObject) {
     if (month(mdy(marketingYear$Date[row])) == 3 && month(mdy(marketingYear$Date[row - 1])) == 2){
       if(marketingYear$Percentile[row - 1] != 95 && marketingYear$Percentile[row - 1] >= 70) {
         
-        if(marketingYear$Percentile[row - 1] == 70) previousPercentileBelow = "60th"
-        if(marketingYear$Percentile[row - 1] == 80) previousPercentileBelow = "70th"
-        if(marketingYear$Percentile[row - 1] == 90) previousPercentileBelow = "80th"
-        if(marketingYear$Percentile[row - 1] == 95) previousPercentileBelow = "90th"
+        if(marketingYear$Percentile[row - 1] == 70) previousPercentileBelow = "70th"
+        if(marketingYear$Percentile[row - 1] == 80) previousPercentileBelow = "80th"
+        if(marketingYear$Percentile[row - 1] == 90) previousPercentileBelow = "90th"
+        if(marketingYear$Percentile[row - 1] == 95) previousPercentileBelow = "95th"
         
-        pricePreviousPercentileBelow = marketingYear[row, previousPercentileBelow]
+        pricePreviousPercentileBelow = marketingYear[row - 1, previousPercentileBelow]
         
         if(previousPercentileBelow == "60th") previousPercentileBelow = 60
         if(previousPercentileBelow == "70th") previousPercentileBelow = 70
