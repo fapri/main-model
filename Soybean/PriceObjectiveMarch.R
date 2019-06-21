@@ -107,9 +107,9 @@ priceObjectiveTriggerMarch = function(cropYear, featuresObject) {
         pricePreviousPercentileAbove = marketingYear[row, previousPercentileAbove]
         
         if(previousPercentileAbove == "70th") previousPercentileAbove = 70
-        if(previousPercentileAbove == "70th") previousPercentileAbove = 80
-        if(previousPercentileAbove == "70th") previousPercentileAbove = 90
-        if(previousPercentileAbove == "70th") previousPercentileAbove = 95
+        if(previousPercentileAbove == "80th") previousPercentileAbove = 80
+        if(previousPercentileAbove == "90th") previousPercentileAbove = 90
+        if(previousPercentileAbove == "95th") previousPercentileAbove = 95
         
         # Takes in price for percentile above prevous day, percentile above previous day, current day price
         if(isPriceObjectiveSpecial(pricePreviousPercentileAbove, marketingYear$Price[row])) {
