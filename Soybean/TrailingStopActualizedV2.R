@@ -232,6 +232,7 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                     tempRows = NA
                     #create a list to get the actualized sales rows within an interval. This will be used to ensure 1 sale per percentile
                     tempRows = which(trailingStopActualized$Date %within% interval1 & trailingStopActualized$Type == "Trailing Stop")
+                    tempRows = c(tempRows, which(trailingStopActualized$Date %within% interval1 & trailingStopActualized$Type == "Trailing Stop Special"))
                     #check if a sale was made in that percentile
                     if(!(triggers$Previous.Percentile[tRow] %in% trailingStopActualized$Previous.Percentile[tempRows])) {
                       currentPercentSold = increasePercentSold(triggers$Type[tRow], triggers$Percentile[tRow], totalSold)
@@ -330,6 +331,7 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                       tempRows = NA
                       #create a list to get the actualized sales rows within an interval. This will be used to ensure 1 sale per percentile
                       tempRows = which(trailingStopActualized$Date %within% interval3 & trailingStopActualized$Type == "Trailing Stop")
+                      tempRows = c(tempRows, which(trailingStopActualized$Date %within% interval3 & trailingStopActualized$Type == "Trailing Stop Special"))
                       #check if a sale was made in that percentile. 
                       if(!(triggers$Previous.Percentile[tRow] %in% trailingStopActualized$Previous.Percentile[tempRows])) {
                         currentPercentSold = increasePercentSold(triggers$Type[tRow], triggers$Percentile[tRow], totalSold)
