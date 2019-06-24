@@ -243,11 +243,11 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
     if((last(preRowsNew) + 1) != commercialRows[1]){
       # Average storage-adjusted sales in the post harvest
       # No need for pre harvest since storage begins in the post harvest
-      commercialPostharvestAvg = weighted.mean(actualizedSales$commercialPrice[(last(preRowsNew) + 1):commercialRows], actualizedSales$Percent.Sold[(last(preRowsNew) + 1):commercialRows])
+      commercialPostharvestAvg = weighted.mean(actualizedSales$commercialPrice[(last(preRowsNew) + 1):last(commercialRows)], actualizedSales$Percent.Sold[(last(preRowsNew) + 1):last(commercialRows)])
       onfarmPostharvestAvg = weighted.mean(actualizedSales$onFarmPrice[onfarmRows], actualizedSales$Percent.Sold[onfarmRows])
       
       # Finds percent sold in commercial and onfarm storage cases
-      commercialPercent = sum(actualizedSales$Percent.Sold[(last(preRowsNew) + 1):commercialRows]) * 0.01
+      commercialPercent = sum(actualizedSales$Percent.Sold[(last(preRowsNew) + 1):last(commercialRows)]) * 0.01
       onfarmPercent = sum(actualizedSales$Percent.Sold[onfarmRows]) * 0.01
     }
     
