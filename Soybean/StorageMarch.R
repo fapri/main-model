@@ -13,15 +13,6 @@ if(type == "soybean"){
 
 # All prices are now being extracted in their actualization functions
 
-
-
-
-
-
-
-
-
-
 # Interest Rate
 interestRate = 0.055
 # Monthly Commercial Storage Cost
@@ -156,36 +147,6 @@ for(i in 1:length(cropYearObjects)){
                                                         cropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
 }
 
-
-
-
-
-
-
-
-
-
-# i = 1
-# actualizedSales = cropYearObjects[[i]]$`PO Actualized`
-# marketingYear = cropYearObjects[[i]][["Marketing Year"]]
-# intervalPre = cropYearObjects[[i]]$`Pre/Post Interval`$intervalPre
-# intervalPost = cropYearObjects[[i]]$`Pre/Post Interval`$intervalPost
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Returns storage adjusted averages
 # Contains logic that figures commercial/on-farm splits
 getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
@@ -198,8 +159,8 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   # Creates storage interval
   storageInterval = interval(mdy(paste("11-01", toString(year(int_start(intervalPost))), sep="-")), int_end(intervalPost))
   # Finds rows corresponding to pre (or post) harvest. This will be used to caluclate the respective storages
-  preRows = which(actualizedSales$originalDate %within% intervalPre)
-  postRows = which(actualizedSales$originalDate %within% intervalPost)
+  preRows = which(actualizedSales$Date %within% intervalPre)
+  postRows = which(actualizedSales$Date %within% intervalPost)
   
   # Finds the row for the first date that storage is utilized
   # This will be used to find how much crop needs to be stored
@@ -279,7 +240,7 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
     }
     
     # Updates the rows in which preharvest sales were made
-    preRowsNew = which(actualizedSales$originalDate %within% intervalPre)
+    preRowsNew = which(actualizedSales$Date %within% intervalPre)
     # Removes NA value
     commercialRows = commercialRows[!is.na(commercialRows)]
     # Finds rows in which onfarm storage was utilized
@@ -376,8 +337,8 @@ finalizeStorage = function(actualizedSales, cropYear, intervalPre, intervalPost)
                                actualizedSales$Percent.Sold)
   
   # Finds pre harvest and post harvest rows
-  preRows = which(actualizedSales$originalDate %within% intervalPre)
-  postRows = which(actualizedSales$originalDate %within% intervalPost)
+  preRows = which(actualizedSales$Date %within% intervalPre)
+  postRows = which(actualizedSales$Date %within% intervalPost)
   
   # Calculates pre harvest average without storage
   preharvestAverage = weighted.mean(actualizedSales$Price[preRows], 
@@ -407,8 +368,7 @@ finalizeStorage = function(actualizedSales, cropYear, intervalPre, intervalPost)
   # Creates single column for final price recieved
   if (is.na(commercialRows[1])){
     actualizedSales$finalPrice = actualizedSales$onFarmPrice
-  }
-  else{
+  } else{
     for (k in 1:tail(commercialRows, n=1)){
       actualizedSales$finalPrice[k] = actualizedSales$commercialPrice[k]
     }
@@ -416,9 +376,20 @@ finalizeStorage = function(actualizedSales, cropYear, intervalPre, intervalPost)
     actualizedSales$finalPrice[onfarmRows] = actualizedSales$onFarmPrice[onfarmRows]
   }
   
+
+  
+  
+  
+  
+  
+  
+  actualizedSales$Date = actualizedSales$originalDate
+  actualizedSales = actualizedSales[,-which(names(actualizedSales) %in% c("Order","originalDate"))]
+  
   dates = actualizedSales$Date
   dates = format(dates, "%b-%d-%y")
   dates = make.unique(dates, sep = "Split")
+  
   
   
   salesSummary = data.frame(matrix(nrow = 6, ncol = length(dates)))
@@ -437,9 +408,7 @@ finalizeStorage = function(actualizedSales, cropYear, intervalPre, intervalPost)
   if (is.na(commercialRows[1])){
     salesSummary[4,2:(length(dates) + 1)] = formatC(round(actualizedSales$onFarmStorage, digits = 2), format = 'f', digits = 2)
     salesSummary[5,2:(length(dates) + 1)] = 0.00
-  }
-  
-  else{
+  } else{
     for (k in 1:tail(commercialRows, n=1)){
       salesSummary[4,(k + 1)] = 0.00
       salesSummary[5,(k + 1)] = formatC(round(actualizedSales$commercialStorage[k], digits = 2), format = 'f', digits = 2)
@@ -458,13 +427,14 @@ finalizeStorage = function(actualizedSales, cropYear, intervalPre, intervalPost)
   finalizedPrices = data.frame("Crop Year" = cropYear, noStorageAvg, storageAdjAvg, preharvestAverage,
                                postharvestAverage, postharvestAverageStorage, preharvestPercent, postharvestPercent)
   
-  actualizedSales$Date = actualizedSales$originalDate
-  actualizedSales = actualizedSales[,-which(names(actualizedSales) %in% c("Order","originalDate"))]
+
   
   
   ########################################################
-  # Potentially order by date here??????????????????
+  # Potentially order by date here
   ########################################################
+  
+  
   
   
   listReturn = list(actualizedSales, salesSummary, finalizedPrices)
@@ -472,25 +442,6 @@ finalizeStorage = function(actualizedSales, cropYear, intervalPre, intervalPost)
   return(listReturn)
   
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # Price Objective
 POfinalizedPrices = data.frame(matrix(nrow = length(cropYearObjects), ncol = 8))
@@ -517,24 +468,6 @@ colnames(SSfinalizedPrices) =colnames(POfinalizedPrices)
 # Seasonal Sales Multi Year
 SSfinalizedPricesMY = data.frame(matrix(nrow = length(cropYearObjects), ncol = 8))
 colnames(SSfinalizedPricesMY) = colnames(POfinalizedPrices)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 for (i in 1:length(cropYearObjects)){
   # Price Objective
