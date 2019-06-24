@@ -145,6 +145,7 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   postRows = rep(0, 9)
   commercialRows = NA
   onfarmRows = NA
+  firstDateRow = NULL
   
   # Creates storage interval
   storageInterval = interval(mdy(paste("11-01", toString(year(int_start(intervalPost))), sep="-")), int_end(intervalPost))
