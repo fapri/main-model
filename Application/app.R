@@ -71,11 +71,17 @@ Corn_CropYearObjectsV3V5 = appObjectsCornV3V5[[1]]
 Corn_CropYearsV3V5 = appObjectsCornV3V5[[2]]
 finalizedPriceObjectCornV3V5 = appObjectsCornV3V5[[3]]
 
-# Corn March NC
-appObjectsCornMarch = readRDS("appObjectsCornMarch.rds")
-Corn_CropYearObjectsMarch = appObjectsCornMarch[[1]]
-Corn_CropYearsMarch = appObjectsCornMarch[[2]]
-finalizedPriceObjectCornMarch = appObjectsCornMarch[[3]]
+# # Corn March NC
+# appObjectsCornMarch = readRDS("appObjectsCornMarch.rds")
+# Corn_CropYearObjectsMarch = appObjectsCornMarch[[1]]
+# Corn_CropYearsMarch = appObjectsCornMarch[[2]]
+# finalizedPriceObjectCornMarch = appObjectsCornMarch[[3]]
+
+# Corn March Baselines Only
+appObjectsCornMarchBaselines = readRDS("appObjectsCornMarchBaselines.rds")
+Corn_CropYearObjectsMarchBaselines = appObjectsCornMarchBaselines[[1]]
+Corn_CropYearsMarchBaselines = appObjectsCornMarchBaselines[[2]]
+finalizedPriceObjectCornMarchBaselines = appObjectsCornMarchBaselines[[3]]
 
 
 # Soybean Base/__
@@ -137,6 +143,12 @@ Soybean_CropYearObjectsMarch = appObjectsSoybeanMarch[[1]]
 Soybean_CropYearsMarch = appObjectsSoybeanMarch[[2]]
 finalizedPriceObjectSoybeanMarch = appObjectsSoybeanMarch[[3]]
 
+# Soybean March Baselines Only
+appObjectsSoybeanMarchBaselines = readRDS("appObjectsSoybeanMarchBaselines.rds")
+Soybean_CropYearObjectsMarchBaselines = appObjectsSoybeanMarchBaselines[[1]]
+Soybean_CropYearsMarchBaselines = appObjectsSoybeanMarchBaselines[[2]]
+finalizedPriceObjectSoybeanMarchBaselines = appObjectsSoybeanMarchBaselines[[3]]
+
 
 # Create strategy results tables
 priceObjectListCorn = list(finalizedPriceObjectCornBase,
@@ -149,7 +161,9 @@ priceObjectListCorn = list(finalizedPriceObjectCornBase,
                            finalizedPriceObjectCornV3V3,
                            finalizedPriceObjectCornV3V4,
                            finalizedPriceObjectCornV3V5,
-                           finalizedPriceObjectCornMarch)
+                           # finalizedPriceObjectCornMarch,
+                           finalizedPriceObjectCornMarchBaselines,
+                           finalizedPriceObjectCornMarchBaselines)
 
 priceObjectListSoybean = list(finalizedPriceObjectSoybeanBase,
                               finalizedPriceObjectSoybeanV2,
@@ -161,7 +175,9 @@ priceObjectListSoybean = list(finalizedPriceObjectSoybeanBase,
                               finalizedPriceObjectSoybeanV3V3,
                               finalizedPriceObjectSoybeanV3V4,
                               finalizedPriceObjectSoybeanV3V5,
-                              finalizedPriceObjectSoybeanMarch)
+                              finalizedPriceObjectSoybeanMarch,
+                              finalizedPriceObjectSoybeanMarchBaselines
+                              )
 
 # These could be different for corn and soybean if we have different strategies
 versions = c("Base",
@@ -174,7 +190,9 @@ versions = c("Base",
              "V3V3",
              "V3V4",
              "V3V5",
-             "March")
+             "March",
+             "MarchBaselines")
+
 MYversions = c("Multiyear",
                "MYV2",
                "MYV3",
@@ -185,7 +203,8 @@ MYversions = c("Multiyear",
                "MYV3V3",
                "MYV3V4",
                "MYV3V5",
-               "MYMarch")
+               "MYMarch",
+               "MYMarchBaselines")
 
 POversions = c("Base",
                "Multiyear",
@@ -198,7 +217,16 @@ POversions = c("Base",
                "V5",
                "MYV5",
                "March",
-               "MYMarch")
+               "MYMarch",
+               "MarchBaselines",
+               "MYMarchBaselines")
+
+SSversions = c("Base",
+              "Multiyear",
+              "March",
+              "MYMarch",
+              "MarchBaselines",
+              "MYMarchBaselines")
 
 nonMultiYearCorn = data.frame()
 multiYearCorn = data.frame()
@@ -250,7 +278,7 @@ getResults = function(strategy, resultsTable, resultsTableMY, strategyName, MY){
       PORow = NULL
     }
     
-    if(!("Seasonal Sales" %in% resultsTable$Strategy)){
+    if(strategyName %in% SSversions){
       SS = which(names(strategy) == "SSResultsTable")
       
       SSRow = cbind("Seasonal Sales", 
@@ -307,7 +335,7 @@ getResults = function(strategy, resultsTable, resultsTableMY, strategyName, MY){
       POMYRow = NULL
     }
     
-    if(!("Seasonal Sales" %in% resultsTableMY$Strategy)){
+    if(strategyName %in% SSversions){
       SSMY = which(names(strategy) == "SSResultsTableMY")
       
       SSMYRow = cbind("Seasonal Sales", 
@@ -354,7 +382,9 @@ POCorn = c("Base" = "base",
            "Version 4" = "V4",
            "Multi-Year Version 4"="MYV4",
            "Version 5" = "V5",
-           "Multi-Year Version 5"="MYV5")
+           "Multi-Year Version 5"="MYV5",
+           "March Baselines" = "MarchBaselines",
+           "Multi-Year March Baselines" = "MYMarchBaselines")
 
 POSoybean = c("Base" = "base",
               "Multi-Year" = "multiyear",
@@ -367,7 +397,9 @@ POSoybean = c("Base" = "base",
               "Version 5" = "V5",
               "Multi-Year Version 5"="MYV5",
               "March" = "March",
-              "Multi-Year March" = "MYMarch")
+              "Multi-Year March" = "MYMarch",
+              "March Baselines" = "MarchBaselines",
+              "Multi-Year March Baselines" = "MYMarchBaselines")
 
 TSCorn = c(Base = "base",
            "Multi-Year" = "multiyear",
@@ -388,7 +420,9 @@ TSCorn = c(Base = "base",
            "Version 3/V4" = "V3V4",
            "Multi-Year Version 3/V4" = "MYV3V4",
            "Version 3/V5" = "V3V5",
-           "Multi-Year Version 3/V5" = "MYV3V5")
+           "Multi-Year Version 3/V5" = "MYV3V5",
+           "March Baselines" = "MarchBaselines",
+           "Multi-Year March Baselines" = "MYMarchBaselines")
 
 TSSoybean = c(Base = "base",
               "Multi-Year" = "multiyear",
@@ -411,13 +445,19 @@ TSSoybean = c(Base = "base",
               "Version 3/V5" = "V3V5",
               "Multi-Year Version 3/V5" = "MYV3V5",
               "March" = "March",
-              "Multi-Year March" = "MYMarch")
+              "Multi-Year March" = "MYMarch",
+              "March Baselines" = "MarchBaselines",
+              "Multi-Year March Baselines" = "MYMarchBaselines")
 
 SSCorn = c("Base" = "base",
-           "Multi-Year" = "multiyear")
+           "Multi-Year" = "multiyear",
+           "March Baselines" = "MarchBaselines",
+           "Multi-Year March Baselines" = "MYMarchBaselines")
 
 SSSoybean = c("Base" = "base",
-              "Multi-Year" = "multiyear")
+              "Multi-Year" = "multiyear",
+              "March Baselines" = "MarchBaselines",
+              "Multi-Year March Baselines" = "MYMarchBaselines")
 
 POVersions = list("Corn" = POCorn, "Soybeans" = POSoybean)
 TSVersions = list("Corn" = TSCorn, "Soybeans" = TSSoybean)
@@ -844,6 +884,57 @@ ui <- shinyUI(
                                   dataTableOutput('POMYsummaryTablesMarch'),
                                   style = "padding-bottom:100px")
                               )
+                            )
+                          )
+                        )
+                      ),
+                      # MODEL VERSION March Baselines Only
+                      conditionalPanel(
+                        condition = "input.POstrategy == 'MarchBaselines'",
+                        fluidPage(
+                          fluidRow(
+                            plotOutput('POdistPlotMarchBaselines'),
+                            style = "padding-bottom:50px"
+                          ),
+                          
+                          tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                          
+                          sidebarLayout(
+                            sidebarPanel(
+                              fluidRow(selectInput('yearPOMarchBaselines','Crop Year', choices = u.n, width = "100%"),
+                                       column(12, dataTableOutput('POstorageTablesMarchBaselines')),
+                                       tags$style(type="text/css", '#POstorageTablesMarchBaselines tfoot {display:none;}'))
+                            ),
+                            mainPanel(
+                              fluidRow(
+                                dataTableOutput('POsummaryTablesMarchBaselines'),
+                                style = "padding-bottom:100px")
+                              
+                            )
+                          )
+                        )
+                      ),
+                      conditionalPanel(
+                        condition = "input.POstrategy == 'MYMarchBaselines'",
+                        fluidPage(
+                          fluidRow(
+                            plotOutput('POMYdistPlotMarchBaselines'),
+                            style = "padding-bottom:50px"
+                          ),
+                          
+                          tags$style(type="text/css", '#POMYsummaryTablesMarchBaselines tfoot {display:none;}'),
+                          
+                          sidebarLayout(
+                            sidebarPanel(
+                              fluidRow(selectInput('yearPOMYMarchBaselines','Crop Year', choices = u.n, width = "100%"),
+                                       column(12, dataTableOutput('POMYstorageTablesMarchBaselines')),
+                                       tags$style(type="text/css", '#POMYstorageTablesMarchBaselines tfoot {display:none;}'))
+                              
+                            ),
+                            mainPanel(
+                              fluidRow(
+                                dataTableOutput('POMYsummaryTablesMarchBaselines'),
+                                style = "padding-bottom:100px")
                             )
                           )
                         )
@@ -1422,6 +1513,58 @@ ui <- shinyUI(
                               )
                             )
                           )
+                        ),
+                        # MODEL VERSION March Baselines Only
+                        conditionalPanel(
+                          condition = "input.TSstrategy == 'MarchBaselines'",
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('TSdistPlotMarchBaselines'),
+                              style = "padding-bottom:50px"
+                            ),
+                            
+                            tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearTSMarchBaselines','Crop Year', choices = u.n, width = "100%"),
+                                         column(12, dataTableOutput('TSstorageTablesMarchBaselines')),
+                                         tags$style(type="text/css", '#TSstorageTablesMarchBaselines tfoot {display:none;}'))
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('TSsummaryTablesMarchBaselines'),
+                                  style = "padding-bottom:100px")
+                                
+                              )
+                            )
+                          )
+                        ),
+                        conditionalPanel(
+                          condition = "input.TSstrategy == 'MYMarchBaselines'",
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('TSMYdistPlotMarchBaselines'),
+                              style = "padding-bottom:50px"
+                            ),
+                            
+                            tags$style(type="text/css", '#TSMYsummaryTablesMarchBaselines tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearTSMYMarchBaselines','Crop Year', choices = u.n, width = "100%"),
+                                         column(12, dataTableOutput('TSMYstorageTablesMarchBaselines')),
+                                         tags$style(type="text/css", '#TSMYstorageTablesMarchBaselines tfoot {display:none;}'))
+                                
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('TSMYsummaryTablesMarchBaselines'),
+                                  style = "padding-bottom:100px")
+                                
+                              )
+                            )
+                          )
                         )
                       )
              ),
@@ -1474,6 +1617,112 @@ ui <- shinyUI(
                               mainPanel(
                                 fluidRow(
                                   dataTableOutput('SSMYsummaryTables'),
+                                  style = "padding-bottom:100px")
+                                
+                              )
+                            )
+                          )
+                        ),
+                        
+                        # MODEL VERSION March NC
+                        conditionalPanel(
+                          condition = "input.SSstrategy == 'March'",
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('SSdistPlotMarch'),
+                              style = "padding-bottom:50px"
+                            ),
+                            
+                            tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearSSMarch','Crop Year', choices = u.n, width = "100%"),
+                                         column(12, dataTableOutput('SSstorageTablesMarch')),
+                                         tags$style(type="text/css", '#SSstorageTablesMarch tfoot {display:none;}'))
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('SSsummaryTablesMarch'),
+                                  style = "padding-bottom:100px")
+                                
+                              )
+                            )
+                          )
+                        ),
+                        conditionalPanel(
+                          condition = "input.SSstrategy == 'MYMarch'",
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('SSMYdistPlotMarch'),
+                              style = "padding-bottom:50px"
+                            ),
+                            
+                            tags$style(type="text/css", '#SSMYsummaryTablesMarch tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearSSMYMarch','Crop Year', choices = u.n, width = "100%"),
+                                         column(12, dataTableOutput('SSMYstorageTablesMarch')),
+                                         tags$style(type="text/css", '#SSMYstorageTablesMarch tfoot {display:none;}'))
+                                
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('SSMYsummaryTablesMarch'),
+                                  style = "padding-bottom:100px")
+                                
+                              )
+                            )
+                          )
+                        ),
+                        
+                        # MODEL VERSION March Baselines Only
+                        conditionalPanel(
+                          condition = "input.SSstrategy == 'MarchBaselines'",
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('SSdistPlotMarchBaselines'),
+                              style = "padding-bottom:50px"
+                            ),
+                            
+                            tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearSSMarchBaselines','Crop Year', choices = u.n, width = "100%"),
+                                         column(12, dataTableOutput('SSstorageTablesMarchBaselines')),
+                                         tags$style(type="text/css", '#SSstorageTablesMarchBaselines tfoot {display:none;}'))
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('SSsummaryTablesMarchBaselines'),
+                                  style = "padding-bottom:100px")
+                                
+                              )
+                            )
+                          )
+                        ),
+                        conditionalPanel(
+                          condition = "input.SSstrategy == 'MYMarchBaselines'",
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('SSMYdistPlotMarchBaselines'),
+                              style = "padding-bottom:50px"
+                            ),
+                            
+                            tags$style(type="text/css", '#SSMYsummaryTablesMarchBaselines tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearSSMYMarchBaselines','Crop Year', choices = u.n, width = "100%"),
+                                         column(12, dataTableOutput('SSMYstorageTablesMarchBaselines')),
+                                         tags$style(type="text/css", '#SSMYstorageTablesMarchBaselines tfoot {display:none;}'))
+                                
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('SSMYsummaryTablesMarchBaselines'),
                                   style = "padding-bottom:100px")
                                 
                               )
@@ -1906,6 +2155,60 @@ server <- shinyServer(function(input,output,session){
     }
     else if(input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsMarch[[yearPOMarch()]]$`Sales Summary`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Price Objective VERSION March Baselines Only
+  #################################################################################################
+  
+  
+  yearPOMarchBaselines <- reactive({
+    switch(input$yearPOMarchBaselines,
+           "2008-09" = 1,
+           "2009-10" = 2,
+           "2010-11" = 3,
+           "2011-12" = 4,
+           "2012-13" = 5,
+           "2013-14" = 6,
+           "2014-15" = 7,
+           "2015-16" = 8,
+           "2016-17" = 9)
+  })
+  
+  
+  output$POdistPlotMarchBaselines <- renderPlot({
+    if(input$cropType == "Corn"){
+      Corn_CropYearObjectsMarchBaselines[[yearPOMarchBaselines()]]$POPlot
+    }
+    else if(input$cropType == "Soybeans"){
+      Soybean_CropYearObjectsMarchBaselines[[yearPOMarchBaselines()]]$POPlot
+    }
+  })
+  
+  
+  
+  output$POstorageTablesMarchBaselines = renderDataTable({
+    if(input$cropType == "Corn"){
+      as.datatable(getTables(Corn_CropYearObjectsMarchBaselines[[yearPOMarchBaselines()]]$`PO Storage`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    else if(input$cropType == "Soybeans"){
+      as.datatable(getTables(Soybean_CropYearObjectsMarchBaselines[[yearPOMarchBaselines()]]$`PO Storage`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  output$POsummaryTablesMarchBaselines = renderDataTable({
+    if(input$cropType == "Corn"){
+      as.datatable(getSalesTable(Corn_CropYearObjectsMarchBaselines[[yearPOMarchBaselines()]]$`Sales Summary`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    else if(input$cropType == "Soybeans"){
+      as.datatable(getSalesTable(Soybean_CropYearObjectsMarchBaselines[[yearPOMarchBaselines()]]$`Sales Summary`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
@@ -2463,6 +2766,56 @@ server <- shinyServer(function(input,output,session){
   
   
   #################################################################################################
+  # Trailing Stop VERSION March Baselines Only
+  #################################################################################################
+  
+  
+  yearTSMarchBaselines <- reactive({
+    switch(input$yearTSMarchBaselines,
+           "2008-09" = 1,
+           "2009-10" = 2,
+           "2010-11" = 3,
+           "2011-12" = 4,
+           "2012-13" = 5,
+           "2013-14" = 6,
+           "2014-15" = 7,
+           "2015-16" = 8,
+           "2016-17" = 9)
+  })
+  
+  output$TSdistPlotMarchBaselines <- renderPlot({
+    if (input$cropType == "Corn"){
+      Corn_CropYearObjectsMarchBaselines[[yearTSMarchBaselines()]]$TSPlot
+    }
+    else if (input$cropType == "Soybeans"){
+      Soybean_CropYearObjectsMarchBaselines[[yearTSMarchBaselines()]]$TSPlot
+    }
+  })
+  
+  output$TSstorageTablesMarchBaselines = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getTables(Corn_CropYearObjectsMarchBaselines[[yearTSMarchBaselines()]]$`TS Storage`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getTables(Soybean_CropYearObjectsMarchBaselines[[yearTSMarchBaselines()]]$`TS Storage`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSsummaryTablesMarchBaselines = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getSalesTable(Corn_CropYearObjectsMarchBaselines[[yearTSMarchBaselines()]]$`TS Sales Summary`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getSalesTable(Soybean_CropYearObjectsMarchBaselines[[yearTSMarchBaselines()]]$`TS Sales Summary`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
   # Seasonal Sales
   #################################################################################################
   
@@ -2507,6 +2860,56 @@ server <- shinyServer(function(input,output,session){
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsBase[[yearSS()]]$`SS Sales Summary`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Seasonal Sales VERSION March Baselines Only
+  #################################################################################################
+  
+  
+  yearSSMarchBaselines <- reactive({
+    switch(input$yearSSMarchBaselines,
+           "2008-09" = 1,
+           "2009-10" = 2,
+           "2010-11" = 3,
+           "2011-12" = 4,
+           "2012-13" = 5,
+           "2013-14" = 6,
+           "2014-15" = 7,
+           "2015-16" = 8,
+           "2016-17" = 9)
+  })
+  
+  output$SSdistPlotMarchBaselines <- renderPlot({
+    if (input$cropType == "Corn"){
+      Corn_CropYearObjectsMarchBaselines[[yearSSMarchBaselines()]]$SSPlot
+    }
+    else if (input$cropType == "Soybeans"){
+      Soybean_CropYearObjectsMarchBaselines[[yearSSMarchBaselines()]]$SSPlot
+    }
+  })
+  
+  output$SSstorageTablesMarchBaselines = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getTables(Corn_CropYearObjectsMarchBaselines[[yearSSMarchBaselines()]]$`SS Storage`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getTables(Soybean_CropYearObjectsMarchBaselines[[yearSSMarchBaselines()]]$`SS Storage`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$SSsummaryTablesMarchBaselines = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getSalesTable(Corn_CropYearObjectsMarchBaselines[[yearSSMarchBaselines()]]$`SS Sales Summary`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getSalesTable(Soybean_CropYearObjectsMarchBaselines[[yearSSMarchBaselines()]]$`SS Sales Summary`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
@@ -2807,6 +3210,56 @@ server <- shinyServer(function(input,output,session){
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsMarch[[yearPOMYMarch()]]$`PO Sales Summary MY`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Price Objective Multi Year March Baselines Only
+  #################################################################################################
+  
+  
+  yearPOMYMarchBaselines <- reactive({
+    switch(input$yearPOMYMarchBaselines,
+           "2008-09" = 1,
+           "2009-10" = 2,
+           "2010-11" = 3,
+           "2011-12" = 4,
+           "2012-13" = 5,
+           "2013-14" = 6,
+           "2014-15" = 7,
+           "2015-16" = 8,
+           "2016-17" = 9)
+  })
+  
+  output$POMYdistPlotMarchBaselines <- renderPlot({
+    if (input$cropType == "Corn"){
+      Corn_CropYearObjectsMarchBaselines[[yearPOMYMarchBaselines()]]$POMYPlot
+    }
+    else if (input$cropType == "Soybeans"){
+      Soybean_CropYearObjectsMarchBaselines[[yearPOMYMarchBaselines()]]$POMYPlot
+    }
+  })
+  
+  output$POMYstorageTablesMarchBaselines = renderDataTable({
+    if(input$cropType == "Corn") {
+      as.datatable(getTables(Corn_CropYearObjectsMarchBaselines[[yearPOMYMarchBaselines()]]$`PO Storage MY`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    else if(input$cropType == "Soybeans") {
+      as.datatable(getTables(Soybean_CropYearObjectsMarchBaselines[[yearPOMYMarchBaselines()]]$`PO Storage MY`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$POMYsummaryTablesMarchBaselines = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getSalesTable(Corn_CropYearObjectsMarchBaselines[[yearPOMYMarchBaselines()]]$`PO Sales Summary MY`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getSalesTable(Soybean_CropYearObjectsMarchBaselines[[yearPOMYMarchBaselines()]]$`PO Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
@@ -3372,6 +3825,57 @@ server <- shinyServer(function(input,output,session){
   
   
   #################################################################################################
+  # Trailing Stop Multi Year VERSION March Baselines Only
+  #################################################################################################
+  
+  
+  yearTSMYMarchBaselines <- reactive({
+    switch(input$yearTSMYMarchBaselines,
+           "2008-09" = 1,
+           "2009-10" = 2,
+           "2010-11" = 3,
+           "2011-12" = 4,
+           "2012-13" = 5,
+           "2013-14" = 6,
+           "2014-15" = 7,
+           "2015-16" = 8,
+           "2016-17" = 9)
+  })
+  
+  output$TSMYdistPlotMarchBaselines <- renderPlot({
+    if (input$cropType == "Corn"){
+      Corn_CropYearObjectsMarchBaselines[[yearTSMYMarchBaselines()]]$TSMYPlot
+    }
+    else if (input$cropType == "Soybeans"){
+      Soybean_CropYearObjectsMarchBaselines[[yearTSMYMarchBaselines()]]$TSMYPlot
+    }
+  })
+  
+  output$TSMYstorageTablesMarchBaselines = renderDataTable({
+    if(input$cropType == "Corn") {
+      as.datatable(getTables(Corn_CropYearObjectsMarchBaselines[[yearTSMYMarchBaselines()]]$`TS Storage MY`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    else if(input$cropType == "Soybeans") {
+      as.datatable(getTables(Soybean_CropYearObjectsMarchBaselines[[yearTSMYMarchBaselines()]]$`TS Storage MY`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  output$TSMYsummaryTablesMarchBaselines = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getSalesTable(Corn_CropYearObjectsMarchBaselines[[yearTSMYMarchBaselines()]]$`TS Sales Summary MY`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getSalesTable(Soybean_CropYearObjectsMarchBaselines[[yearTSMYMarchBaselines()]]$`TS Sales Summary MY`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
   # Seasonal Sales With Multi Year
   #################################################################################################
   
@@ -3416,6 +3920,108 @@ server <- shinyServer(function(input,output,session){
     }
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsBase[[yearSSMY()]]$`SS Sales Summary MY`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Seasonal Sales Multi Year VERSION March NC
+  #################################################################################################
+  
+  
+  yearSSMYMarch <- reactive({
+    switch(input$yearSSMYMarch,
+           "2008-09" = 1,
+           "2009-10" = 2,
+           "2010-11" = 3,
+           "2011-12" = 4,
+           "2012-13" = 5,
+           "2013-14" = 6,
+           "2014-15" = 7,
+           "2015-16" = 8,
+           "2016-17" = 9)
+  })
+  
+  output$SSMYdistPlotMarch <- renderPlot({
+    if (input$cropType == "Corn"){
+      Corn_CropYearObjectsMarch[[yearSSMYMarch()]]$SSMYPlot
+    }
+    else if (input$cropType == "Soybeans"){
+      Soybean_CropYearObjectsMarch[[yearSSMYMarch()]]$SSMYPlot
+    }
+  })
+  
+  output$SSMYstorageTablesMarch = renderDataTable({
+    if(input$cropType == "Corn") {
+      as.datatable(getTables(Corn_CropYearObjectsMarch[[yearSSMYMarch()]]$`SS Storage MY`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    else if(input$cropType == "Soybeans") {
+      as.datatable(getTables(Soybean_CropYearObjectsMarch[[yearSSMYMarch()]]$`SS Storage MY`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  output$SSMYsummaryTablesMarch = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getSalesTable(Corn_CropYearObjectsMarch[[yearSSMYMarch()]]$`SS Sales Summary MY`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getSalesTable(Soybean_CropYearObjectsMarch[[yearSSMYMarch()]]$`SS Sales Summary MY`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  #################################################################################################
+  # Seasonal Sales Multi Year VERSION March Baselines Only
+  #################################################################################################
+  
+  
+  yearSSMYMarchBaselines <- reactive({
+    switch(input$yearSSMYMarchBaselines,
+           "2008-09" = 1,
+           "2009-10" = 2,
+           "2010-11" = 3,
+           "2011-12" = 4,
+           "2012-13" = 5,
+           "2013-14" = 6,
+           "2014-15" = 7,
+           "2015-16" = 8,
+           "2016-17" = 9)
+  })
+  
+  output$SSMYdistPlotMarchBaselines <- renderPlot({
+    if (input$cropType == "Corn"){
+      Corn_CropYearObjectsMarchBaselines[[yearSSMYMarchBaselines()]]$SSMYPlot
+    }
+    else if (input$cropType == "Soybeans"){
+      Soybean_CropYearObjectsMarchBaselines[[yearSSMYMarchBaselines()]]$SSMYPlot
+    }
+  })
+  
+  output$SSMYstorageTablesMarchBaselines = renderDataTable({
+    if(input$cropType == "Corn") {
+      as.datatable(getTables(Corn_CropYearObjectsMarchBaselines[[yearSSMYMarchBaselines()]]$`SS Storage MY`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    else if(input$cropType == "Soybeans") {
+      as.datatable(getTables(Soybean_CropYearObjectsMarchBaselines[[yearSSMYMarchBaselines()]]$`SS Storage MY`), rownames = FALSE, 
+                   caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  
+  output$SSMYsummaryTablesMarchBaselines = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getSalesTable(Corn_CropYearObjectsMarchBaselines[[yearSSMYMarchBaselines()]]$`SS Sales Summary MY`), rownames = FALSE, 
+                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getSalesTable(Soybean_CropYearObjectsMarchBaselines[[yearSSMYMarchBaselines()]]$`SS Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
