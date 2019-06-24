@@ -173,7 +173,7 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   }
   
   # IF THE FIRST POST HARVEST DATE HAS >=50% "TOTAL.SOLD"
-  if(actualizedSales$Total.Sold[firstDateRow - 1] >= 50){
+  else if(actualizedSales$Total.Sold[firstDateRow - 1] >= 50){
     # AVERAGE SALES BEFORE STORAGE + STRICTLY ON FARM STORAGE
     storageAdjAvg = weighted.mean(actualizedSales$onFarmPrice, actualizedSales$Percent.Sold)
     # Average storage-adjusted sales in the post harvest
