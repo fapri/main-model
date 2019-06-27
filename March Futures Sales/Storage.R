@@ -185,6 +185,7 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   postRows = rep(0, 9)
   commercialRows = NA
   onfarmRows = NA
+  firstDateRow = NA
   
   # Creates storage interval
   storageInterval = interval(mdy(paste("11-01", toString(year(int_start(intervalPost))), sep="-")), int_end(intervalPost))
@@ -204,15 +205,15 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   }
   
   # When no storage is needed
-  if(is.null(firstDateRow)){
+  if(is.na(firstDateRow[1])){
     storageAdjAvg = weighted.mean(actualizedSales$onFarmPrice, actualizedSales$Percent.Sold)
     storagePostharvestAvg = weighted.mean(actualizedSales$onFarmPrice[postRows], actualizedSales$Percent.Sold[postRows])
     commercialRows = NA
     onfarmRows = NA
   }
   
-  # IF THE FIRST POST HARVEST DATE HAS >=50% "TOTAL.SOLD"
-  if(actualizedSales$Total.Sold[firstDateRow - 1] >= 50){
+  # IF THE FIRST POST HARVEST DATE HAS >=50% "TOTAL.SOLD" to see if we only need on farm storage
+  else if(firstDateRow != 1 && actualizedSales$Total.Sold[firstDateRow - 1] >= 50){
     # AVERAGE SALES BEFORE STORAGE + STRICTLY ON FARM STORAGE
     storageAdjAvg = weighted.mean(actualizedSales$onFarmPrice, actualizedSales$Percent.Sold)
     # Average storage-adjusted sales in the post harvest
@@ -224,7 +225,11 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   # AVERAGE SALES BEFORE STORAGE + 50% OF CROP IN ON-FARM STORAGE + REMAINING CROP IN COMMERCIAL STORAGE
   else{
     # Calculates remaining crop that needs storage
-    remainingCrop = 100 - actualizedSales$Total.Sold[firstDateRow - 1]
+    if(firstDateRow > 1){
+      remainingCrop = 100 - actualizedSales$Total.Sold[firstDateRow - 1]
+    } else {
+      remainingCrop = 100
+    }
     # Calculates the percent of crop that needs commercial storage
     commercialCrop = remainingCrop - 50
     
@@ -279,7 +284,11 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
     
     
     # Average prearvest sales
-    storagePreharvestAvg = weighted.mean(actualizedSales$onFarmPrice[preRowsNew], actualizedSales$Percent.Sold[preRowsNew])
+    if(length(preRowsNew) != 0){
+      storagePreharvestAvg = weighted.mean(actualizedSales$onFarmPrice[preRowsNew], actualizedSales$Percent.Sold[preRowsNew])
+    } else {
+      storagePreharvestAvg = 0
+    }
     
     if(length(which(commercialRows %in% postRows)) > 0){
       # Average storage-adjusted sales in the post harvest
@@ -307,8 +316,13 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
     storageOnfarmPostharvestAvg = onfarmPostharvestAvg * onfarmPercent
     
     # Calculates percent sold in the preharvest and postharvest
-    preharvestPercent = actualizedSales$Total.Sold[last(preRowsNew)] * 0.01
-    postharvestPercent = 1 - preharvestPercent
+    if(length(preRowsNew) != 0){
+      preharvestPercent = actualizedSales$Total.Sold[last(preRowsNew)] * 0.01
+      postharvestPercent = 1 - preharvestPercent
+    } else{
+      preharvestPercent = 0
+      postharvestPercent = 1
+    }
     
     # Calculates postharvest average price, accounting for storage
     storagePostharvestAvg = (storageCommercialPostharvestAvg + storageOnfarmPostharvestAvg) / postharvestPercent
@@ -341,12 +355,12 @@ postharvestAverageStorage = rep(0, 9)
 
 
 
-# i = 4
-# actualizedSales = cropYearObjects[[i]]$`TS Actualized`
-# cropYear = Soybean_CropYears$CropYear[i]
+i = 4
+actualizedSales = cropYearObjects[[i]]$`TS Actualized`
+cropYear = Soybean_CropYears$CropYear[i]
 # marketingYear = cropYearObjects[[i]][["Marketing Year"]]
-# intervalPre = cropYearObjects[[i]]$`Pre/Post Interval`$intervalPre
-# intervalPost = cropYearObjects[[i]]$`Pre/Post Interval`$intervalPost
+intervalPre = cropYearObjects[[i]]$`Pre/Post Interval`$intervalPre
+intervalPost = cropYearObjects[[i]]$`Pre/Post Interval`$intervalPost
 
 
 
@@ -653,10 +667,8 @@ finalizedPriceObject[["AllResultsTable"]] = cbind(finalizedPriceObject[["POResul
 
 if(type == "corn"){
   Corn_CropYearObjects = cropYearObjects
-  Corn_CropYears = cropYearsList
 }
 
 if(type == "soybean"){
   Soybean_CropYearObjects = cropYearObjects
-  Soybean_CropYears = cropYearsList
 }

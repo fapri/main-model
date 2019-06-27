@@ -149,7 +149,7 @@ if (type == "corn"){
                                                          POTitle)
     
     POMYTitle = "Price Objective with Multi-Year"
-    names(Corn_CropYearObjects[[i]]$`Marketing Year MY`) = names(Corn_CropYearObjects[[i]]$`Marketing Year`)
+    names(Corn_CropYearObjects[[i]]$`Marketing Year MY`) = names(Corn_CropYearObjects[[i]]$`Marketing Year`[-c(3,12)])
     Corn_CropYearObjects[[i]]$POMYPlot = plotMarketingYear(Corn_CropYearObjects[[i]]$`Crop Year`,
                                                            mdy(Corn_CropYearObjects[[i]]$`Start Date`),
                                                            mdy(Corn_CropYearObjects[[i]]$`Stop Date`),
