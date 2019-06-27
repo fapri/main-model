@@ -71,11 +71,11 @@ Corn_CropYearObjectsV3V5 = appObjectsCornV3V5[[1]]
 Corn_CropYearsV3V5 = appObjectsCornV3V5[[2]]
 finalizedPriceObjectCornV3V5 = appObjectsCornV3V5[[3]]
 
-# # Corn March NC
-# appObjectsCornMarch = readRDS("appObjectsCornMarch.rds")
-# Corn_CropYearObjectsMarch = appObjectsCornMarch[[1]]
-# Corn_CropYearsMarch = appObjectsCornMarch[[2]]
-# finalizedPriceObjectCornMarch = appObjectsCornMarch[[3]]
+# Corn March NC
+appObjectsCornMarch = readRDS("appObjectsCornMarch.rds")
+Corn_CropYearObjectsMarch = appObjectsCornMarch[[1]]
+Corn_CropYearsMarch = appObjectsCornMarch[[2]]
+finalizedPriceObjectCornMarch = appObjectsCornMarch[[3]]
 
 # Corn March Baselines Only
 appObjectsCornMarchBaselines = readRDS("appObjectsCornMarchBaselines.rds")
@@ -161,8 +161,7 @@ priceObjectListCorn = list(finalizedPriceObjectCornBase,
                            finalizedPriceObjectCornV3V3,
                            finalizedPriceObjectCornV3V4,
                            finalizedPriceObjectCornV3V5,
-                           # finalizedPriceObjectCornMarch,
-                           finalizedPriceObjectCornMarchBaselines,
+                           finalizedPriceObjectCornMarch,
                            finalizedPriceObjectCornMarchBaselines)
 
 priceObjectListSoybean = list(finalizedPriceObjectSoybeanBase,
@@ -176,8 +175,7 @@ priceObjectListSoybean = list(finalizedPriceObjectSoybeanBase,
                               finalizedPriceObjectSoybeanV3V4,
                               finalizedPriceObjectSoybeanV3V5,
                               finalizedPriceObjectSoybeanMarch,
-                              finalizedPriceObjectSoybeanMarchBaselines
-                              )
+                              finalizedPriceObjectSoybeanMarchBaselines)
 
 # These could be different for corn and soybean if we have different strategies
 versions = c("Base",
@@ -383,6 +381,8 @@ POCorn = c("Base" = "base",
            "Multi-Year Version 4"="MYV4",
            "Version 5" = "V5",
            "Multi-Year Version 5"="MYV5",
+           "March" = "March",
+           "Multi-Year March" = "MYMarch",
            "March Baselines" = "MarchBaselines",
            "Multi-Year March Baselines" = "MYMarchBaselines")
 
@@ -421,6 +421,8 @@ TSCorn = c(Base = "base",
            "Multi-Year Version 3/V4" = "MYV3V4",
            "Version 3/V5" = "V3V5",
            "Multi-Year Version 3/V5" = "MYV3V5",
+           "March" = "March",
+           "Multi-Year March" = "MYMarch",
            "March Baselines" = "MarchBaselines",
            "Multi-Year March Baselines" = "MYMarchBaselines")
 
