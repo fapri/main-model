@@ -177,7 +177,7 @@ priceObjectListSoybean = list(finalizedPriceObjectSoybeanBase,
                               finalizedPriceObjectSoybeanV3V5,
                               finalizedPriceObjectSoybeanMarch,
                               finalizedPriceObjectSoybeanMarchBaselines
-                              )
+)
 
 # These could be different for corn and soybean if we have different strategies
 versions = c("Base",
@@ -222,11 +222,11 @@ POversions = c("Base",
                "MYMarchBaselines")
 
 SSversions = c("Base",
-              "Multiyear",
-              "March",
-              "MYMarch",
-              "MarchBaselines",
-              "MYMarchBaselines")
+               "Multiyear",
+               "March",
+               "MYMarch",
+               "MarchBaselines",
+               "MYMarchBaselines")
 
 nonMultiYearCorn = data.frame()
 multiYearCorn = data.frame()
@@ -571,6 +571,11 @@ ui <- shinyUI(
                       fluidPage(
                         fluidRow(column(12, includeHTML("homePage.html"),
                                         selectInput("cropType", "", typeList, width = "33%")
+                        )
+                        ),
+                        fluidRow(column(12,
+                                        sliderInput("availableFarmStorage", "On-Farm Storage Capacity:", min = 1, max = 11, value = 6, step = 1,
+                                                    label = " 0---------------------------------------------------------100")
                         )
                         )
                       )
@@ -1773,6 +1778,12 @@ ui <- shinyUI(
 ) 
 
 server <- shinyServer(function(input,output,session){
+  
+  #saves slider input for on-farm storage available
+  storagePercent <- reactive({
+    percentStored = input$availableFarmStorage
+  })
+  
   
   POchoices_versions <- reactive({
     POchoices_versions <- POVersions[[input$cropType]]
