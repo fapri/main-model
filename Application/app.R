@@ -232,14 +232,6 @@ multiYearCorn = data.frame()
 nonMultiYearSoybean = data.frame()
 multiYearSoybean = data.frame()
 
-# i = 1
-# strategy = priceObjectListSoybean[[i]]
-# resultsTable = nonMultiYearSoybean
-# resultsTableMY = multiYearSoybean
-# strategyName = MYversions[i]
-# MY = FALSE
-
-
 getResults = function(strategy, resultsTable, resultsTableMY, strategyName, MY){
   if(MY == FALSE){
     if (nrow(resultsTable) == 0){
