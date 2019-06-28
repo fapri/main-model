@@ -332,6 +332,9 @@ finalizeStorage = function(actualizedSales, cropYear, intervalPre, intervalPost)
                                          intervalPre,
                                          intervalPost)[[2]]
   
+  preRows = which(actualizedSales$Date %within% intervalPre)
+  postRows = which(actualizedSales$Date %within% intervalPost)
+  
   commercialRows = getStorageActualized(actualizedSales,
                                         intervalPre,
                                         intervalPost)[[3]]
