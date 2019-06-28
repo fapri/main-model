@@ -1,11 +1,6 @@
 # Storage
 # Corn and Soybean
 
-UserStorage = 0
-type = 'corn'
-cropYearsList = Corn_CropYears
-cropYearObjects = Corn_CropYearObjects
-
 storageFunction <- function(UserStorage,type,cropYearsList,cropYearObjects){
   
   
