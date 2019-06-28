@@ -1,0 +1,480 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+
+# load("cornV1.RData")
+# load("cornV3.RData")
+# load("soybeanV1.RData")
+# load("soybeanV3.RData")
+
+
+```
+
+
+
+
+
+```{r}
+
+# Gets a results table for all crop years in a single strategy
+yearlyResultsByStrategy = function(finalizedPriceList, strategyName){
+  
+  resultsTable = data.frame(matrix(nrow = 0, ncol = 6))
+  
+  resultsList = which(names(finalizedPriceList) == strategyName)
+  
+  strategyList = finalizedPriceList[[resultsList]]
+  
+  year = which(colnames(strategyList) == "Crop Year")
+  rawAveragePrice = which(colnames(strategyList) == "noStorageAvg")
+  preHarvestAverage = which(colnames(strategyList) == "preharvestAverage")
+  postHarvestAverage = which(colnames(strategyList) == "postharvestAverage")
+  storageAdjustedAverage = which(colnames(strategyList) == "storageAdjAvg")
+  storageAdjustedPostHarvestAverage = which(colnames(strategyList) == "postharvestAverageStorage")
+  
+  resultsTable = data.frame(cbind(strategyList[, year],
+                                  strategyList[, rawAveragePrice],
+                                  strategyList[, preHarvestAverage],
+                                  strategyList[, postHarvestAverage],
+                                  strategyList[, storageAdjustedAverage],
+                                  strategyList[, storageAdjustedPostHarvestAverage]))
+  
+  colnames(resultsTable) = c("Year", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
+                             "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
+  
+  return(resultsTable)
+}
+
+
+# Formats a results table for all crop years in a single strategy
+getYearlyResultsTable = function(data) {
+  data[,2:6] = lapply(data[2:6], function(x) as.numeric(as.character(x)))
+  rownames(data) <- c()
+  data = cbind("Crop Year" = data[,1], round(data[, 2:6], digits = 2))
+  table = formattable(data, 
+                      align = "c",
+                      list(~ formatter("span",
+                                       style = x ~ style(display = "block",
+                                                         "border-radius" = "0px",
+                                                         "padding" = "0px",
+                                                         "text-align" = "center")),
+                           `Strategy` = formatter("span", style = x ~ style(font.weight = "bold")),
+                           `Version` = formatter("span", style = x ~ style(font.weight = "bold"))))
+  return(table)
+}
+
+
+
+if (type == "Corn"){
+  
+  #WITHOUT MY
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "POfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("PO Base  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "POfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("PO V2  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "POfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("PO V3  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "POfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("PO V4  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "POfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("PO V5  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "POfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("PO March  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "POfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("PO March Baselines  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS Base  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V2  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V3  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V4  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V5  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3Base, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V3Base  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V2, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V3V2  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V3, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V3V3  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V4, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V3V4  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V5, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V3V5  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS March  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS March Baselines USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "SSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("SS Base  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "SSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("SS March Baselines  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  
+  # WITH MY
+  
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "POfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("PO Base MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "POfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("PO V2 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "POfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("PO V3 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "POfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("PO V4 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "POfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("PO V5 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "POfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("PO March MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "POfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("PO March Baselines MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS Base MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V2 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V3 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V4 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V5 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3Base, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V3Base MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V2, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V3V2 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V3, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V3V3 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V4, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V3V4 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V5, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V3V5 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS March MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS March Baselines MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "SSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("SS Base MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "SSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("SS March Baselines MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+} else if (type == "Soybeans"){
+  
+    #WITHOUT MY
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "POfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("PO Base  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "POfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("PO V2  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "POfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("PO V3  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "POfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("PO V4  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "POfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("PO V5  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "POfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("PO March  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "POfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("PO March Baselines  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS Base  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V2  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V3  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V4  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V5  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3Base, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V3Base  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V2, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V3V2  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V3, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V3V3  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V4, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V3V4  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V5, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS V3V5  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS March  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "TSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("TS March Baselines USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "SSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("SS Base  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "SSfinalizedPrices")), rownames = FALSE, 
+               caption = tags$caption("SS March Baselines  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  
+  # WITH MY
+  
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "POfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("PO Base MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "POfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("PO V2 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "POfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("PO V3 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "POfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("PO V4 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "POfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("PO V5 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "POfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("PO March MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "POfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("PO March Baselines MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS Base MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V2 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V3 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V4 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V5 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3Base, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V3Base MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V2, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V3V2 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V3, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V3V3 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V4, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V3V4 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V5, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS V3V5 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS March MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "TSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("TS March Baselines MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "SSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("SS Base MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "SSfinalizedPricesMY")), rownames = FALSE, 
+               caption = tags$caption("SS March Baselines MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+               options = list(dom = 't', pageLength = 30))
+  
+  
+  
+  
+  
+}
+
+```
+
