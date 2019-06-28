@@ -352,18 +352,6 @@ postharvestAverage = rep(0, 9)
 preharvestAverageStorage = rep(0, 9)
 postharvestAverageStorage = rep(0, 9)
 
-
-
-
-i = 4
-actualizedSales = cropYearObjects[[i]]$`TS Actualized`
-cropYear = Soybean_CropYears$CropYear[i]
-# marketingYear = cropYearObjects[[i]][["Marketing Year"]]
-intervalPre = cropYearObjects[[i]]$`Pre/Post Interval`$intervalPre
-intervalPost = cropYearObjects[[i]]$`Pre/Post Interval`$intervalPost
-
-
-
 finalizeStorage = function(actualizedSales, cropYear, intervalPre, intervalPost){
   
   
