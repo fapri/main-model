@@ -9,12 +9,12 @@ library(lubridate)
 # load(url("https://github.com/fapri/main-model/blob/soybean/triggers/Application/cornV1.RData?raw=true"))
 # load(url("https://github.com/fapri/main-model/blob/soybean/triggers/Application/cornV3.RData?raw=true"))
 # load(url("https://github.com/fapri/main-model/blob/soybean/triggers/Application/soybeanV1.RData?raw=true"))
-# load(url("https://github.com/fapri/main-model/blob/soybean/triggers/Application/soybeanV2.RData?raw=true"))
+# load(url("https://github.com/fapri/main-model/blob/soybean/triggers/Application/soybeanV3.RData?raw=true"))
 
 # load("cornV1.RData")
 # load("cornV3.RData")
 # load("soybeanV1.RData")
-# load("soybeanV2.RData")
+# load("soybeanV3.RData")
 
 
 # Corn Base/__
@@ -175,7 +175,6 @@ priceObjectListSoybean = list(finalizedPriceObjectSoybeanBase,
                               finalizedPriceObjectSoybeanV3V4,
                               finalizedPriceObjectSoybeanV3V5,
                               finalizedPriceObjectSoybeanMarch,
-
                               finalizedPriceObjectSoybeanMarchBaselines)
 
 
@@ -370,6 +369,59 @@ for(i in 1:length(priceObjectListSoybean)){
   
 }
 
+
+
+# finalizedPriceList = finalizedPriceObjectCornBase
+# strategyName = "POfinalizedPrices"
+
+
+
+# Gets a results table for all crop years in a single strategy
+yearlyResultsByStrategy = function(finalizedPriceList, strategyName){
+  
+  resultsTable = data.frame(matrix(nrow = 0, ncol = 6))
+  
+  resultsList = which(names(finalizedPriceList) == strategyName)
+  
+  strategyList = finalizedPriceList[[resultsList]]
+  
+  year = which(colnames(strategyList) == "Crop Year")
+  rawAveragePrice = which(colnames(strategyList) == "noStorageAvg")
+  preHarvestAverage = which(colnames(strategyList) == "preharvestAverage")
+  postHarvestAverage = which(colnames(strategyList) == "postharvestAverage")
+  storageAdjustedAverage = which(colnames(strategyList) == "storageAdjAvg")
+  storageAdjustedPostHarvestAverage = which(colnames(strategyList) == "postharvestAverageStorage")
+  
+  resultsTable = data.frame(cbind(strategyList[, year],
+                                  strategyList[, rawAveragePrice],
+                                  strategyList[, preHarvestAverage],
+                                  strategyList[, postHarvestAverage],
+                                  strategyList[, storageAdjustedAverage],
+                                  strategyList[, storageAdjustedPostHarvestAverage]))
+  
+  colnames(resultsTable) = c("Year", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
+                             "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
+  
+  return(resultsTable)
+}
+
+
+# Formats a results table for all crop years in a single strategy
+getYearlyResultsTable = function(data) {
+  data[,2:6] = lapply(data[2:6], function(x) as.numeric(as.character(x)))
+  rownames(data) <- c()
+  data = cbind("Crop Year" = data[,1], round(data[, 2:6], digits = 2))
+  table = formattable(data, 
+                      align = "c",
+                      list(~ formatter("span",
+                                       style = x ~ style(display = "block",
+                                                         "border-radius" = "0px",
+                                                         "padding" = "0px",
+                                                         "text-align" = "center")),
+                           `Strategy` = formatter("span", style = x ~ style(font.weight = "bold")),
+                           `Version` = formatter("span", style = x ~ style(font.weight = "bold"))))
+  return(table)
+}
 
 
 # Load in values for dynamic drop down menus
@@ -576,12 +628,13 @@ ui <- shinyUI(
                         fluidRow(column(12, includeHTML("homePage.html"),
                                         selectInput("cropType", "", typeList, width = "33%")
                         )
-                        ),
-                        fluidRow(column(12,
-                                        sliderInput("availableFarmStorage", "On-Farm Storage Capacity:", min = 1, max = 11, value = 6, step = 1,
-                                                    label = " 0---------------------------------------------------------100")
                         )
-                        )
+                        
+                        # Code for slider
+                        # fluidRow(column(12,
+                        #                 sliderInput("availableFarmStorage", "On-Farm Storage Capacity:", min = 1, max = 11, value = 6, step = 1,
+                        #                             label = " 0---------------------------------------------------------100")
+                        # ))
                       )
              ),
              tabPanel("Price Objective",
@@ -609,6 +662,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('POyearTable'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -635,6 +692,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('POMYyearTable'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -661,6 +722,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('POyearTableV2'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -687,6 +752,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('POMYyearTableV2'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -713,6 +782,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('POyearTableV3'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -739,6 +812,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('POMYyearTableV3'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -765,6 +842,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('POyearTableV4'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -791,6 +872,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('POMYyearTableV4'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -817,6 +902,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('POyearTableV5'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -842,6 +931,10 @@ ui <- shinyUI(
                                   dataTableOutput('POMYsummaryTablesV5'),
                                   style = "padding-bottom:100px")
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('POMYyearTableV5'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -868,6 +961,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('POyearTableMarch'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -893,57 +990,69 @@ ui <- shinyUI(
                                   dataTableOutput('POMYsummaryTablesMarch'),
                                   style = "padding-bottom:100px")
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('POMYyearTableMarch'),
+                              style = "padding-bottom:50px"
                             )
                           )
-                        )
-                      ),
-                      # MODEL VERSION March Baselines Only
-                      conditionalPanel(
-                        condition = "input.POstrategy == 'MarchBaselines'",
-                        fluidPage(
-                          fluidRow(
-                            plotOutput('POdistPlotMarchBaselines'),
-                            style = "padding-bottom:50px"
-                          ),
-                          
-                          tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
-                          
-                          sidebarLayout(
-                            sidebarPanel(
-                              fluidRow(selectInput('yearPOMarchBaselines','Crop Year', choices = u.n, width = "100%"),
-                                       column(12, dataTableOutput('POstorageTablesMarchBaselines')),
-                                       tags$style(type="text/css", '#POstorageTablesMarchBaselines tfoot {display:none;}'))
+                        ),
+                        # MODEL VERSION March Baselines Only
+                        conditionalPanel(
+                          condition = "input.POstrategy == 'MarchBaselines'",
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('POdistPlotMarchBaselines'),
+                              style = "padding-bottom:50px"
                             ),
-                            mainPanel(
-                              fluidRow(
-                                dataTableOutput('POsummaryTablesMarchBaselines'),
-                                style = "padding-bottom:100px")
-                              
+                            
+                            tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearPOMarchBaselines','Crop Year', choices = u.n, width = "100%"),
+                                         column(12, dataTableOutput('POstorageTablesMarchBaselines')),
+                                         tags$style(type="text/css", '#POstorageTablesMarchBaselines tfoot {display:none;}'))
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('POsummaryTablesMarchBaselines'),
+                                  style = "padding-bottom:100px")
+                                
+                              )
+                            ),
+                            fluidRow(
+                              dataTableOutput('POyearTableMarchBaselines'),
+                              style = "padding-bottom:50px"
                             )
                           )
-                        )
-                      ),
-                      conditionalPanel(
-                        condition = "input.POstrategy == 'MYMarchBaselines'",
-                        fluidPage(
-                          fluidRow(
-                            plotOutput('POMYdistPlotMarchBaselines'),
-                            style = "padding-bottom:50px"
-                          ),
-                          
-                          tags$style(type="text/css", '#POMYsummaryTablesMarchBaselines tfoot {display:none;}'),
-                          
-                          sidebarLayout(
-                            sidebarPanel(
-                              fluidRow(selectInput('yearPOMYMarchBaselines','Crop Year', choices = u.n, width = "100%"),
-                                       column(12, dataTableOutput('POMYstorageTablesMarchBaselines')),
-                                       tags$style(type="text/css", '#POMYstorageTablesMarchBaselines tfoot {display:none;}'))
-                              
+                        ),
+                        conditionalPanel(
+                          condition = "input.POstrategy == 'MYMarchBaselines'",
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('POMYdistPlotMarchBaselines'),
+                              style = "padding-bottom:50px"
                             ),
-                            mainPanel(
-                              fluidRow(
-                                dataTableOutput('POMYsummaryTablesMarchBaselines'),
-                                style = "padding-bottom:100px")
+                            
+                            tags$style(type="text/css", '#POMYsummaryTablesMarchBaselines tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearPOMYMarchBaselines','Crop Year', choices = u.n, width = "100%"),
+                                         column(12, dataTableOutput('POMYstorageTablesMarchBaselines')),
+                                         tags$style(type="text/css", '#POMYstorageTablesMarchBaselines tfoot {display:none;}'))
+                                
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('POMYsummaryTablesMarchBaselines'),
+                                  style = "padding-bottom:100px")
+                              )
+                            ),
+                            fluidRow(
+                              dataTableOutput('POMYyearTableMarchBaselines'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         )
@@ -974,6 +1083,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSyearTable'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1000,6 +1113,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSMYyearTable'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1026,6 +1143,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSyearTableV2'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1052,6 +1173,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSMYyearTableV2'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1078,6 +1203,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSyearTableV3'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1104,6 +1233,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSMYyearTableV3'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1130,6 +1263,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSyearTableV4'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1156,6 +1293,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSMYyearTableV4'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1182,6 +1323,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSyearTableV5'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1208,6 +1353,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSMYyearTableV5'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1234,6 +1383,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSyearTableV3Base'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1260,6 +1413,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSMYyearTableV3Base'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1286,6 +1443,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSyearTableV3V2'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1312,6 +1473,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSMYyearTableV3V2'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1338,6 +1503,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSyearTableV3V3'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1364,6 +1533,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSMYyearTableV3V3'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1390,6 +1563,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSyearTableV3V4'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1416,6 +1593,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSMYyearTableV3V4'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1442,6 +1623,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSyearTableV3V5'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1468,6 +1653,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSMYyearTableV3V5'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1494,6 +1683,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSyearTableMarch'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1520,6 +1713,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSMYyearTableMarch'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1546,6 +1743,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSyearTableMarchBaselines'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1572,6 +1773,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSMYyearTableMarchBaselines'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         )
@@ -1602,7 +1807,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
-                              
+                            ),
+                            fluidRow(
+                              dataTableOutput('SSyearTable'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1629,6 +1837,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('SSMYyearTable'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1656,6 +1868,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('SSyearTableMarch'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1682,6 +1898,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('SSMYyearTableMarch'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1709,6 +1929,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('SSyearTableMarchBaselines'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         ),
@@ -1735,6 +1959,10 @@ ui <- shinyUI(
                                   style = "padding-bottom:100px")
                                 
                               )
+                            ),
+                            fluidRow(
+                              dataTableOutput('SSMYyearTableMarchBaselines'),
+                              style = "padding-bottom:50px"
                             )
                           )
                         )
@@ -1903,6 +2131,17 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$POyearTable = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "POfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "POfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+  
   
   #################################################################################################
   # Price Objective VERSION 2
@@ -1954,6 +2193,17 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$POyearTableV2 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "POfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "POfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+  
   
   #################################################################################################
   # Price Objective VERSION 3
@@ -1982,9 +2232,7 @@ server <- shinyServer(function(input,output,session){
       Soybean_CropYearObjectsV3[[yearPOV3()]]$POPlot
     }
   })
-  
-  
-  
+
   output$POstorageTablesV3 = renderDataTable({
     if(input$cropType == "Corn"){
       as.datatable(getTables(Corn_CropYearObjectsV3[[yearPOV3()]]$`PO Storage`), rownames = FALSE, 
@@ -1995,9 +2243,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  
+
   output$POsummaryTablesV3 = renderDataTable({
     if(input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsV3[[yearPOV3()]]$`Sales Summary`), rownames = FALSE, 
@@ -2006,6 +2252,17 @@ server <- shinyServer(function(input,output,session){
     else if(input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[yearPOV3()]]$`Sales Summary`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$POyearTableV3 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "POfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "POfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -2027,8 +2284,7 @@ server <- shinyServer(function(input,output,session){
            "2015-16" = 8,
            "2016-17" = 9)
   })
-  
-  
+
   output$POdistPlotV4 <- renderPlot({
     if(input$cropType == "Corn"){
       Corn_CropYearObjectsV4[[yearPOV4()]]$POPlot
@@ -2037,9 +2293,7 @@ server <- shinyServer(function(input,output,session){
       Soybean_CropYearObjectsV4[[yearPOV4()]]$POPlot
     }
   })
-  
-  
-  
+
   output$POstorageTablesV4 = renderDataTable({
     if(input$cropType == "Corn"){
       as.datatable(getTables(Corn_CropYearObjectsV4[[yearPOV4()]]$`PO Storage`), rownames = FALSE, 
@@ -2050,9 +2304,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  
+
   output$POsummaryTablesV4 = renderDataTable({
     if(input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsV4[[yearPOV4()]]$`Sales Summary`), rownames = FALSE, 
@@ -2061,6 +2313,17 @@ server <- shinyServer(function(input,output,session){
     else if(input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV4[[yearPOV4()]]$`Sales Summary`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$POyearTableV4 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "POfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "POfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -2082,8 +2345,7 @@ server <- shinyServer(function(input,output,session){
            "2015-16" = 8,
            "2016-17" = 9)
   })
-  
-  
+
   output$POdistPlotV5 <- renderPlot({
     if(input$cropType == "Corn"){
       Corn_CropYearObjectsV5[[yearPOV5()]]$POPlot
@@ -2092,9 +2354,7 @@ server <- shinyServer(function(input,output,session){
       Soybean_CropYearObjectsV5[[yearPOV5()]]$POPlot
     }
   })
-  
-  
-  
+
   output$POstorageTablesV5 = renderDataTable({
     if(input$cropType == "Corn"){
       as.datatable(getTables(Corn_CropYearObjectsV5[[yearPOV5()]]$`PO Storage`), rownames = FALSE, 
@@ -2105,9 +2365,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  
+
   output$POsummaryTablesV5 = renderDataTable({
     if(input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsV5[[yearPOV5()]]$`Sales Summary`), rownames = FALSE, 
@@ -2116,6 +2374,17 @@ server <- shinyServer(function(input,output,session){
     else if(input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV5[[yearPOV5()]]$`Sales Summary`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$POyearTableV5 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "POfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "POfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -2147,9 +2416,7 @@ server <- shinyServer(function(input,output,session){
       Soybean_CropYearObjectsMarch[[yearPOMarch()]]$POPlot
     }
   })
-  
-  
-  
+
   output$POstorageTablesMarch = renderDataTable({
     if(input$cropType == "Corn"){
       as.datatable(getTables(Corn_CropYearObjectsMarch[[yearPOMarch()]]$`PO Storage`), rownames = FALSE, 
@@ -2160,9 +2427,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
-  
+
   output$POsummaryTablesMarch = renderDataTable({
     if(input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsMarch[[yearPOMarch()]]$`Sales Summary`), rownames = FALSE, 
@@ -2171,6 +2436,17 @@ server <- shinyServer(function(input,output,session){
     else if(input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsMarch[[yearPOMarch()]]$`Sales Summary`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$POyearTableMarch = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "POfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "POfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -2192,8 +2468,7 @@ server <- shinyServer(function(input,output,session){
            "2015-16" = 8,
            "2016-17" = 9)
   })
-  
-  
+
   output$POdistPlotMarchBaselines <- renderPlot({
     if(input$cropType == "Corn"){
       Corn_CropYearObjectsMarchBaselines[[yearPOMarchBaselines()]]$POPlot
@@ -2202,9 +2477,7 @@ server <- shinyServer(function(input,output,session){
       Soybean_CropYearObjectsMarchBaselines[[yearPOMarchBaselines()]]$POPlot
     }
   })
-  
-  
-  
+
   output$POstorageTablesMarchBaselines = renderDataTable({
     if(input$cropType == "Corn"){
       as.datatable(getTables(Corn_CropYearObjectsMarchBaselines[[yearPOMarchBaselines()]]$`PO Storage`), rownames = FALSE, 
@@ -2215,8 +2488,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
+
   output$POsummaryTablesMarchBaselines = renderDataTable({
     if(input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsMarchBaselines[[yearPOMarchBaselines()]]$`Sales Summary`), rownames = FALSE, 
@@ -2228,7 +2500,17 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
-  
+  output$POyearTableMarchBaselines = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "POfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "POfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+
   
   #################################################################################################
   # Trailing Stop
@@ -2276,6 +2558,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsBase[[yearTS()]]$`TS Sales Summary`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSyearTable = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -2329,6 +2622,17 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$TSyearTableV2 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+  
   
   #################################################################################################
   # Trailing Stop VERSION 3
@@ -2376,6 +2680,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV3[[yearTSV3()]]$`TS Sales Summary`), rownames = FALSE,
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSyearTableV3 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -2429,6 +2744,17 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$TSyearTableV4 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+  
   
   #################################################################################################
   # Trailing Stop VERSION 5
@@ -2476,6 +2802,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV5[[yearTSV5()]]$`TS Sales Summary`), rownames = FALSE,
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSyearTableV5 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -2529,6 +2866,17 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$TSyearTableV3Base = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3Base, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3Base, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+  
   
   #################################################################################################
   # Trailing Stop VERSION 3/V2
@@ -2579,6 +2927,16 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$TSyearTableV3V2 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V2, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V2, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
   
   #################################################################################################
   # Trailing Stop VERSION 3/V3
@@ -2626,6 +2984,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV3V3[[yearTSV3V3()]]$`TS Sales Summary`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSyearTableV3V3 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V3, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V3, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -2679,6 +3048,17 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$TSyearTableV3V4 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V4, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V4, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+  
   
   #################################################################################################
   # Trailing Stop VERSION 3/V5
@@ -2726,6 +3106,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV3V5[[yearTSV3V5()]]$`TS Sales Summary`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSyearTableV3V5 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V5, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V5, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -2779,6 +3170,17 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$TSyearTableMarch = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+  
   
   #################################################################################################
   # Trailing Stop VERSION March Baselines Only
@@ -2826,6 +3228,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsMarchBaselines[[yearTSMarchBaselines()]]$`TS Sales Summary`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSyearTableMarchBaselines = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "TSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -2879,6 +3292,17 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$SSyearTable = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "SSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "SSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+  
   
   #################################################################################################
   # Seasonal Sales VERSION March Baselines Only
@@ -2926,6 +3350,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsMarchBaselines[[yearSSMarchBaselines()]]$`SS Sales Summary`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$SSyearTableMarchBaselines = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "SSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaslines, "SSfinalizedPrices")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -2979,6 +3414,17 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$POMYyearTable = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "POfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "POfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+  
   
   #################################################################################################
   # Price Objective Multi Year VERSION 2
@@ -3026,6 +3472,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV2[[yearPOMYV2()]]$`PO Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$POMYyearTableV2 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "POfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "POfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -3079,6 +3536,17 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$POMYyearTableV3 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "POfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "POfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+  
   
   #################################################################################################
   # Price Objective Multi Year VERSION 4
@@ -3126,6 +3594,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV4[[yearPOMYV4()]]$`PO Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$POMYyearTableV4 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "POfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "POfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -3179,6 +3658,17 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$POMYyearTableV5 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "POfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "POfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+  
   
   #################################################################################################
   # Price Objective Multi Year March
@@ -3229,6 +3719,17 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$POMYyearTableMarch = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "POfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "POfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+  
   
   #################################################################################################
   # Price Objective Multi Year March Baselines Only
@@ -3276,6 +3777,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsMarchBaselines[[yearPOMYMarchBaselines()]]$`PO Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$POMYyearTableMarchBaselines = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "POfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "POfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -3330,6 +3842,17 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$TSMYyearTable = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+  
   
   #################################################################################################
   # Trailing Stop With Multi Year VERSION 2
@@ -3377,6 +3900,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV2[[yearTSMYV2()]]$`TS Sales Summary MY`), rownames = FALSE,
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSMYyearTableV2 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -3430,6 +3964,17 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$TSMYyearTableV3 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+  
   
   #################################################################################################
   # Trailing Stop Multi Year VERSION 4
@@ -3468,8 +4013,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
+
   output$TSMYsummaryTablesV4 = renderDataTable({
     if (input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsV4[[yearTSMYV4()]]$`TS Sales Summary MY`), rownames = FALSE, 
@@ -3478,6 +4022,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV4[[yearTSMYV4()]]$`TS Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSMYyearTableV4 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -3519,8 +4074,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
+
   output$TSMYsummaryTablesV5 = renderDataTable({
     if (input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsV5[[yearTSMYV5()]]$`TS Sales Summary MY`), rownames = FALSE, 
@@ -3529,6 +4083,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV5[[yearTSMYV5()]]$`TS Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSMYyearTableV5 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -3570,8 +4135,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
+
   output$TSMYsummaryTablesV3Base = renderDataTable({
     if (input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsV3Base[[yearTSMYV3Base()]]$`TS Sales Summary MY`), rownames = FALSE, 
@@ -3582,6 +4146,17 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   }) 
+  
+  output$TSMYyearTableV3Base = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3Base, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3Base, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
   
   
   #################################################################################################
@@ -3621,8 +4196,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
+
   output$TSMYsummaryTablesV3V2 = renderDataTable({
     if (input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsV3V2[[yearTSMYV3V2()]]$`TS Sales Summary MY`), rownames = FALSE, 
@@ -3631,6 +4205,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV3V2[[yearTSMYV3V2()]]$`TS Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSMYyearTableV3V2 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V2, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V2, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -3672,8 +4257,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
+
   output$TSMYsummaryTablesV3V3 = renderDataTable({
     if (input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsV3V3[[yearTSMYV3V3()]]$`TS Sales Summary MY`), rownames = FALSE, 
@@ -3682,6 +4266,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV3V3[[yearTSMYV3V3()]]$`TS Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSMYyearTableV3V3 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V3, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V3, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -3723,8 +4318,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
+
   output$TSMYsummaryTablesV3V4 = renderDataTable({
     if (input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsV3V4[[yearTSMYV3V4()]]$`TS Sales Summary MY`), rownames = FALSE, 
@@ -3733,6 +4327,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV3V4[[yearTSMYV3V4()]]$`TS Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSMYyearTableV3V4 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V4, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V4, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -3774,8 +4379,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
+
   output$TSMYsummaryTablesV3V5 = renderDataTable({
     if (input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsV3V5[[yearTSMYV3V5()]]$`TS Sales Summary MY`), rownames = FALSE, 
@@ -3784,6 +4388,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsV3V5[[yearTSMYV3V5()]]$`TS Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSMYyearTableV3V5 = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V5, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V5, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -3825,8 +4440,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
+
   output$TSMYsummaryTablesMarch = renderDataTable({
     if (input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsMarch[[yearTSMYMarch()]]$`TS Sales Summary MY`), rownames = FALSE, 
@@ -3835,6 +4449,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsMarch[[yearTSMYMarch()]]$`TS Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSMYyearTableMarch = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -3876,8 +4501,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
+
   output$TSMYsummaryTablesMarchBaselines = renderDataTable({
     if (input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsMarchBaselines[[yearTSMYMarchBaselines()]]$`TS Sales Summary MY`), rownames = FALSE, 
@@ -3886,6 +4510,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsMarchBaselines[[yearTSMYMarchBaselines()]]$`TS Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$TSMYyearTableMarchBaselines = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "TSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -3939,6 +4574,17 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
+  output$SSMYyearTable = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "SSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "SSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+  })
+  
   
   #################################################################################################
   # Seasonal Sales Multi Year VERSION March NC
@@ -3977,8 +4623,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
+
   output$SSMYsummaryTablesMarch = renderDataTable({
     if (input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsMarch[[yearSSMYMarch()]]$`SS Sales Summary MY`), rownames = FALSE, 
@@ -3987,6 +4632,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsMarch[[yearSSMYMarch()]]$`SS Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$SSMYyearTableMarch = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "SSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "SSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
@@ -4028,8 +4684,7 @@ server <- shinyServer(function(input,output,session){
                    caption = tags$caption("Storage Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
     }
   })
-  
-  
+
   output$SSMYsummaryTablesMarchBaselines = renderDataTable({
     if (input$cropType == "Corn"){
       as.datatable(getSalesTable(Corn_CropYearObjectsMarchBaselines[[yearSSMYMarchBaselines()]]$`SS Sales Summary MY`), rownames = FALSE, 
@@ -4038,6 +4693,17 @@ server <- shinyServer(function(input,output,session){
     else if (input$cropType == "Soybeans"){
       as.datatable(getSalesTable(Soybean_CropYearObjectsMarchBaselines[[yearSSMYMarchBaselines()]]$`SS Sales Summary MY`), rownames = FALSE, 
                    caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+    }
+  })
+  
+  output$SSMYyearTableMarchBaselines = renderDataTable({
+    if (input$cropType == "Corn"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "SSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+    }
+    else if (input$cropType == "Soybeans"){
+      as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "SSfinalizedPricesMY")), rownames = FALSE, 
+                   caption = tags$caption("USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
 })
