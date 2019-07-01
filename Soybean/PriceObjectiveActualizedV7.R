@@ -34,12 +34,21 @@ getPercentSold = function(actualizedSales){
 }
 
 # 20% Sales at 90th percentile
-increasePercentSold = function(triggerType, percentile, total){
-  if(triggerType == "Price Objective" && percentile == "90" && total <= "80"){
-    return(20)
-  }
-  else{
-    return(10)
+increasePercentSold = function(triggerType, percentile, total, preOrPost){
+  if(preOrPost == "pre"){
+    if(triggerType == "Price Objective" && percentile == "90" && total <= "30"){
+      return(20)
+    }
+    else{
+      return(10)
+    }
+  }else if(preOrPost == "post"){
+    if(triggerType == "Price Objective" && percentile == "90" && total <= "80"){
+      return(20)
+    }
+    else{
+      return(10)
+    }
   }
 }
 
@@ -256,7 +265,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                     tempRows = c(tempRows, which(priceObjectiveActualized$Date %within% interval1 & priceObjectiveActualized$Type == "Price Objective Special"))
                     #check if a sale was made in that percentile
                     if(!(triggers$Percentile[tRow] %in% priceObjectiveActualized$Percentile[tempRows])) {
-                      currentPercentSold = increasePercentSold(triggers$Type[tRow], triggers$Percentile[tRow], totalSold)
+                      currentPercentSold = increasePercentSold(triggers$Type[tRow], triggers$Percentile[tRow], totalSold, "pre")
                       totalSold = totalSold + currentPercentSold
                       if (MY == TRUE && totalSold > tail(priceObjectiveActualized$Total.Sold, 1)){
                         priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow],
@@ -287,7 +296,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                   
                   #if trigger date is in an unrestricted interval or ATH/TDH we can just make the sale
                   else {
-                    currentPercentSold = increasePercentSold(triggers$Type[tRow], triggers$Percentile[tRow], totalSold)
+                    currentPercentSold = increasePercentSold(triggers$Type[tRow], triggers$Percentile[tRow], totalSold, "pre")
                     totalSold = totalSold + currentPercentSold
                     if (MY == TRUE && totalSold > tail(priceObjectiveActualized$Total.Sold, 1)){
                       priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
@@ -317,7 +326,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                 
                 #if trigger is the first one we can just make the sale
                 else {
-                  currentPercentSold = increasePercentSold(triggers$Type[tRow], triggers$Percentile[tRow], totalSold)
+                  currentPercentSold = increasePercentSold(triggers$Type[tRow], triggers$Percentile[tRow], totalSold, "pre")
                   totalSold = totalSold + currentPercentSold
                   priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                         "Percentile" = triggers$Percentile[tRow],
@@ -350,7 +359,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                       tempRows = c(tempRows, which(priceObjectiveActualized$Date %within% interval3 & priceObjectiveActualized$Type == "Price Objective Special"))
                       #check if a sale was made in that percentile. 
                       if(!(triggers$Percentile[tRow] %in% priceObjectiveActualized$Percentile[tempRows])) {
-                        currentPercentSold = increasePercentSold(triggers$Type[tRow], triggers$Percentile[tRow], totalSold)
+                        currentPercentSold = increasePercentSold(triggers$Type[tRow], triggers$Percentile[tRow], totalSold, "post")
                         totalSold = totalSold + currentPercentSold
                         priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                               "Percentile" = triggers$Percentile[tRow],
@@ -363,7 +372,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                     } 
                     #if trigger date is in an unrestricted interval or ATH/TDH we can just make the sale
                     else {
-                      currentPercentSold = increasePercentSold(triggers$Type[tRow], triggers$Percentile[tRow], totalSold)
+                      currentPercentSold = increasePercentSold(triggers$Type[tRow], triggers$Percentile[tRow], totalSold, "post")
                       totalSold = totalSold + currentPercentSold
                       priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow],
                                                                                             "Percentile" = triggers$Percentile[tRow],
@@ -442,7 +451,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
               
               #if trigger is the first one we can just make the sale
               else {
-                currentPercentSold = increasePercentSold(triggers$Type[tRow], triggers$Percentile[tRow], totalSold)
+                currentPercentSold = increasePercentSold(triggers$Type[tRow], triggers$Percentile[tRow], totalSold, "post")
                 totalSold = totalSold + currentPercentSold
                 priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow],
                                                                                       "Percentile" = triggers$Percentile[tRow],
