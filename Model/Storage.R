@@ -581,10 +581,8 @@ finalizedPriceObject[["AllResultsTable"]] = cbind(finalizedPriceObject[["POResul
 
 if(type == "corn"){
   Corn_CropYearObjects = cropYearObjects
-  Corn_CropYears = cropYearsList
 }
 
 if(type == "soybean"){
   Soybean_CropYearObjects = cropYearObjects
-  Soybean_CropYears = cropYearsList
 }
