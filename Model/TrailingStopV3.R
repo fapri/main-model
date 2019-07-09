@@ -166,15 +166,15 @@ trailingStopTrigger = function(cropYear, featuresObject) {
         }
       }
     }
-
+    
     # Special case for Aug -> Sept
     # Functions on adjusted marketing year
-    else if (month(mdy(marketingYearAdj$Date[row])) == 9 && month(mdy(marketingYearAdj$Date[row - 1])) == 8){
+    if (month(mdy(marketingYearAdj$Date[row])) == 9 && month(mdy(marketingYearAdj$Date[row - 1])) == 8 && !(marketingYear$Date[row] %in% trailingStopTriggers$Date)){
       next
     }
     
     # Functions on adjusted marketing year
-    else if(isTrailingStop(marketingYearAdj$Percentile[row - 1], marketingYearAdj$Percentile[row]) && !(mdy(marketingYearAdj$Date[row]) %within% EYTSInterval)) {
+    if(isTrailingStop(marketingYearAdj$Percentile[row - 1], marketingYearAdj$Percentile[row]) && !(mdy(marketingYearAdj$Date[row]) %within% EYTSInterval) && !(marketingYear$Date[row] %in% trailingStopTriggers$Date)) {
       if(nrow(trailingStopTriggers) == 0 || difftime((mdy(marketingYearAdj$Date[row])), mdy(trailingStopTriggers$Date[nrow(trailingStopTriggers)])) >= 7){ 
         trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYearAdj$Date[row], 
                                                                       "Previous Percentile" = marketingYearAdj$Percentile[row - 1],
@@ -184,7 +184,7 @@ trailingStopTrigger = function(cropYear, featuresObject) {
     }
     
     # Functions on normal marketing year
-    else if(isTrailingStop(marketingYear$Percentile[row - 1], marketingYear$Percentile[row]) && (mdy(marketingYear$Date[row]) %within% EYTSInterval)) {
+    if(isTrailingStop(marketingYear$Percentile[row - 1], marketingYear$Percentile[row]) && (mdy(marketingYear$Date[row]) %within% EYTSInterval) && !(marketingYear$Date[row] %in% trailingStopTriggers$Date)) {
       if(!nrow(trailingStopTriggers) == 0 || difftime((mdy(marketingYear$Date[row])), mdy(trailingStopTriggers$Date[nrow(trailingStopTriggers)])) >= 7){
         trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                       "Previous Percentile" = marketingYear$Percentile[row - 1],
@@ -194,9 +194,9 @@ trailingStopTrigger = function(cropYear, featuresObject) {
     }
     
     # Functions on normal marketing year
-    else if (isTenDayHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row], 
-                          cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
-                          featuresObject$`95% of Ten Day High`, MY = FALSE)) {
+    if (isTenDayHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row], 
+                     cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
+                     featuresObject$`95% of Ten Day High`, MY = FALSE) && !(marketingYear$Date[row] %in% trailingStopTriggers$Date)) {
       trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                     "Previous Percentile" = marketingYear$Percentile[row - 1],
                                                                     "Percentile" = marketingYear$Percentile[row],
@@ -204,9 +204,9 @@ trailingStopTrigger = function(cropYear, featuresObject) {
     }
     
     # Functions on normal marketing year
-    else if (isAllTimeHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row],
-                           cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
-                           featuresObject$`95% of Ten Day High`, featuresObject$`All Time High`, MY = FALSE)) {
+    if (isAllTimeHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row],
+                      cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
+                      featuresObject$`95% of Ten Day High`, featuresObject$`All Time High`, MY = FALSE) && !(marketingYear$Date[row] %in% trailingStopTriggers$Date)) {
       trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                     "Previous Percentile" = marketingYear$Percentile[row - 1],
                                                                     "Percentile" = marketingYear$Percentile[row],
