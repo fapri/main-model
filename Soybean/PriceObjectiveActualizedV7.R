@@ -55,7 +55,7 @@ increasePercentSold = function(triggerType, percentile, total, preOrPost){
 # Returns True for dump days, 5/20 or 7/20
 isDumpDate = function(type, month, day, year, stopYear){
   if(type == "corn"){
-    if(month == 5 && year == stopYear){
+    if(month == 6 && year == stopYear){
       if(day == 20 || day == 21 || day == 22 || day == 23) {
         return(TRUE)
       } else{
