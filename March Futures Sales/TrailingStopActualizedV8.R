@@ -56,7 +56,6 @@ isDumpDate = function(type, month, day, year, stopYear){
   }
 }
 
-
 # Finds actualized Trailing Stop sales
 isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
   trailingStopActualized = isActualizedPresent(cropYear)
@@ -234,7 +233,7 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
           #find trigger row
           tRow = which(marketingYear$Date[row] == triggers$Date)
           tRowMar = NULL
-          if(length(tRow) > 1){
+          if(length(tRow) > 1 && triggers$Type[tRow[1]] != "All Time High" && triggers$Type[tRow[2]] != "All Time High"){
             tRowMar = tRow[which(triggers$Type[tRow] == "Trailing Stop March")]
             if(length(tRowMar) == 0){
               tRowMar = tRow[which(triggers$Type[tRow] == "Trailing Stop Special March")]
@@ -242,6 +241,8 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
             } else{
               tRow = tRow[which(triggers$Type[tRow] == "Trailing Stop")]
             }
+          } else {
+            tRow = tRow[1]
           }
           #check if preharvest
           if(triggers$Date[tRow] %within% intervalPre) {
