@@ -54,11 +54,11 @@ trailingStopTrigger = function(cropYear, featuresObject) {
     }
     
     #Special case for Aug -> Sept
-    else if (month(mdy(marketingYear$Date[row])) == 9 && month(mdy(marketingYear$Date[row - 1])) == 8){
+    if (month(mdy(marketingYear$Date[row])) == 9 && month(mdy(marketingYear$Date[row - 1])) == 8 && !(marketingYear$Date[row] %in% trailingStopTriggers$Date)){
       next
     }
     
-    else if(isTrailingStop(marketingYear$Percentile[row - 1], marketingYear$Percentile[row])) {
+    if(isTrailingStop(marketingYear$Percentile[row - 1], marketingYear$Percentile[row]) && !(marketingYear$Date[row] %in% trailingStopTriggers$Date)) {
       if(nrow(trailingStopTriggers) == 0 || difftime((mdy(marketingYear$Date[row])), mdy(trailingStopTriggers$Date[nrow(trailingStopTriggers)])) >= 7){ 
         trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                       "Previous Percentile" = marketingYear$Percentile[row - 1],
@@ -74,18 +74,18 @@ trailingStopTrigger = function(cropYear, featuresObject) {
       }
     }
     
-    else if (isTenDayHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row], 
-                          cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
-                          featuresObject$`95% of Ten Day High`, MY = FALSE)) {
+    if (isTenDayHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row], 
+                     cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
+                     featuresObject$`95% of Ten Day High`, MY = FALSE) && !(marketingYear$Date[row] %in% trailingStopTriggers$Date)) {
       trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                     "Previous Percentile" = marketingYear$Percentile[row - 1],
                                                                     "Percentile" = marketingYear$Percentile[row],
                                                                     "Type" = "Ten Day High"))
     }
     
-    else if (isAllTimeHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row],
-                           cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
-                           featuresObject$`95% of Ten Day High`, featuresObject$`All Time High`, MY = FALSE)) {
+    if (isAllTimeHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row],
+                      cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
+                      featuresObject$`95% of Ten Day High`, featuresObject$`All Time High`, MY = FALSE) && !(marketingYear$Date[row] %in% trailingStopTriggers$Date)) {
       trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                     "Previous Percentile" = marketingYear$Percentile[row - 1],
                                                                     "Percentile" = marketingYear$Percentile[row],
@@ -130,30 +130,30 @@ trailingStopTriggerMarch = function(cropYear, featuresObject) {
         # Takes in price for percentile above prevous day, percentile above previous day, current day price
         if(isTrailingStopSpecial(pricePreviousPercentileBelow, marketingYear$Price[row])) {
           trailingStopTriggersMarch = rbind(trailingStopTriggersMarch, data.frame("Date" = marketingYear$Date[row], 
-                                                                        "Previous Percentile" = marketingYear$MarPercentile[row - 1],
-                                                                        "Percentile" = previousPercentileBelow,
-                                                                        "Type" = "Trailing Stop Special March"))
+                                                                                  "Previous Percentile" = marketingYear$MarPercentile[row - 1],
+                                                                                  "Percentile" = previousPercentileBelow,
+                                                                                  "Type" = "Trailing Stop Special March"))
         }
       }
     }
     
     #Special case for Aug -> Sept
-    else if (month(mdy(marketingYear$Date[row])) == 9 && month(mdy(marketingYear$Date[row - 1])) == 8){
+    if (month(mdy(marketingYear$Date[row])) == 9 && month(mdy(marketingYear$Date[row - 1])) == 8 && !(marketingYear$Date[row] %in% trailingStopTriggersMarch$Date)){
       next
     }
     
-    else if(isTrailingStop(marketingYear$MarPercentile[row - 1], marketingYear$MarPercentile[row])) {
+    if(isTrailingStop(marketingYear$MarPercentile[row - 1], marketingYear$MarPercentile[row]) && !(marketingYear$Date[row] %in% trailingStopTriggersMarch$Date)) {
       if(nrow(trailingStopTriggersMarch) == 0 || difftime((mdy(marketingYear$Date[row])), mdy(trailingStopTriggersMarch$Date[nrow(trailingStopTriggersMarch)])) >= 7){ 
         trailingStopTriggersMarch = rbind(trailingStopTriggersMarch, data.frame("Date" = marketingYear$Date[row], 
-                                                                      "Previous Percentile" = marketingYear$MarPercentile[row - 1],
-                                                                      "Percentile" = marketingYear$MarPercentile[row],
-                                                                      "Type" = "Trailing Stop March"))
+                                                                                "Previous Percentile" = marketingYear$MarPercentile[row - 1],
+                                                                                "Percentile" = marketingYear$MarPercentile[row],
+                                                                                "Type" = "Trailing Stop March"))
       } 
     }
   }
   
   return(trailingStopTriggersMarch)
-
+  
 }
 
 if(type == "corn"){
@@ -165,7 +165,7 @@ if(type == "corn"){
     
     allTriggers = rbind(trailingStopTriggersMarch, trailingStopTriggers)
     allTriggers = allTriggers[order(allTriggers$Date), ]
-
+    
     Corn_CropYearObjects[[i]]$`TS Triggers` = allTriggers
     Corn_CropYearObjects[[i]]$`TS Triggers`$Date = mdy(Corn_CropYearObjects[[i]]$`TS Triggers`$Date)
   }
@@ -179,7 +179,7 @@ if(type == "soybean"){
     
     allTriggers = rbind(trailingStopTriggersMarch, trailingStopTriggers)
     allTriggers = allTriggers[order(allTriggers$Date), ]
-
+    
     Soybean_CropYearObjects[[i]]$`TS Triggers` = allTriggers
     Soybean_CropYearObjects[[i]]$`TS Triggers`$Date = mdy(Soybean_CropYearObjects[[i]]$`TS Triggers`$Date)
   }
