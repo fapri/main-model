@@ -48,34 +48,34 @@ priceObjectiveTrigger = function(cropYear, featuresObject) {
     }
     
     #Special case for Aug -> Sept
-    if (month(mdy(marketingYear$Date[row])) == 9 && month(mdy(marketingYear$Date[row - 1])) == 8 && !(marketingYear$Date[row] %in% priceObjectiveTriggers$Date)){
+    else if (month(mdy(marketingYear$Date[row])) == 9 && month(mdy(marketingYear$Date[row - 1])) == 8){
       next
     }
     
-    if(isPriceObjective(marketingYear$Percentile[row - 1], marketingYear$Percentile[row]) && !(marketingYear$Date[row] %in% priceObjectiveTriggers$Date)) {
+    else if(isPriceObjective(marketingYear$Percentile[row - 1], marketingYear$Percentile[row])) {
       priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                         "Percentile" = marketingYear$Percentile[row],
                                                                         "Type" = "Price Objective"))
     }
     
-    if (isTenDayHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row], 
-                     cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
-                     featuresObject$`95% of Ten Day High`, MY = FALSE) && !(marketingYear$Date[row] %in% priceObjectiveTriggers$Date)) {
+    else if (isTenDayHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row], 
+                          cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
+                          featuresObject$`95% of Ten Day High`, MY = FALSE)) {
       priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                         "Percentile" = marketingYear$Percentile[row],
                                                                         "Type" = "Ten Day High"))
     }
     
-    if (isAllTimeHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row],
-                      cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
-                      featuresObject$`95% of Ten Day High`, featuresObject$`All Time High`, MY = FALSE) && !(marketingYear$Date[row] %in% priceObjectiveTriggers$Date)) {
+    else if (isAllTimeHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row],
+                           cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
+                           featuresObject$`95% of Ten Day High`, featuresObject$`All Time High`, MY = FALSE)) {
       priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                         "Percentile" = marketingYear$Percentile[row],
                                                                         "Type" = "All Time High"))
     }
     
-    if (isEndYearTrailingStop(mdy(marketingYear$Date[row]), marketingYear$Percentile[row - 1], marketingYear$Percentile[row],
-                              cropYear$`Pre/Post Interval`$intervalPost) && !(marketingYear$Date[row] %in% priceObjectiveTriggers$Date)) {
+    else if (isEndYearTrailingStop(mdy(marketingYear$Date[row]), marketingYear$Percentile[row - 1], marketingYear$Percentile[row],
+                                   cropYear$`Pre/Post Interval`$intervalPost)) {
       priceObjectiveTriggers = rbind(priceObjectiveTriggers, data.frame("Date" = marketingYear$Date[row], 
                                                                         "Percentile" = marketingYear$Percentile[row],
                                                                         "Type" = "End of Year Trailing Stop"))
@@ -89,7 +89,7 @@ priceObjectiveTrigger = function(cropYear, featuresObject) {
 priceObjectiveTriggerMarch = function(cropYear, featuresObject) {
   priceObjectiveTriggersMarch = data.frame()
   marketingYear = cropYear[['Marketing Year']]
-  
+
   intervalPre = cropYear$`Pre/Post Interval`$intervalPre
   
   preRows = which(mdy(marketingYear$Date) %within% intervalPre)
@@ -114,21 +114,21 @@ priceObjectiveTriggerMarch = function(cropYear, featuresObject) {
         # Takes in price for percentile above prevous day, percentile above previous day, current day price
         if(isPriceObjectiveSpecial(pricePreviousPercentileAbove, marketingYear$Price[row])) {
           priceObjectiveTriggersMarch = rbind(priceObjectiveTriggersMarch, data.frame("Date" = marketingYear$Date[row], 
-                                                                                      "Percentile" = previousPercentileAbove,
-                                                                                      "Type" = "Price Objective Special March"))
+                                                                            "Percentile" = previousPercentileAbove,
+                                                                            "Type" = "Price Objective Special March"))
         }
       }
     }
     
     #Special case for Aug -> Sept
-    if (month(mdy(marketingYear$Date[row])) == 9 && month(mdy(marketingYear$Date[row - 1])) == 8 && !(marketingYear$Date[row] %in% priceObjectiveTriggersMarch$Date)){
+    else if (month(mdy(marketingYear$Date[row])) == 9 && month(mdy(marketingYear$Date[row - 1])) == 8){
       next
     }
     
-    if(isPriceObjective(marketingYear$MarPercentile[row - 1], marketingYear$MarPercentile[row])&& !(marketingYear$Date[row] %in% priceObjectiveTriggersMarch$Date)) {
+    else if(isPriceObjective(marketingYear$MarPercentile[row - 1], marketingYear$MarPercentile[row])) {
       priceObjectiveTriggersMarch = rbind(priceObjectiveTriggersMarch, data.frame("Date" = marketingYear$Date[row], 
-                                                                                  "Percentile" = marketingYear$MarPercentile[row],
-                                                                                  "Type" = "Price Objective March"))
+                                                                        "Percentile" = marketingYear$MarPercentile[row],
+                                                                        "Type" = "Price Objective March"))
     }
   }
   
