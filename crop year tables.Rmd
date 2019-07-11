@@ -4,7 +4,7 @@ output:
   html_notebook
 ---
 
-```{r}
+```{r echo = F}
 
 
 
@@ -275,7 +275,11 @@ if (type == "Corn"){
                               caption = tags$caption("SS Base MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
                               options = list(dom = 't', pageLength = 30))
   
-  tables[[42]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "SSfinalizedPricesMY")), rownames = FALSE, 
+  tables[[42]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "SSfinalizedPricesMY")), rownames = FALSE, 
+                              caption = tags$caption("SS March MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+                              options = list(dom = 't', pageLength = 30))
+  
+  tables[[43]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "SSfinalizedPricesMY")), rownames = FALSE, 
                               caption = tags$caption("SS March Baselines MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
                               options = list(dom = 't', pageLength = 30))
   
@@ -472,12 +476,15 @@ if (type == "Corn"){
   
   
   
-  
   tables[[41]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "SSfinalizedPricesMY")), rownames = FALSE, 
                              caption = tags$caption("SS Base MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
                              options = list(dom = 't', pageLength = 30))
   
-  tables[[42]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "SSfinalizedPricesMY")), rownames = FALSE, 
+  tables[[42]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "SSfinalizedPricesMY")), rownames = FALSE, 
+                             caption = tags$caption("SS March MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
+                             options = list(dom = 't', pageLength = 30))
+  
+  tables[[43]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "SSfinalizedPricesMY")), rownames = FALSE, 
                              caption = tags$caption("SS March Baselines MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
                              options = list(dom = 't', pageLength = 30))
   
