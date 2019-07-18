@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Strategy Definitions</title>
+    <style>
+      li.format{
+        padding-bottom:20px; 
+        font-family: calibri; 
+        font-size: 1.2em;
+      }
+    </style>
+  </head>
+  <body>
+    <ul>
+      <li class = "format">
+        <u><b> Price Objective (PO): </b></u> This strategy triggers a sale each time the market touches a higher percentile. For example, if the market was at the 90th percentile but then moved through the 95th percentile, a sale would be triggered. In general, a tenth of crop production is sold whenever a Price Objective sale is actualized. Price Objective sales are represented in yellow.
+      </li>
+      <li class = "format">
+        <u><b> Trailing Stop (TS): </b></u> When prices have been trending higher, this strategy triggers a sale only when the market shifts downward and passes through a lower percentile. Here, baselines are treated as points. For example, if the market were at the 90th percentile but then moved to (or through) the 80th percentile, a sale would be triggered. In general, a tenth of crop production is sold whenever a Trailing Stop sale is actualized. Trailing Stop sales are represented in purple.
+      </li>
+      <li class = "format">
+        <u><b>  Seasonal Sale (SS):  </b></u> The Seasonal Sale strategy makes seasonal sales on every 10th and 20th of March and June. It is an extension of seasonal sales, as described below, over the entire marketing year. Seasonal sales will always be made at 12.5% of crop production. These sales are denoted in orange.
+      </li>
+      <li class = "format">
+        <u><b> Baseline: </b></u> Our entire marketing model is based off of the annually released FAPRI baselines. These baselines are calculated using a sophisticated econometric model of several dozen exogenous variables. An initial, exhaustive report is released in March of each year that contains these baseline price projections for corn. Then, in late August, a updated copy is released that accounts for recent developments. Both the March and August baselines are used in this model. They are represented in every chart and labeled “Baseline.”
+      </li>
+      <li class = "format">
+        <u><b> Percentiles: </b></u> Using the baseline price, a stochastic process of 500 iterations is used to determine pricing intervals centered around the baseline. These are used to determine our price percentile projections. For our marketing strategies, we use the 70th, 80th, 90th, and 95th percentiles in order to capture high market prices. These percentiles are represented in each chart and are labeled accordingly.
+      </li>
+      <li class = "format">
+        <u><b> Storage:</b></u> Storage is a central component of the cost-benefit analysis for farmers. As such, assumed storage costs are accounted for in our model. In the model, we do not begin calculating storage until the first of November, since we assume that is when farmers must have their grain out of the fields and into storage. Storage costs are then calculated using formulas that account for interest, elapsed time, shrink, and insurance, among other components. Two costs are calculated: one for commercial storage and one for on-farm storage. We assume that up to the last 50% of crop production will be held in on-farm storage. More thorough descriptions of commercial and on-farm storage costs are provided below, including how these costs are represented in our model.
+      </li>
+      <li class = "format">
+        <u><b> Pre-Harvest:</b></u> The initial period from January-September of a given crop year, representing the period prior to the harvesting of crop. On all crop year summaries and graphs, Pre-Harvest percentiles, sales, and average prices are represented in blue.
+      </li>
+      <li class = "format">
+        <u><b> Post-Harvest:</b></u> The period from September-August of a given crop year after the beginning of harvest. On all crop year summaries and graphs, Post-Harvest percentiles, sales, and average prices are represented in green.
+      </li>
+      <li class = "format">
+        <u><b> Seasonal:</b></u> It is common knowledge that commodity markets tend to have seasonal trends. Prices rise in the spring, when supplies get tighter, and decline in the fall. Because of these historical trends, we assume that prices will generally be highest in March and June of each crop year. In the PO and TS strategy, seasonal sales may be made on the 10th and 20th of Post-Harvest March and June as a “back-up” if unmarketed crop remains. In the SS strategy, seasonal sales are made every 10th and 20th of March and June and no PO, TS, EYTS, ATHTS, or 5% DFTDH sales are made. At least 10% of expected crop production will be sold when making a seasonal sale. For example, if three Multi-Year sales were made prior to March 10th of Pre-Harvest, making a sale on March 10th would mean selling only 5% of expected crop production. Thus, a Pre-Harvest seasonal sale would not be made until June 10th at 10% of crop production, as long as no Multi-Year sales were made before that day. Then, another 10% sale would be made on June 20th – again, granted a Multi-Year sale was not made after June 10th – resulting in a total of 50% of crop production sold in Pre-Harvest.
+      </li>
+      <li class = "format">
+        <u><b> End of Year Trailing Stop (EYTS):</b></u> This is our “forced liquidation” strategy if crop is still left when using the Price Objective or Trailing Stop strategies. This strategy is not needed for the SS strategy. If crop remains in Post-Harvest June and we are not below the 70th percentile, we utilize EYTS. PO/TS sales are made as usual (at 10% of crop), but if the market passes down through a percentile, we make a sale relative to the remaining crop. For example, if we are in Post-Harvest June, have 40% of our crop remaining, and are at the 80th percentile, we would sell 20% of our crop when the market passes down through the 80th percentile and the final 20% when it passes through the 70th percentile. This strategy ensures that all crop will be cleared by the end of the crop year. EYTS sales are represented in pink.
+      </li>
+      <li class = "format">
+        <u><b> Multi-Year:</b></u> Multi-Year sales are made to take advantage of abnormally high futures prices. These sales are made when the market is above the 95th percentile and involve forward contracting up to three years. For the purposes of this packet, theses sales are not included.
+      </li>
+      <li class = "format">
+        <u><b> Five Percent Drop From Ten Day High (5% DFTDH):</b></u> The futures market will sometimes rise above the 95th percentile. Since there is no chance a PO/TS sale could be made in this situation but obvious reasons to sale at these prices, the 5% DFTDH strategy is employed. This strategy is self-explanatory. When the market is above the 95th percentile and is at a price that is equal to or less than 95% of the highest price over the previous ten days, a sale is triggered. These sales are represented as PO sales being triggered by the 5% DFTDH strategy.
+      </li>
+      <li class = "format">
+        <u><b> All-Time High Trailing Stop (ATHTS):</b></u> When prices are at or near an all-time high, it is prudent to make as many strategic sales as possible. The ATHTS strategy is a way to make these sales, regardless of the percentile the market is at. When the market is at or above the all-time high, a 10% sale will be made if the market drops 5% from the ten-day high.
+      </li>
+      <li class = "format">
+        <u><b> On-Farm:</b></u> When Post-Harvest sales are made after October, storage is utilized. There are two types of storage options, generally speaking: commercial and on-farm. No storage costs are assumed before the first of November. Since the initial costs of on-farm storage are a result of handling cost, grain shrink, and drying, on-farm storage typically becomes marginally cheaper the further into Post-Harvest you hold your crop. Thus, up to the final 50% of crop could be sold having utilized on-farm storage. 
+      </li>
+      <li class = "format">
+        <u><b> Commercial:</b></u> Commercial storage is the other option. While storage costs commercially may be cheaper in the short-run (due to low fixed costs), they are marginally more expensive in the long-run. For this reason, the first 50% of crop could be sold using commercial storage. However, if 50% of crop was sold before November, no commercial storage will be utilized.
+      </li>
+    </ul>
+    
+    Updated: July 10th, 2019
+    
+  </body>
+</html>

@@ -151,11 +151,21 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
       # Store the first date which storage needs to be utilized
       firstDateRow = i
       break
+    } else{
+      firstDateRow = NULL
     }
   }
   
+  # When no storage is needed
+  if(is.null(firstDateRow)){
+    storageAdjAvg = weighted.mean(actualizedSales$onFarmPrice, actualizedSales$Percent.Sold)
+    storagePostharvestAvg = weighted.mean(actualizedSales$onFarmPrice[postRows], actualizedSales$Percent.Sold[postRows])
+    commercialRows = NA
+    onfarmRows = NA
+  }
+  
   # IF THE FIRST POST HARVEST DATE HAS >=50% "TOTAL.SOLD"
-  if(actualizedSales$Total.Sold[firstDateRow - 1] >= 50){
+  else if(actualizedSales$Total.Sold[firstDateRow - 1] >= 50){
     # AVERAGE SALES BEFORE STORAGE + STRICTLY ON FARM STORAGE
     storageAdjAvg = weighted.mean(actualizedSales$onFarmPrice, actualizedSales$Percent.Sold)
     # Average storage-adjusted sales in the post harvest
