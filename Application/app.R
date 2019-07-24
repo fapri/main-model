@@ -4,10 +4,10 @@ library(htmltools)
 library(formattable)
 library(lubridate)
 
-load(url("https://github.com/fapri/main-model/blob/master/Application/cornV1.RData?raw=true"))
-load(url("https://github.com/fapri/main-model/blob/master/Application/cornV3.RData?raw=true"))
-load(url("https://github.com/fapri/main-model/blob/master/Application/soybeanV1.RData?raw=true"))
-load(url("https://github.com/fapri/main-model/blob/master/Application/soybeanV3.RData?raw=true"))
+# load(url("https://github.com/fapri/main-model/blob/master/Application/cornV1.RData?raw=true"))
+# load(url("https://github.com/fapri/main-model/blob/master/Application/cornV3.RData?raw=true"))
+# load(url("https://github.com/fapri/main-model/blob/master/Application/soybeanV1.RData?raw=true"))
+# load(url("https://github.com/fapri/main-model/blob/master/Application/soybeanV3.RData?raw=true"))
 
 versionsHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/versions.html")
 indexHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/index.html")
@@ -19,137 +19,137 @@ homePageHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Ap
 # load("soybeanV3.RData")
 
 
-# # Corn Base/__
-# appObjectsCornBase = readRDS("appObjectsCornBase.rds")
-# Corn_CropYearObjectsBase = appObjectsCornBase[[1]]
-# Corn_CropYearsBase = appObjectsCornBase[[2]]
-# finalizedPriceObjectCornBase = appObjectsCornBase[[3]]
-# 
-# appObjectsCornV2 = readRDS("appObjectsCornV2.rds")
-# Corn_CropYearObjectsV2 = appObjectsCornV2[[1]]
-# Corn_CropYearsV2 = appObjectsCornV2[[2]]
-# finalizedPriceObjectCornV2 = appObjectsCornV2[[3]]
-# 
-# appObjectsCornV3 = readRDS("appObjectsCornV3.rds")
-# Corn_CropYearObjectsV3 = appObjectsCornV3[[1]]
-# Corn_CropYearsV3 = appObjectsCornV3[[2]]
-# finalizedPriceObjectCornV3 = appObjectsCornV3[[3]]
-# 
-# appObjectsCornV4 = readRDS("appObjectsCornV4.rds")
-# Corn_CropYearObjectsV4 = appObjectsCornV4[[1]]
-# Corn_CropYearsV4 = appObjectsCornV4[[2]]
-# finalizedPriceObjectCornV4 = appObjectsCornV4[[3]]
-# 
-# appObjectsCornV5 = readRDS("appObjectsCornV5.rds")
-# Corn_CropYearObjectsV5 = appObjectsCornV5[[1]]
-# Corn_CropYearsV5 = appObjectsCornV5[[2]]
-# finalizedPriceObjectCornV5 = appObjectsCornV5[[3]]
-# 
-# 
-# 
-# # Corn V3/__
-# appObjectsCornV3Base = readRDS("appObjectsCornV3Base.rds")
-# Corn_CropYearObjectsV3Base = appObjectsCornV3Base[[1]]
-# Corn_CropYearsV3Base = appObjectsCornV3Base[[2]]
-# finalizedPriceObjectCornV3Base = appObjectsCornV3Base[[3]]
-# 
-# appObjectsCornV3V2 = readRDS("appObjectsCornV3V2.rds")
-# Corn_CropYearObjectsV3V2 = appObjectsCornV3V2[[1]]
-# Corn_CropYearsV3V2 = appObjectsCornV3V2[[2]]
-# finalizedPriceObjectCornV3V2 = appObjectsCornV3V2[[3]]
-# 
-# appObjectsCornV3V3 = readRDS("appObjectsCornV3V3.rds")
-# Corn_CropYearObjectsV3V3 = appObjectsCornV3V3[[1]]
-# Corn_CropYearsV3V3 = appObjectsCornV3V3[[2]]
-# finalizedPriceObjectCornV3V3 = appObjectsCornV3V3[[3]]
-# 
-# appObjectsCornV3V4 = readRDS("appObjectsCornV3V4.rds")
-# Corn_CropYearObjectsV3V4 = appObjectsCornV3V4[[1]]
-# Corn_CropYearsV3V4 = appObjectsCornV3V4[[2]]
-# finalizedPriceObjectCornV3V4 = appObjectsCornV3V4[[3]]
-# 
-# appObjectsCornV3V5 = readRDS("appObjectsCornV3V5.rds")
-# Corn_CropYearObjectsV3V5 = appObjectsCornV3V5[[1]]
-# Corn_CropYearsV3V5 = appObjectsCornV3V5[[2]]
-# finalizedPriceObjectCornV3V5 = appObjectsCornV3V5[[3]]
-# 
-# # Corn March NC
-# appObjectsCornMarch = readRDS("appObjectsCornMarch.rds")
-# Corn_CropYearObjectsMarch = appObjectsCornMarch[[1]]
-# Corn_CropYearsMarch = appObjectsCornMarch[[2]]
-# finalizedPriceObjectCornMarch = appObjectsCornMarch[[3]]
-# 
-# # Corn March Baselines Only
-# appObjectsCornMarchBaselines = readRDS("appObjectsCornMarchBaselines.rds")
-# Corn_CropYearObjectsMarchBaselines = appObjectsCornMarchBaselines[[1]]
-# Corn_CropYearsMarchBaselines = appObjectsCornMarchBaselines[[2]]
-# finalizedPriceObjectCornMarchBaselines = appObjectsCornMarchBaselines[[3]]
-# 
-# 
-# # Soybean Base/__
-# appObjectsSoybean = readRDS("appObjectsSoybeanBase.rds")
-# Soybean_CropYearObjectsBase = appObjectsSoybean[[1]]
-# Soybean_CropYearsBase = appObjectsSoybean[[2]]
-# finalizedPriceObjectSoybeanBase = appObjectsSoybean[[3]]
-# 
-# appObjectsSoybeanV2 = readRDS("appObjectsSoybeanV2.rds")
-# Soybean_CropYearObjectsV2 = appObjectsSoybeanV2[[1]]
-# Soybean_CropYearsV2 = appObjectsSoybeanV2[[2]]
-# finalizedPriceObjectSoybeanV2 = appObjectsSoybeanV2[[3]]
-# 
-# appObjectsSoybeanV3 = readRDS("appObjectsSoybeanV3.rds")
-# Soybean_CropYearObjectsV3 = appObjectsSoybeanV3[[1]]
-# Soybean_CropYearsV3 = appObjectsSoybeanV3[[2]]
-# finalizedPriceObjectSoybeanV3 = appObjectsSoybeanV3[[3]]
-# 
-# appObjectsSoybeanV4 = readRDS("appObjectsSoybeanV4.rds")
-# Soybean_CropYearObjectsV4 = appObjectsSoybeanV4[[1]]
-# Soybean_CropYearsV4 = appObjectsSoybeanV4[[2]]
-# finalizedPriceObjectSoybeanV4 = appObjectsSoybeanV4[[3]]
-# 
-# appObjectsSoybeanV5 = readRDS("appObjectsSoybeanV5.rds")
-# Soybean_CropYearObjectsV5 = appObjectsSoybeanV5[[1]]
-# Soybean_CropYearsV5 = appObjectsSoybeanV5[[2]]
-# finalizedPriceObjectSoybeanV5 = appObjectsSoybeanV5[[3]]
-# 
-# 
-# # Soybean V3/__
-# appObjectsSoybeanV3Base = readRDS("appObjectsSoybeanV3Base.rds")
-# Soybean_CropYearObjectsV3Base = appObjectsSoybeanV3Base[[1]]
-# Soybean_CropYearsV3Base = appObjectsSoybeanV3Base[[2]]
-# finalizedPriceObjectSoybeanV3Base = appObjectsSoybeanV3Base[[3]]
-# 
-# appObjectsSoybeanV3V2 = readRDS("appObjectsSoybeanV3V2.rds")
-# Soybean_CropYearObjectsV3V2 = appObjectsSoybeanV3V2[[1]]
-# Soybean_CropYearsV3V2 = appObjectsSoybeanV3V2[[2]]
-# finalizedPriceObjectSoybeanV3V2 = appObjectsSoybeanV3V2[[3]]
-# 
-# appObjectsSoybeanV3V3 = readRDS("appObjectsSoybeanV3V3.rds")
-# Soybean_CropYearObjectsV3V3 = appObjectsSoybeanV3V3[[1]]
-# Soybean_CropYearsV3V3 = appObjectsSoybeanV3V3[[2]]
-# finalizedPriceObjectSoybeanV3V3 = appObjectsSoybeanV3V3[[3]]
-# 
-# appObjectsSoybeanV3V4 = readRDS("appObjectsSoybeanV3V4.rds")
-# Soybean_CropYearObjectsV3V4 = appObjectsSoybeanV3V4[[1]]
-# Soybean_CropYearsV3V4 = appObjectsSoybeanV3V4[[2]]
-# finalizedPriceObjectSoybeanV3V4 = appObjectsSoybeanV3V4[[3]]
-# 
-# appObjectsSoybeanV3V5 = readRDS("appObjectsSoybeanV3V5.rds")
-# Soybean_CropYearObjectsV3V5 = appObjectsSoybeanV3V5[[1]]
-# Soybean_CropYearsV3V5 = appObjectsSoybeanV3V5[[2]]
-# finalizedPriceObjectSoybeanV3V5 = appObjectsSoybeanV3V5[[3]]
-# 
-# # Soybean March NC
-# appObjectsSoybeanMarch = readRDS("appObjectsSoybeanMarch.rds")
-# Soybean_CropYearObjectsMarch = appObjectsSoybeanMarch[[1]]
-# Soybean_CropYearsMarch = appObjectsSoybeanMarch[[2]]
-# finalizedPriceObjectSoybeanMarch = appObjectsSoybeanMarch[[3]]
-# 
-# # Soybean March Baselines Only
-# appObjectsSoybeanMarchBaselines = readRDS("appObjectsSoybeanMarchBaselines.rds")
-# Soybean_CropYearObjectsMarchBaselines = appObjectsSoybeanMarchBaselines[[1]]
-# Soybean_CropYearsMarchBaselines = appObjectsSoybeanMarchBaselines[[2]]
-# finalizedPriceObjectSoybeanMarchBaselines = appObjectsSoybeanMarchBaselines[[3]]
+#Corn Base/__
+appObjectsCornBase = readRDS("appObjectsCornBase.rds")
+Corn_CropYearObjectsBase = appObjectsCornBase[[1]]
+Corn_CropYearsBase = appObjectsCornBase[[2]]
+finalizedPriceObjectCornBase = appObjectsCornBase[[3]]
+
+appObjectsCornV2 = readRDS("appObjectsCornV2.rds")
+Corn_CropYearObjectsV2 = appObjectsCornV2[[1]]
+Corn_CropYearsV2 = appObjectsCornV2[[2]]
+finalizedPriceObjectCornV2 = appObjectsCornV2[[3]]
+
+appObjectsCornV3 = readRDS("appObjectsCornV3.rds")
+Corn_CropYearObjectsV3 = appObjectsCornV3[[1]]
+Corn_CropYearsV3 = appObjectsCornV3[[2]]
+finalizedPriceObjectCornV3 = appObjectsCornV3[[3]]
+
+appObjectsCornV4 = readRDS("appObjectsCornV4.rds")
+Corn_CropYearObjectsV4 = appObjectsCornV4[[1]]
+Corn_CropYearsV4 = appObjectsCornV4[[2]]
+finalizedPriceObjectCornV4 = appObjectsCornV4[[3]]
+
+appObjectsCornV5 = readRDS("appObjectsCornV5.rds")
+Corn_CropYearObjectsV5 = appObjectsCornV5[[1]]
+Corn_CropYearsV5 = appObjectsCornV5[[2]]
+finalizedPriceObjectCornV5 = appObjectsCornV5[[3]]
+
+
+
+# Corn V3/__
+appObjectsCornV3Base = readRDS("appObjectsCornV3Base.rds")
+Corn_CropYearObjectsV3Base = appObjectsCornV3Base[[1]]
+Corn_CropYearsV3Base = appObjectsCornV3Base[[2]]
+finalizedPriceObjectCornV3Base = appObjectsCornV3Base[[3]]
+
+appObjectsCornV3V2 = readRDS("appObjectsCornV3V2.rds")
+Corn_CropYearObjectsV3V2 = appObjectsCornV3V2[[1]]
+Corn_CropYearsV3V2 = appObjectsCornV3V2[[2]]
+finalizedPriceObjectCornV3V2 = appObjectsCornV3V2[[3]]
+
+appObjectsCornV3V3 = readRDS("appObjectsCornV3V3.rds")
+Corn_CropYearObjectsV3V3 = appObjectsCornV3V3[[1]]
+Corn_CropYearsV3V3 = appObjectsCornV3V3[[2]]
+finalizedPriceObjectCornV3V3 = appObjectsCornV3V3[[3]]
+
+appObjectsCornV3V4 = readRDS("appObjectsCornV3V4.rds")
+Corn_CropYearObjectsV3V4 = appObjectsCornV3V4[[1]]
+Corn_CropYearsV3V4 = appObjectsCornV3V4[[2]]
+finalizedPriceObjectCornV3V4 = appObjectsCornV3V4[[3]]
+
+appObjectsCornV3V5 = readRDS("appObjectsCornV3V5.rds")
+Corn_CropYearObjectsV3V5 = appObjectsCornV3V5[[1]]
+Corn_CropYearsV3V5 = appObjectsCornV3V5[[2]]
+finalizedPriceObjectCornV3V5 = appObjectsCornV3V5[[3]]
+
+# Corn March NC
+appObjectsCornMarch = readRDS("appObjectsCornMarch.rds")
+Corn_CropYearObjectsMarch = appObjectsCornMarch[[1]]
+Corn_CropYearsMarch = appObjectsCornMarch[[2]]
+finalizedPriceObjectCornMarch = appObjectsCornMarch[[3]]
+
+# Corn March Baselines Only
+appObjectsCornMarchBaselines = readRDS("appObjectsCornMarchBaselines.rds")
+Corn_CropYearObjectsMarchBaselines = appObjectsCornMarchBaselines[[1]]
+Corn_CropYearsMarchBaselines = appObjectsCornMarchBaselines[[2]]
+finalizedPriceObjectCornMarchBaselines = appObjectsCornMarchBaselines[[3]]
+
+
+# Soybean Base/__
+appObjectsSoybean = readRDS("appObjectsSoybeanBase.rds")
+Soybean_CropYearObjectsBase = appObjectsSoybean[[1]]
+Soybean_CropYearsBase = appObjectsSoybean[[2]]
+finalizedPriceObjectSoybeanBase = appObjectsSoybean[[3]]
+
+appObjectsSoybeanV2 = readRDS("appObjectsSoybeanV2.rds")
+Soybean_CropYearObjectsV2 = appObjectsSoybeanV2[[1]]
+Soybean_CropYearsV2 = appObjectsSoybeanV2[[2]]
+finalizedPriceObjectSoybeanV2 = appObjectsSoybeanV2[[3]]
+
+appObjectsSoybeanV3 = readRDS("appObjectsSoybeanV3.rds")
+Soybean_CropYearObjectsV3 = appObjectsSoybeanV3[[1]]
+Soybean_CropYearsV3 = appObjectsSoybeanV3[[2]]
+finalizedPriceObjectSoybeanV3 = appObjectsSoybeanV3[[3]]
+
+appObjectsSoybeanV4 = readRDS("appObjectsSoybeanV4.rds")
+Soybean_CropYearObjectsV4 = appObjectsSoybeanV4[[1]]
+Soybean_CropYearsV4 = appObjectsSoybeanV4[[2]]
+finalizedPriceObjectSoybeanV4 = appObjectsSoybeanV4[[3]]
+
+appObjectsSoybeanV5 = readRDS("appObjectsSoybeanV5.rds")
+Soybean_CropYearObjectsV5 = appObjectsSoybeanV5[[1]]
+Soybean_CropYearsV5 = appObjectsSoybeanV5[[2]]
+finalizedPriceObjectSoybeanV5 = appObjectsSoybeanV5[[3]]
+
+
+# Soybean V3/__
+appObjectsSoybeanV3Base = readRDS("appObjectsSoybeanV3Base.rds")
+Soybean_CropYearObjectsV3Base = appObjectsSoybeanV3Base[[1]]
+Soybean_CropYearsV3Base = appObjectsSoybeanV3Base[[2]]
+finalizedPriceObjectSoybeanV3Base = appObjectsSoybeanV3Base[[3]]
+
+appObjectsSoybeanV3V2 = readRDS("appObjectsSoybeanV3V2.rds")
+Soybean_CropYearObjectsV3V2 = appObjectsSoybeanV3V2[[1]]
+Soybean_CropYearsV3V2 = appObjectsSoybeanV3V2[[2]]
+finalizedPriceObjectSoybeanV3V2 = appObjectsSoybeanV3V2[[3]]
+
+appObjectsSoybeanV3V3 = readRDS("appObjectsSoybeanV3V3.rds")
+Soybean_CropYearObjectsV3V3 = appObjectsSoybeanV3V3[[1]]
+Soybean_CropYearsV3V3 = appObjectsSoybeanV3V3[[2]]
+finalizedPriceObjectSoybeanV3V3 = appObjectsSoybeanV3V3[[3]]
+
+appObjectsSoybeanV3V4 = readRDS("appObjectsSoybeanV3V4.rds")
+Soybean_CropYearObjectsV3V4 = appObjectsSoybeanV3V4[[1]]
+Soybean_CropYearsV3V4 = appObjectsSoybeanV3V4[[2]]
+finalizedPriceObjectSoybeanV3V4 = appObjectsSoybeanV3V4[[3]]
+
+appObjectsSoybeanV3V5 = readRDS("appObjectsSoybeanV3V5.rds")
+Soybean_CropYearObjectsV3V5 = appObjectsSoybeanV3V5[[1]]
+Soybean_CropYearsV3V5 = appObjectsSoybeanV3V5[[2]]
+finalizedPriceObjectSoybeanV3V5 = appObjectsSoybeanV3V5[[3]]
+
+# Soybean March NC
+appObjectsSoybeanMarch = readRDS("appObjectsSoybeanMarch.rds")
+Soybean_CropYearObjectsMarch = appObjectsSoybeanMarch[[1]]
+Soybean_CropYearsMarch = appObjectsSoybeanMarch[[2]]
+finalizedPriceObjectSoybeanMarch = appObjectsSoybeanMarch[[3]]
+
+# Soybean March Baselines Only
+appObjectsSoybeanMarchBaselines = readRDS("appObjectsSoybeanMarchBaselines.rds")
+Soybean_CropYearObjectsMarchBaselines = appObjectsSoybeanMarchBaselines[[1]]
+Soybean_CropYearsMarchBaselines = appObjectsSoybeanMarchBaselines[[2]]
+finalizedPriceObjectSoybeanMarchBaselines = appObjectsSoybeanMarchBaselines[[3]]
 
 
 # Create strategy results tables
@@ -2013,9 +2013,9 @@ ui <- shinyUI(
 server <- shinyServer(function(input,output,session){
   
   #saves slider input for on-farm storage available
-  storagePercent <- reactive({
-    percentStored = input$availableFarmStorage
-  })
+  # storagePercent <- reactive({
+  #   percentStored = input$availableFarmStorage
+  # })
   
   
   POchoices_versions <- reactive({
@@ -2098,7 +2098,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$distPlot <- renderPlot({
@@ -2159,7 +2160,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   
@@ -2221,7 +2223,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   
@@ -2283,7 +2286,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$POdistPlotV4 <- renderPlot({
@@ -2344,7 +2348,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$POdistPlotV5 <- renderPlot({
@@ -2405,7 +2410,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   
@@ -2467,7 +2473,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$POdistPlotMarchBaselines <- renderPlot({
@@ -2528,7 +2535,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSdistPlot <- renderPlot({
@@ -2589,7 +2597,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSdistPlotV2 <- renderPlot({
@@ -2650,7 +2659,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSdistPlotV3 <- renderPlot({
@@ -2711,7 +2721,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSdistPlotV4 <- renderPlot({
@@ -2772,7 +2783,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSdistPlotV5 <- renderPlot({
@@ -2833,7 +2845,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSdistPlotV3Base <- renderPlot({
@@ -2894,7 +2907,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSdistPlotV3V2 <- renderPlot({
@@ -2954,7 +2968,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSdistPlotV3V3 <- renderPlot({
@@ -3015,7 +3030,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSdistPlotV3V4 <- renderPlot({
@@ -3076,7 +3092,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSdistPlotV3V5 <- renderPlot({
@@ -3137,7 +3154,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSdistPlotMarch <- renderPlot({
@@ -3198,7 +3216,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSdistPlotMarchBaselines <- renderPlot({
@@ -3259,7 +3278,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$SSdistPlot <- renderPlot({
@@ -3320,7 +3340,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$SSdistPlotMarch <- renderPlot({
@@ -3381,7 +3402,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$SSdistPlotMarchBaselines <- renderPlot({
@@ -3442,7 +3464,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$POMYdistPlot <- renderPlot({
@@ -3503,7 +3526,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$POMYdistPlotV2 <- renderPlot({
@@ -3564,7 +3588,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$POMYdistPlotV3 <- renderPlot({
@@ -3625,7 +3650,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$POMYdistPlotV4 <- renderPlot({
@@ -3686,7 +3712,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$POMYdistPlotV5 <- renderPlot({
@@ -3747,7 +3774,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$POMYdistPlotMarch <- renderPlot({
@@ -3808,7 +3836,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$POMYdistPlotMarchBaselines <- renderPlot({
@@ -3869,7 +3898,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSMYdistPlot <- renderPlot({
@@ -3931,7 +3961,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSMYdistPlotV2 <- renderPlot({
@@ -3992,7 +4023,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSMYdistPlotV3 <- renderPlot({
@@ -4053,7 +4085,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSMYdistPlotV4 <- renderPlot({
@@ -4114,7 +4147,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSMYdistPlotV5 <- renderPlot({
@@ -4175,7 +4209,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSMYdistPlotV3Base <- renderPlot({
@@ -4236,7 +4271,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSMYdistPlotV3V2 <- renderPlot({
@@ -4297,7 +4333,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSMYdistPlotV3V3 <- renderPlot({
@@ -4358,7 +4395,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSMYdistPlotV3V4 <- renderPlot({
@@ -4419,7 +4457,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSMYdistPlotV3V5 <- renderPlot({
@@ -4480,7 +4519,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSMYdistPlotMarch <- renderPlot({
@@ -4541,7 +4581,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$TSMYdistPlotMarchBaselines <- renderPlot({
@@ -4602,7 +4643,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$SSMYdistPlot <- renderPlot({
@@ -4663,7 +4705,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$SSMYdistPlotMarch <- renderPlot({
@@ -4724,7 +4767,8 @@ server <- shinyServer(function(input,output,session){
            "2013-14" = 6,
            "2014-15" = 7,
            "2015-16" = 8,
-           "2016-17" = 9)
+           "2016-17" = 9,
+           "2017-18" = 10)
   })
   
   output$SSMYdistPlotMarchBaselines <- renderPlot({
