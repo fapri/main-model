@@ -142,7 +142,9 @@ if(type == "corn"){
     priceObjectiveTriggersMarch = priceObjectiveTriggerMarch(Corn_CropYearObjects[[i]], Corn_FeaturesObject)
     
     allTriggers = rbind(priceObjectiveTriggersMarch, priceObjectiveTriggers)
-    allTriggers = allTriggers[order(allTriggers$Date), ]
+    if(nrow(allTriggers) > 0){
+      allTriggers = allTriggers[order(allTriggers$Date), ]
+    }
     # allTriggers = allTriggers[!duplicated(allTriggers$Date), ]
     
     
@@ -158,11 +160,13 @@ if(type == "soybean"){
     priceObjectiveTriggersMarch = priceObjectiveTriggerMarch(Soybean_CropYearObjects[[i]], Soybean_FeaturesObject)
     
     allTriggers = rbind(priceObjectiveTriggersMarch, priceObjectiveTriggers)
-    allTriggers = allTriggers[order(allTriggers$Date), ]
+    if(nrow(allTriggers) > 0){
+      allTriggers = allTriggers[order(allTriggers$Date), ]
+    }
     # allTriggers = allTriggers[!duplicated(allTriggers$Date), ]
     
     
     Soybean_CropYearObjects[[i]]$`PO Triggers` = allTriggers
     Soybean_CropYearObjects[[i]]$`PO Triggers`$Date = mdy(Soybean_CropYearObjects[[i]]$`PO Triggers`$Date)
   }
-}
+} 

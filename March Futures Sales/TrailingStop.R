@@ -164,7 +164,9 @@ if(type == "corn"){
     trailingStopTriggersMarch = trailingStopTriggerMarch(Corn_CropYearObjects[[i]], Corn_FeaturesObject)
     
     allTriggers = rbind(trailingStopTriggersMarch, trailingStopTriggers)
-    allTriggers = allTriggers[order(allTriggers$Date), ]
+    if(nrow(allTriggers) > 0){
+      allTriggers = allTriggers[order(allTriggers$Date), ]
+    }
 
     Corn_CropYearObjects[[i]]$`TS Triggers` = allTriggers
     Corn_CropYearObjects[[i]]$`TS Triggers`$Date = mdy(Corn_CropYearObjects[[i]]$`TS Triggers`$Date)
@@ -178,7 +180,9 @@ if(type == "soybean"){
     trailingStopTriggersMarch = trailingStopTriggerMarch(Soybean_CropYearObjects[[i]], Soybean_FeaturesObject)
     
     allTriggers = rbind(trailingStopTriggersMarch, trailingStopTriggers)
-    allTriggers = allTriggers[order(allTriggers$Date), ]
+    if(nrow(allTriggers) > 0){
+      allTriggers = allTriggers[order(allTriggers$Date), ]
+    }
 
     Soybean_CropYearObjects[[i]]$`TS Triggers` = allTriggers
     Soybean_CropYearObjects[[i]]$`TS Triggers`$Date = mdy(Soybean_CropYearObjects[[i]]$`TS Triggers`$Date)
