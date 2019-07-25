@@ -717,46 +717,77 @@ isActualizedTS = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
   return(actualizedList)
 }
 
-if (type == "corn"){
+
+if(type == "corn"){
   # Trailing Stop loading
   for(i in 1:length(Corn_CropYearObjects)){
-    Corn_CropYearObjects[[i]] = isActualizedTS(Corn_CropYearObjects[[i]], NULL, NULL, Corn_FuturesMarket, MY = FALSE)
+    if(nrow(Corn_CropYearObjects[[i]][["TS Triggers"]]) > 1){
+      Corn_CropYearObjects[[i]] = isActualizedTS(Corn_CropYearObjects[[i]], NULL, NULL, Corn_FuturesMarket, MY = FALSE)
+    } else{
+      Corn_CropYearObjects[[i]][["TS Actualized"]] = data.frame(matrix(ncol = 7, nrow = 0))
+      colnames(Corn_CropYearObjects[[i]][["TS Actualized"]]) = c("Date", "Previous Percentile", "Percentile", "Type", "PercentSold", "TotalSold", "Price")
+    } 
   }
   
-  # Multi-year loading
   if("Marketing Year MY" %in% names(Corn_CropYearObjects[[1]])){
+    # Multi-year loading
     for(i in 1:(length(Corn_CropYearObjects) - 2)) {
-      temp = list()
-      temp[[1]] = isActualizedTS(Corn_CropYearObjects[[i]], Corn_CropYearObjects[[i + 1]], Corn_CropYearObjects[[i + 2]], Corn_FuturesMarket, MY = TRUE)
-      Corn_CropYearObjects[[i]] = temp[[1]][[1]]
-      Corn_CropYearObjects[[i + 1]] = temp[[1]][[2]]
-      Corn_CropYearObjects[[i + 2]] = temp[[1]][[3]]
+      if(nrow(Corn_CropYearObjects[[i]][["TS Triggers"]]) > 1){
+        temp = list()
+        temp[[1]] = isActualizedTS(Corn_CropYearObjects[[i]], Corn_CropYearObjects[[i + 1]], Corn_CropYearObjects[[i + 2]], Corn_FuturesMarket, MY = TRUE)
+        Corn_CropYearObjects[[i]] = temp[[1]][[1]]
+        Corn_CropYearObjects[[i + 1]] = temp[[1]][[2]]
+        Corn_CropYearObjects[[i + 2]] = temp[[1]][[3]]
+      } else{
+        Corn_CropYearObjects[[i]][["TS Actualized"]] = data.frame(matrix(ncol = 7, nrow = 0))
+        colnames(Corn_CropYearObjects[[i]][["TS Actualized"]]) = c("Date", "Previous Percentile", "Percentile", "Type", "PercentSold", "TotalSold", "Price")
+      } 
     }
     
     for(i in (length(Corn_CropYearObjects) - 1):length(Corn_CropYearObjects)){
-      Corn_CropYearObjects[[i]] = isActualizedTS(Corn_CropYearObjects[[i]], NULL, NULL, Corn_FuturesMarket, MY = TRUE)
+      if(nrow(Corn_CropYearObjects[[i]][["TS Triggers"]]) > 1){
+        Corn_CropYearObjects[[i]] = isActualizedTS(Corn_CropYearObjects[[i]], NULL, NULL, Corn_FuturesMarket, MY = TRUE)
+      } else{
+        Corn_CropYearObjects[[i]][["TS Actualized"]] = data.frame(matrix(ncol = 7, nrow = 0))
+        colnames(Corn_CropYearObjects[[i]][["TS Actualized"]]) = c("Date", "Previous Percentile", "Percentile", "Type", "PercentSold", "TotalSold", "Price")
+      }   
     }
   }
 }
 
-if (type == "soybean"){
+if(type == "soybean"){
   # Trailing Stop loading
   for(i in 1:length(Soybean_CropYearObjects)){
-    Soybean_CropYearObjects[[i]] = isActualizedTS(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = FALSE)
+    if(nrow(Soybean_CropYearObjects[[i]][["TS Triggers"]]) > 1){
+      Soybean_CropYearObjects[[i]] = isActualizedTS(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = FALSE)
+    } else{
+      Soybean_CropYearObjects[[i]][["TS Actualized"]] = data.frame(matrix(ncol = 7, nrow = 0))
+      colnames(Soybean_CropYearObjects[[i]][["TS Actualized"]]) = c("Date", "Previous Percentile", "Percentile", "Type", "PercentSold", "TotalSold", "Price")
+    } 
   }
   
-  # Multi-year loading
   if("Marketing Year MY" %in% names(Soybean_CropYearObjects[[1]])){
+    # Multi-year loading
     for(i in 1:(length(Soybean_CropYearObjects) - 2)) {
-      temp = list()
-      temp[[1]] = isActualizedTS(Soybean_CropYearObjects[[i]], Soybean_CropYearObjects[[i + 1]], Soybean_CropYearObjects[[i + 2]], Soybean_FuturesMarket, MY = TRUE)
-      Soybean_CropYearObjects[[i]] = temp[[1]][[1]]
-      Soybean_CropYearObjects[[i + 1]] = temp[[1]][[2]]
-      Soybean_CropYearObjects[[i + 2]] = temp[[1]][[3]]
+      if(nrow(Soybean_CropYearObjects[[i]][["TS Triggers"]]) > 1){
+        temp = list()
+        temp[[1]] = isActualizedTS(Soybean_CropYearObjects[[i]], Soybean_CropYearObjects[[i + 1]], Soybean_CropYearObjects[[i + 2]], Soybean_FuturesMarket, MY = TRUE)
+        Soybean_CropYearObjects[[i]] = temp[[1]][[1]]
+        Soybean_CropYearObjects[[i + 1]] = temp[[1]][[2]]
+        Soybean_CropYearObjects[[i + 2]] = temp[[1]][[3]]
+      } else{
+        Soybean_CropYearObjects[[i]][["TS Actualized"]] = data.frame(matrix(ncol = 7, nrow = 0))
+        colnames(Soybean_CropYearObjects[[i]][["TS Actualized"]]) = c("Date", "Previous Percentile", "Percentile", "Type", "PercentSold", "TotalSold", "Price")
+      } 
     }
     
     for(i in (length(Soybean_CropYearObjects) - 1):length(Soybean_CropYearObjects)){
-      Soybean_CropYearObjects[[i]] = isActualizedTS(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = TRUE)
+      if(nrow(Soybean_CropYearObjects[[i]][["TS Triggers"]]) > 1){
+        Soybean_CropYearObjects[[i]] = isActualizedTS(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = TRUE)
+      } else{
+        Soybean_CropYearObjects[[i]][["TS Actualized"]] = data.frame(matrix(ncol = 7, nrow = 0))
+        colnames(Soybean_CropYearObjects[[i]][["TS Actualized"]]) = c("Date", "Previous Percentile", "Percentile", "Type", "PercentSold", "TotalSold", "Price")
+      }  
     }
   }
 }
