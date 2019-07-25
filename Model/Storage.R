@@ -521,8 +521,18 @@ finalizedPriceObject = list("POfinalizedPrices" = POfinalizedPrices,
                             "TSfinalizedPrices" = TSfinalizedPrices, 
                             "TSfinalizedPricesMY" = TSfinalizedPricesMY,
                             "SSfinalizedPrices" = SSfinalizedPrices,
-                            "SSfinalizedPricesMY" = SSfinalizedPricesMY
-)
+                            "SSfinalizedPricesMY" = SSfinalizedPricesMY)
+
+for(i in 1:length(finalizedPriceObject)){
+  finalizedPriceObject[[i]][is.na(finalizedPriceObject[[i]])] = 0
+}
+
+POfinalizedPrices = finalizedPriceObject[[1]]
+POfinalizedPricesMY = finalizedPriceObject[[2]]
+TSfinalizedPrices = finalizedPriceObject[[3]]
+TSfinalizedPricesMY = finalizedPriceObject[[4]]
+SSfinalizedPrices = finalizedPriceObject[[5]]
+SSfinalizedPricesMY = finalizedPriceObject[[6]]
 
 makeStorageTable = function(finalizedPrices){
   storageTable = data.frame(matrix(nrow = 3, ncol = 3))
@@ -535,6 +545,8 @@ makeStorageTable = function(finalizedPrices){
   storageTable$`Storage`[1] = finalizedPrices$storageAdjAvg[i]
   storageTable$`Storage`[2] = finalizedPrices$preharvestAverage[i]
   storageTable$`Storage`[3] = finalizedPrices$postharvestAverageStorage[i]
+  
+  storageTable[is.na(storageTable)] = 0
   
   return(storageTable)
 }
