@@ -8,19 +8,21 @@ library(lubridate)
 # REFER TO THE MANUAL FOR INSTRUCTIONS ON HOW TO SET EVERYTHING UP FOR REMOTE ACCESS
 ####################################################################################
 
-# load(url("https://github.com/fapri/main-model/blob/master/Application/cornV1.RData?raw=true"))
-# load(url("https://github.com/fapri/main-model/blob/master/Application/cornV3.RData?raw=true"))
-# load(url("https://github.com/fapri/main-model/blob/master/Application/soybeanV1.RData?raw=true"))
-# load(url("https://github.com/fapri/main-model/blob/master/Application/soybeanV3.RData?raw=true"))
+# Load GitHub links for Remote Access to appObjects and HTML files
+
+load(url("https://github.com/fapri/main-model/blob/master/Application/cornV1.RData?raw=true"))
+load(url("https://github.com/fapri/main-model/blob/master/Application/cornV3.RData?raw=true"))
+load(url("https://github.com/fapri/main-model/blob/master/Application/soybeanV1.RData?raw=true"))
+load(url("https://github.com/fapri/main-model/blob/master/Application/soybeanV3.RData?raw=true"))
 
 versionsHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/versions.html")
 indexHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/index.html")
 homePageHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/homePage.html")
 
-load("cornV1.RData")
-load("cornV3.RData")
-load("soybeanV1.RData")
-load("soybeanV3.RData")
+# load("cornV1.RData")
+# load("cornV3.RData")
+# load("soybeanV1.RData")
+# load("soybeanV3.RData")
 
 
 # #Corn Base/__
@@ -233,6 +235,7 @@ SSversions = c("Base",
                "MarchBaselines",
                "MYMarchBaselines")
 
+# Initialize objects
 nonMultiYearCorn = data.frame()
 multiYearCorn = data.frame()
 nonMultiYearSoybean = data.frame()
@@ -425,7 +428,7 @@ getYearlyResultsTable = function(data, cropType) {
 }
 
 
-# Load in values for dynamic drop down menus
+# Load in values for dynamic drop down menus. These can be different for corn and soybeans
 POCorn = c("Base" = "base",
            "Multi-Year" = "multiyear",
            "Version 2" = "V2",
@@ -524,13 +527,13 @@ POVersions = list("Corn" = POCorn, "Soybeans" = POSoybean)
 TSVersions = list("Corn" = TSCorn, "Soybeans" = TSSoybean)
 SSVersions = list("Corn" = SSCorn, "Soybeans" = SSSoybean)
 
-u.n <-  Corn_CropYearsBase$CropYear
-names(u.n) <- u.n
+cropYearMenuChoices <-  Corn_CropYearsBase$CropYear
+names(cropYearMenuChoices) <- cropYearMenuChoices
 
 typeList <- c("Corn", "Soybeans")
 names(typeList) = typeList
 
-
+# Storage Summary Table creation and formatting
 getTables = function(data) {
   data = cbind(" " = data[,1], round(data[, 2:3], digits = 2))
   table = as.datatable(formattable(data, 
@@ -567,55 +570,26 @@ getTables = function(data) {
   return(table)
 }
 
-getFirstSummaryTable = function(data) {
-  data = cbind(" " = data[,1], round(data[, 2:3], digits = 2))
-  table = formattable(data, 
-                      align = "c",
-                      list(~ formatter("span",
-                                       style = x ~ style(display = "block",
-                                                         "border-radius" = "0px",
-                                                         "padding" = "0px",
-                                                         "text-align" = "center")),
-                           `Total Avg Price` = formatter("span",
-                                                         style = x ~ style(color = "white", background = "gray")),
-                           `Pre-Harvest Avg Price` = formatter("span",
-                                                               style = x ~ style(color = "white", background = "blue")),
-                           `Post-Harvest Avg Price` = formatter("span",
-                                                                style = x ~ style(color = "white", background = "green")),
-                           ` ` = formatter("span", style = ~ style(display = "block",
-                                                                   "border-radius" = "0px",
-                                                                   "padding" = "0px",
-                                                                   "font.weight" = "bold",  
-                                                                   "text-align" = "left"))))
-  return(table)
-}
-
-getRemainingSummaryTables = function(data) {
-  data = round(data[,], digits = 2)
-  table = formattable(data, align = "c")
-  return(table)
-}
-
+# Sales Summary Table creation and formatting
 getSalesTable = function(data) {
   if(!is.null(data)){
     table = as.datatable(formattable(data, 
-                        align = "c",
-                        list(~ formatter("span",
-                                         style = x ~ style(display = "block",
-                                                           "border-radius" = "2px",
-                                                           "padding" = "5px",
-                                                           "text-align" = "center")),
-                             `Date` = formatter("span", style = ~ style(display = "block",
+                                     align = "c",
+                                     list(~ formatter("span",
+                                                      style = x ~ style(display = "block",
                                                                         "border-radius" = "2px",
                                                                         "padding" = "5px",
-                                                                        "font.weight" = "bold",  
-                                                                        "text-align" = "left")))), 
-                        rownames = FALSE, 
-                        caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), 
-                        options = list(dom = 't'))
+                                                                        "text-align" = "center")),
+                                          `Date` = formatter("span", style = ~ style(display = "block",
+                                                                                     "border-radius" = "2px",
+                                                                                     "padding" = "5px",
+                                                                                     "font.weight" = "bold",  
+                                                                                     "text-align" = "left")))), 
+                         rownames = FALSE, 
+                         caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), 
+                         options = list(dom = 't'))
   } else{
     data = data.frame("NO SALES ACTUALIZED" = "NO SALES ACTUALIZED")
-    
     table = as.datatable(formattable(data, 
                                      align = "c",
                                      list(~ formatter("span",
@@ -678,26 +652,26 @@ ui <- shinyUI(
                       fluidPage(
                         selectInput(inputId = "POstrategy", label = "Select Price Objective Strategy", choices = NULL),
                         conditionalPanel(
-                          condition = "input.POstrategy == 'base'",         
+                          condition = "input.POstrategy == 'base'",   
                           fluidPage(
                             fluidRow(
-                              plotOutput('distPlot'),
+                              plotOutput('POsalesPlot'),
                               style = "padding-bottom:50px"
                             ),
-                            
-                            tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
-                            
+
+                            tags$style(type="text/css", '#POsummaryTables tfoot {display:none;}'),
+
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearPO','Crop Year', choices = u.n, width = "100%"),
-                                         column(12, dataTableOutput('storageTables')),
-                                         tags$style(type="text/css", '#storageTables tfoot {display:none;}'))
+                                fluidRow(selectInput('yearPO','Crop Year', choices = cropYearMenuChoices, width = "100%"),
+                                         column(12, dataTableOutput('POstorageTables')),
+                                         tags$style(type="text/css", '#sPOtorageTables tfoot {display:none;}'))
                               ),
                               mainPanel(
                                 fluidRow(
-                                  dataTableOutput('summaryTables'),
+                                  dataTableOutput('POsummaryTables'),
                                   style = "padding-bottom:100px")
-                                
+
                               )
                             ),
                             fluidRow(
@@ -718,7 +692,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearPOMY','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearPOMY','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('POMYstorageTables')),
                                          tags$style(type="text/css", '#POMYstorageTables tfoot {display:none;}'))
                                 
@@ -749,7 +723,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearPOV2','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearPOV2','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('POstorageTablesV2')),
                                          tags$style(type="text/css", '#POstorageTablesV2 tfoot {display:none;}'))
                               ),
@@ -778,7 +752,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearPOMYV2','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearPOMYV2','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('POMYstorageTablesV2')),
                                          tags$style(type="text/css", '#POMYstorageTablesV2 tfoot {display:none;}'))
                                 
@@ -809,7 +783,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearPOV3','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearPOV3','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('POstorageTablesV3')),
                                          tags$style(type="text/css", '#POstorageTablesV3 tfoot {display:none;}'))
                               ),
@@ -838,7 +812,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearPOMYV3','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearPOMYV3','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('POMYstorageTablesV3')),
                                          tags$style(type="text/css", '#POMYstorageTablesV3 tfoot {display:none;}'))
                                 
@@ -869,7 +843,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearPOV4','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearPOV4','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('POstorageTablesV4')),
                                          tags$style(type="text/css", '#POstorageTablesV4 tfoot {display:none;}'))
                               ),
@@ -898,7 +872,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearPOMYV4','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearPOMYV4','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('POMYstorageTablesV4')),
                                          tags$style(type="text/css", '#POMYstorageTablesV4 tfoot {display:none;}'))
                                 
@@ -929,7 +903,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearPOV5','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearPOV5','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('POstorageTablesV5')),
                                          tags$style(type="text/css", '#POstorageTablesV5 tfoot {display:none;}'))
                               ),
@@ -958,7 +932,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearPOMYV5','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearPOMYV5','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('POMYstorageTablesV5')),
                                          tags$style(type="text/css", '#POMYstorageTablesV5 tfoot {display:none;}'))
                                 
@@ -988,7 +962,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearPOMarch','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearPOMarch','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('POstorageTablesMarch')),
                                          tags$style(type="text/css", '#POstorageTablesMarch tfoot {display:none;}'))
                               ),
@@ -1017,7 +991,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearPOMYMarch','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearPOMYMarch','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('POMYstorageTablesMarch')),
                                          tags$style(type="text/css", '#POMYstorageTablesMarch tfoot {display:none;}'))
                                 
@@ -1047,7 +1021,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearPOMarchBaselines','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearPOMarchBaselines','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('POstorageTablesMarchBaselines')),
                                          tags$style(type="text/css", '#POstorageTablesMarchBaselines tfoot {display:none;}'))
                               ),
@@ -1076,7 +1050,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearPOMYMarchBaselines','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearPOMYMarchBaselines','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('POMYstorageTablesMarchBaselines')),
                                          tags$style(type="text/css", '#POMYstorageTablesMarchBaselines tfoot {display:none;}'))
                                 
@@ -1110,7 +1084,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTS','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTS','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSstorageTables')),
                                          tags$style(type="text/css", '#TSstorageTables tfoot {display:none;}'))
                               ),
@@ -1139,7 +1113,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSMY','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSMY','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSMYstorageTables')),
                                          tags$style(type="text/css", '#TSMYstorageTables tfoot {display:none;}'))
                                 
@@ -1170,7 +1144,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSV2','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSV2','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSstorageTablesV2')),
                                          tags$style(type="text/css", '#TSstorageTablesV2 tfoot {display:none;}'))
                               ),
@@ -1199,7 +1173,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSMYV2','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSMYV2','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSMYstorageTablesV2')),
                                          tags$style(type="text/css", '#TSMYstorageTablesV2 tfoot {display:none;}'))
                                 
@@ -1230,7 +1204,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSV3','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSV3','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSstorageTablesV3')),
                                          tags$style(type="text/css", '#TSstorageTablesV3 tfoot {display:none;}'))
                               ),
@@ -1259,7 +1233,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSMYV3','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSMYV3','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSMYstorageTablesV3')),
                                          tags$style(type="text/css", '#TSMYstorageTablesV3 tfoot {display:none;}'))
                                 
@@ -1290,7 +1264,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSV4','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSV4','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSstorageTablesV4')),
                                          tags$style(type="text/css", '#TSstorageTablesV4 tfoot {display:none;}'))
                               ),
@@ -1319,7 +1293,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSMYV4','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSMYV4','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSMYstorageTablesV4')),
                                          tags$style(type="text/css", '#TSMYstorageTablesV4 tfoot {display:none;}'))
                                 
@@ -1350,7 +1324,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSV5','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSV5','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSstorageTablesV5')),
                                          tags$style(type="text/css", '#TSstorageTablesV5 tfoot {display:none;}'))
                               ),
@@ -1379,7 +1353,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSMYV5','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSMYV5','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSMYstorageTablesV5')),
                                          tags$style(type="text/css", '#TSMYstorageTablesV5 tfoot {display:none;}'))
                                 
@@ -1410,7 +1384,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSV3Base','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSV3Base','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSstorageTablesV3Base')),
                                          tags$style(type="text/css", '#TSstorageTablesV3Base tfoot {display:none;}'))
                               ),
@@ -1439,7 +1413,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSMYV3Base','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSMYV3Base','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSMYstorageTablesV3Base')),
                                          tags$style(type="text/css", '#TSMYstorageTablesV3Base tfoot {display:none;}'))
                                 
@@ -1470,7 +1444,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSV3V2','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSV3V2','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSstorageTablesV3V2')),
                                          tags$style(type="text/css", '#TSstorageTablesV3V2 tfoot {display:none;}'))
                               ),
@@ -1499,7 +1473,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSMYV3V2','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSMYV3V2','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSMYstorageTablesV3V2')),
                                          tags$style(type="text/css", '#TSMYstorageTablesV3V2 tfoot {display:none;}'))
                                 
@@ -1530,7 +1504,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSV3V3','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSV3V3','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSstorageTablesV3V3')),
                                          tags$style(type="text/css", '#TSstorageTablesV3V3 tfoot {display:none;}'))
                               ),
@@ -1559,7 +1533,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSMYV3V3','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSMYV3V3','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSMYstorageTablesV3V3')),
                                          tags$style(type="text/css", '#TSMYstorageTablesV3V3 tfoot {display:none;}'))
                                 
@@ -1590,7 +1564,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSV3V4','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSV3V4','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSstorageTablesV3V4')),
                                          tags$style(type="text/css", '#TSstorageTablesV3V4 tfoot {display:none;}'))
                               ),
@@ -1619,7 +1593,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSMYV3V4','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSMYV3V4','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSMYstorageTablesV3V4')),
                                          tags$style(type="text/css", '#TSMYstorageTablesV3V4 tfoot {display:none;}'))
                                 
@@ -1650,7 +1624,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSV3V5','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSV3V5','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSstorageTablesV3V5')),
                                          tags$style(type="text/css", '#TSstorageTablesV3V5 tfoot {display:none;}'))
                               ),
@@ -1679,7 +1653,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSMYV3V5','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSMYV3V5','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSMYstorageTablesV3V5')),
                                          tags$style(type="text/css", '#TSMYstorageTablesV3V5 tfoot {display:none;}'))
                                 
@@ -1710,7 +1684,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSMarch','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSMarch','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSstorageTablesMarch')),
                                          tags$style(type="text/css", '#TSstorageTablesMarch tfoot {display:none;}'))
                               ),
@@ -1739,7 +1713,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSMYMarch','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSMYMarch','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSMYstorageTablesMarch')),
                                          tags$style(type="text/css", '#TSMYstorageTablesMarch tfoot {display:none;}'))
                                 
@@ -1770,7 +1744,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSMarchBaselines','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSMarchBaselines','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSstorageTablesMarchBaselines')),
                                          tags$style(type="text/css", '#TSstorageTablesMarchBaselines tfoot {display:none;}'))
                               ),
@@ -1799,7 +1773,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearTSMYMarchBaselines','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearTSMYMarchBaselines','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('TSMYstorageTablesMarchBaselines')),
                                          tags$style(type="text/css", '#TSMYstorageTablesMarchBaselines tfoot {display:none;}'))
                                 
@@ -1834,7 +1808,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearSS','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearSS','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('SSstorageTables')),
                                          tags$style(type="text/css", '#SSstorageTables tfoot {display:none;}'))
                               ),
@@ -1863,7 +1837,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearSSMY','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearSSMY','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('SSMYstorageTables')),
                                          tags$style(type="text/css", '#SSMYstorageTables tfoot {display:none;}'))
                                 
@@ -1895,7 +1869,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearSSMarch','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearSSMarch','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('SSstorageTablesMarch')),
                                          tags$style(type="text/css", '#SSstorageTablesMarch tfoot {display:none;}'))
                               ),
@@ -1924,7 +1898,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearSSMYMarch','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearSSMYMarch','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('SSMYstorageTablesMarch')),
                                          tags$style(type="text/css", '#SSMYstorageTablesMarch tfoot {display:none;}'))
                                 
@@ -1956,7 +1930,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearSSMarchBaselines','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearSSMarchBaselines','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('SSstorageTablesMarchBaselines')),
                                          tags$style(type="text/css", '#SSstorageTablesMarchBaselines tfoot {display:none;}'))
                               ),
@@ -1985,7 +1959,7 @@ ui <- shinyUI(
                             
                             sidebarLayout(
                               sidebarPanel(
-                                fluidRow(selectInput('yearSSMYMarchBaselines','Crop Year', choices = u.n, width = "100%"),
+                                fluidRow(selectInput('yearSSMYMarchBaselines','Crop Year', choices = cropYearMenuChoices, width = "100%"),
                                          column(12, dataTableOutput('SSMYstorageTablesMarchBaselines')),
                                          tags$style(type="text/css", '#SSMYstorageTablesMarchBaselines tfoot {display:none;}'))
                                 
@@ -2140,7 +2114,7 @@ server <- shinyServer(function(input,output,session){
            "2017-18" = 10)
   })
   
-  output$distPlot <- renderPlot({
+  output$POsalesPlot <- renderPlot({
     if(input$cropType == "Corn"){
       Corn_CropYearObjectsBase[[yearPO()]]$POPlot
     }
@@ -2149,7 +2123,7 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
-  output$storageTables = renderDataTable({
+  output$POstorageTables = renderDataTable({
     if(input$cropType == "Corn"){
       getTables(Corn_CropYearObjectsBase[[yearPO()]]$`PO Storage`)
     }
@@ -2158,7 +2132,7 @@ server <- shinyServer(function(input,output,session){
     }
   })
   
-  output$summaryTables = renderDataTable({
+  output$POsummaryTables = renderDataTable({
     if(input$cropType == "Corn"){
       getSalesTable(Corn_CropYearObjectsBase[[yearPO()]]$`Sales Summary`)
     }
@@ -2208,10 +2182,10 @@ server <- shinyServer(function(input,output,session){
   
   output$POstorageTablesV2 = renderDataTable({
     if(input$cropType == "Corn"){
-getTables(Corn_CropYearObjectsV2[[yearPOV2()]]$`PO Storage`)
+      getTables(Corn_CropYearObjectsV2[[yearPOV2()]]$`PO Storage`)
     }
     else if(input$cropType == "Soybeans"){
-getTables(Soybean_CropYearObjectsV2[[yearPOV2()]]$`PO Storage`)
+      getTables(Soybean_CropYearObjectsV2[[yearPOV2()]]$`PO Storage`)
     }
   })
   
@@ -2266,10 +2240,10 @@ getTables(Soybean_CropYearObjectsV2[[yearPOV2()]]$`PO Storage`)
   output$POstorageTablesV3 = renderDataTable({
     if(input$cropType == "Corn"){
       getTables(Corn_CropYearObjectsV3[[yearPOV3()]]$`PO Storage`)
-
+      
     }
     else if(input$cropType == "Soybeans"){
-getTables(Soybean_CropYearObjectsV3[[yearPOV3()]]$`PO Storage`)
+      getTables(Soybean_CropYearObjectsV3[[yearPOV3()]]$`PO Storage`)
     }
   })
   
@@ -2322,11 +2296,11 @@ getTables(Soybean_CropYearObjectsV3[[yearPOV3()]]$`PO Storage`)
   
   output$POstorageTablesV4 = renderDataTable({
     if(input$cropType == "Corn"){
-getTables(Corn_CropYearObjectsV4[[yearPOV4()]]$`PO Storage`)
+      getTables(Corn_CropYearObjectsV4[[yearPOV4()]]$`PO Storage`)
     }
     else if(input$cropType == "Soybeans"){
       getTables(Soybean_CropYearObjectsV4[[yearPOV4()]]$`PO Storage`)
-
+      
     }
   })
   
@@ -2382,7 +2356,7 @@ getTables(Corn_CropYearObjectsV4[[yearPOV4()]]$`PO Storage`)
       getTables(Corn_CropYearObjectsV5[[yearPOV5()]]$`PO Storage`)
     }
     else if(input$cropType == "Soybeans"){
-     getTables(Soybean_CropYearObjectsV5[[yearPOV5()]]$`PO Storage`)
+      getTables(Soybean_CropYearObjectsV5[[yearPOV5()]]$`PO Storage`)
     }
   })
   
@@ -2613,7 +2587,7 @@ getTables(Corn_CropYearObjectsV4[[yearPOV4()]]$`PO Storage`)
   
   output$TSsummaryTablesV2 = renderDataTable({
     if (input$cropType == "Corn"){
-     getSalesTable(Corn_CropYearObjectsV2[[yearTSV2()]]$`TS Sales Summary`)
+      getSalesTable(Corn_CropYearObjectsV2[[yearTSV2()]]$`TS Sales Summary`)
     }
     else if (input$cropType == "Soybeans"){
       getSalesTable(Soybean_CropYearObjectsV2[[yearTSV2()]]$`TS Sales Summary`)
@@ -2893,7 +2867,7 @@ getTables(Corn_CropYearObjectsV4[[yearPOV4()]]$`PO Storage`)
   
   output$TSsummaryTablesV3V2 = renderDataTable({
     if (input$cropType == "Corn"){
-     getSalesTable(Corn_CropYearObjectsV3V2[[yearTSV3V2()]]$`TS Sales Summary`)
+      getSalesTable(Corn_CropYearObjectsV3V2[[yearTSV3V2()]]$`TS Sales Summary`)
     }
     else if (input$cropType == "Soybeans"){
       getSalesTable(Soybean_CropYearObjectsV3V2[[yearTSV3V2()]]$`TS Sales Summary`)
@@ -2942,7 +2916,7 @@ getTables(Corn_CropYearObjectsV4[[yearPOV4()]]$`PO Storage`)
       getTables(Corn_CropYearObjectsV3V3[[yearTSV3V3()]]$`TS Storage`)
     }
     else if (input$cropType == "Soybeans"){
-     getTables(Soybean_CropYearObjectsV3V3[[yearTSV3V3()]]$`TS Storage`)
+      getTables(Soybean_CropYearObjectsV3V3[[yearTSV3V3()]]$`TS Storage`)
     }
   })
   
@@ -3399,7 +3373,7 @@ getTables(Corn_CropYearObjectsV4[[yearPOV4()]]$`PO Storage`)
       getSalesTable(Corn_CropYearObjectsBase[[yearPOMY()]]$`PO Sales Summary MY`)
     }
     else if (input$cropType == "Soybeans"){
-     getSalesTable(Soybean_CropYearObjectsBase[[yearPOMY()]]$`PO Sales Summary MY`)
+      getSalesTable(Soybean_CropYearObjectsBase[[yearPOMY()]]$`PO Sales Summary MY`)
     }
   })
   
@@ -3511,7 +3485,7 @@ getTables(Corn_CropYearObjectsV4[[yearPOV4()]]$`PO Storage`)
       getSalesTable(Corn_CropYearObjectsV3[[yearPOMYV3()]]$`PO Sales Summary MY`)
     }
     else if (input$cropType == "Soybeans"){
-     getSalesTable(Soybean_CropYearObjectsV3[[yearPOMYV3()]]$`PO Sales Summary MY`)
+      getSalesTable(Soybean_CropYearObjectsV3[[yearPOMYV3()]]$`PO Sales Summary MY`)
     }
   })
   
@@ -3555,7 +3529,7 @@ getTables(Corn_CropYearObjectsV4[[yearPOV4()]]$`PO Storage`)
   
   output$POMYstorageTablesV4 = renderDataTable({
     if(input$cropType == "Corn") {
-     getTables(Corn_CropYearObjectsV4[[yearPOMYV4()]]$`PO Storage MY`)
+      getTables(Corn_CropYearObjectsV4[[yearPOMYV4()]]$`PO Storage MY`)
     }
     else if(input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV4[[yearPOMY4()]]$`PO Storage MY`)
@@ -3614,7 +3588,7 @@ getTables(Corn_CropYearObjectsV4[[yearPOV4()]]$`PO Storage`)
       getTables(Corn_CropYearObjectsV5[[yearPOMYV5()]]$`PO Storage MY`)
     }
     else if(input$cropType == "Soybeans") {
-     getTables(Soybean_CropYearObjectsV5[[yearPOMYV5()]]$`PO Storage MY`)
+      getTables(Soybean_CropYearObjectsV5[[yearPOMYV5()]]$`PO Storage MY`)
     }
   })
   
