@@ -4,6 +4,10 @@ library(htmltools)
 library(formattable)
 library(lubridate)
 
+####################################################################################
+# REFER TO THE MANUAL FOR INSTRUCTIONS ON HOW TO SET EVERYTHING UP FOR REMOTE ACCESS
+####################################################################################
+
 # load(url("https://github.com/fapri/main-model/blob/master/Application/cornV1.RData?raw=true"))
 # load(url("https://github.com/fapri/main-model/blob/master/Application/cornV3.RData?raw=true"))
 # load(url("https://github.com/fapri/main-model/blob/master/Application/soybeanV1.RData?raw=true"))
@@ -13,143 +17,143 @@ versionsHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Ap
 indexHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/index.html")
 homePageHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/homePage.html")
 
-# load("cornV1.RData")
-# load("cornV3.RData")
-# load("soybeanV1.RData")
-# load("soybeanV3.RData")
+load("cornV1.RData")
+load("cornV3.RData")
+load("soybeanV1.RData")
+load("soybeanV3.RData")
 
 
-#Corn Base/__
-appObjectsCornBase = readRDS("appObjectsCornBase.rds")
-Corn_CropYearObjectsBase = appObjectsCornBase[[1]]
-Corn_CropYearsBase = appObjectsCornBase[[2]]
-finalizedPriceObjectCornBase = appObjectsCornBase[[3]]
-
-appObjectsCornV2 = readRDS("appObjectsCornV2.rds")
-Corn_CropYearObjectsV2 = appObjectsCornV2[[1]]
-Corn_CropYearsV2 = appObjectsCornV2[[2]]
-finalizedPriceObjectCornV2 = appObjectsCornV2[[3]]
-
-appObjectsCornV3 = readRDS("appObjectsCornV3.rds")
-Corn_CropYearObjectsV3 = appObjectsCornV3[[1]]
-Corn_CropYearsV3 = appObjectsCornV3[[2]]
-finalizedPriceObjectCornV3 = appObjectsCornV3[[3]]
-
-appObjectsCornV4 = readRDS("appObjectsCornV4.rds")
-Corn_CropYearObjectsV4 = appObjectsCornV4[[1]]
-Corn_CropYearsV4 = appObjectsCornV4[[2]]
-finalizedPriceObjectCornV4 = appObjectsCornV4[[3]]
-
-appObjectsCornV5 = readRDS("appObjectsCornV5.rds")
-Corn_CropYearObjectsV5 = appObjectsCornV5[[1]]
-Corn_CropYearsV5 = appObjectsCornV5[[2]]
-finalizedPriceObjectCornV5 = appObjectsCornV5[[3]]
-
-
-
-# Corn V3/__
-appObjectsCornV3Base = readRDS("appObjectsCornV3Base.rds")
-Corn_CropYearObjectsV3Base = appObjectsCornV3Base[[1]]
-Corn_CropYearsV3Base = appObjectsCornV3Base[[2]]
-finalizedPriceObjectCornV3Base = appObjectsCornV3Base[[3]]
-
-appObjectsCornV3V2 = readRDS("appObjectsCornV3V2.rds")
-Corn_CropYearObjectsV3V2 = appObjectsCornV3V2[[1]]
-Corn_CropYearsV3V2 = appObjectsCornV3V2[[2]]
-finalizedPriceObjectCornV3V2 = appObjectsCornV3V2[[3]]
-
-appObjectsCornV3V3 = readRDS("appObjectsCornV3V3.rds")
-Corn_CropYearObjectsV3V3 = appObjectsCornV3V3[[1]]
-Corn_CropYearsV3V3 = appObjectsCornV3V3[[2]]
-finalizedPriceObjectCornV3V3 = appObjectsCornV3V3[[3]]
-
-appObjectsCornV3V4 = readRDS("appObjectsCornV3V4.rds")
-Corn_CropYearObjectsV3V4 = appObjectsCornV3V4[[1]]
-Corn_CropYearsV3V4 = appObjectsCornV3V4[[2]]
-finalizedPriceObjectCornV3V4 = appObjectsCornV3V4[[3]]
-
-appObjectsCornV3V5 = readRDS("appObjectsCornV3V5.rds")
-Corn_CropYearObjectsV3V5 = appObjectsCornV3V5[[1]]
-Corn_CropYearsV3V5 = appObjectsCornV3V5[[2]]
-finalizedPriceObjectCornV3V5 = appObjectsCornV3V5[[3]]
-
-# Corn March NC
-appObjectsCornMarch = readRDS("appObjectsCornMarch.rds")
-Corn_CropYearObjectsMarch = appObjectsCornMarch[[1]]
-Corn_CropYearsMarch = appObjectsCornMarch[[2]]
-finalizedPriceObjectCornMarch = appObjectsCornMarch[[3]]
-
-# Corn March Baselines Only
-appObjectsCornMarchBaselines = readRDS("appObjectsCornMarchBaselines.rds")
-Corn_CropYearObjectsMarchBaselines = appObjectsCornMarchBaselines[[1]]
-Corn_CropYearsMarchBaselines = appObjectsCornMarchBaselines[[2]]
-finalizedPriceObjectCornMarchBaselines = appObjectsCornMarchBaselines[[3]]
-
-
-# Soybean Base/__
-appObjectsSoybean = readRDS("appObjectsSoybeanBase.rds")
-Soybean_CropYearObjectsBase = appObjectsSoybean[[1]]
-Soybean_CropYearsBase = appObjectsSoybean[[2]]
-finalizedPriceObjectSoybeanBase = appObjectsSoybean[[3]]
-
-appObjectsSoybeanV2 = readRDS("appObjectsSoybeanV2.rds")
-Soybean_CropYearObjectsV2 = appObjectsSoybeanV2[[1]]
-Soybean_CropYearsV2 = appObjectsSoybeanV2[[2]]
-finalizedPriceObjectSoybeanV2 = appObjectsSoybeanV2[[3]]
-
-appObjectsSoybeanV3 = readRDS("appObjectsSoybeanV3.rds")
-Soybean_CropYearObjectsV3 = appObjectsSoybeanV3[[1]]
-Soybean_CropYearsV3 = appObjectsSoybeanV3[[2]]
-finalizedPriceObjectSoybeanV3 = appObjectsSoybeanV3[[3]]
-
-appObjectsSoybeanV4 = readRDS("appObjectsSoybeanV4.rds")
-Soybean_CropYearObjectsV4 = appObjectsSoybeanV4[[1]]
-Soybean_CropYearsV4 = appObjectsSoybeanV4[[2]]
-finalizedPriceObjectSoybeanV4 = appObjectsSoybeanV4[[3]]
-
-appObjectsSoybeanV5 = readRDS("appObjectsSoybeanV5.rds")
-Soybean_CropYearObjectsV5 = appObjectsSoybeanV5[[1]]
-Soybean_CropYearsV5 = appObjectsSoybeanV5[[2]]
-finalizedPriceObjectSoybeanV5 = appObjectsSoybeanV5[[3]]
-
-
-# Soybean V3/__
-appObjectsSoybeanV3Base = readRDS("appObjectsSoybeanV3Base.rds")
-Soybean_CropYearObjectsV3Base = appObjectsSoybeanV3Base[[1]]
-Soybean_CropYearsV3Base = appObjectsSoybeanV3Base[[2]]
-finalizedPriceObjectSoybeanV3Base = appObjectsSoybeanV3Base[[3]]
-
-appObjectsSoybeanV3V2 = readRDS("appObjectsSoybeanV3V2.rds")
-Soybean_CropYearObjectsV3V2 = appObjectsSoybeanV3V2[[1]]
-Soybean_CropYearsV3V2 = appObjectsSoybeanV3V2[[2]]
-finalizedPriceObjectSoybeanV3V2 = appObjectsSoybeanV3V2[[3]]
-
-appObjectsSoybeanV3V3 = readRDS("appObjectsSoybeanV3V3.rds")
-Soybean_CropYearObjectsV3V3 = appObjectsSoybeanV3V3[[1]]
-Soybean_CropYearsV3V3 = appObjectsSoybeanV3V3[[2]]
-finalizedPriceObjectSoybeanV3V3 = appObjectsSoybeanV3V3[[3]]
-
-appObjectsSoybeanV3V4 = readRDS("appObjectsSoybeanV3V4.rds")
-Soybean_CropYearObjectsV3V4 = appObjectsSoybeanV3V4[[1]]
-Soybean_CropYearsV3V4 = appObjectsSoybeanV3V4[[2]]
-finalizedPriceObjectSoybeanV3V4 = appObjectsSoybeanV3V4[[3]]
-
-appObjectsSoybeanV3V5 = readRDS("appObjectsSoybeanV3V5.rds")
-Soybean_CropYearObjectsV3V5 = appObjectsSoybeanV3V5[[1]]
-Soybean_CropYearsV3V5 = appObjectsSoybeanV3V5[[2]]
-finalizedPriceObjectSoybeanV3V5 = appObjectsSoybeanV3V5[[3]]
-
-# Soybean March NC
-appObjectsSoybeanMarch = readRDS("appObjectsSoybeanMarch.rds")
-Soybean_CropYearObjectsMarch = appObjectsSoybeanMarch[[1]]
-Soybean_CropYearsMarch = appObjectsSoybeanMarch[[2]]
-finalizedPriceObjectSoybeanMarch = appObjectsSoybeanMarch[[3]]
-
-# Soybean March Baselines Only
-appObjectsSoybeanMarchBaselines = readRDS("appObjectsSoybeanMarchBaselines.rds")
-Soybean_CropYearObjectsMarchBaselines = appObjectsSoybeanMarchBaselines[[1]]
-Soybean_CropYearsMarchBaselines = appObjectsSoybeanMarchBaselines[[2]]
-finalizedPriceObjectSoybeanMarchBaselines = appObjectsSoybeanMarchBaselines[[3]]
+# #Corn Base/__
+# appObjectsCornBase = readRDS("appObjectsCornBase.rds")
+# Corn_CropYearObjectsBase = appObjectsCornBase[[1]]
+# Corn_CropYearsBase = appObjectsCornBase[[2]]
+# finalizedPriceObjectCornBase = appObjectsCornBase[[3]]
+# 
+# appObjectsCornV2 = readRDS("appObjectsCornV2.rds")
+# Corn_CropYearObjectsV2 = appObjectsCornV2[[1]]
+# Corn_CropYearsV2 = appObjectsCornV2[[2]]
+# finalizedPriceObjectCornV2 = appObjectsCornV2[[3]]
+# 
+# appObjectsCornV3 = readRDS("appObjectsCornV3.rds")
+# Corn_CropYearObjectsV3 = appObjectsCornV3[[1]]
+# Corn_CropYearsV3 = appObjectsCornV3[[2]]
+# finalizedPriceObjectCornV3 = appObjectsCornV3[[3]]
+# 
+# appObjectsCornV4 = readRDS("appObjectsCornV4.rds")
+# Corn_CropYearObjectsV4 = appObjectsCornV4[[1]]
+# Corn_CropYearsV4 = appObjectsCornV4[[2]]
+# finalizedPriceObjectCornV4 = appObjectsCornV4[[3]]
+# 
+# appObjectsCornV5 = readRDS("appObjectsCornV5.rds")
+# Corn_CropYearObjectsV5 = appObjectsCornV5[[1]]
+# Corn_CropYearsV5 = appObjectsCornV5[[2]]
+# finalizedPriceObjectCornV5 = appObjectsCornV5[[3]]
+# 
+# 
+# 
+# # Corn V3/__
+# appObjectsCornV3Base = readRDS("appObjectsCornV3Base.rds")
+# Corn_CropYearObjectsV3Base = appObjectsCornV3Base[[1]]
+# Corn_CropYearsV3Base = appObjectsCornV3Base[[2]]
+# finalizedPriceObjectCornV3Base = appObjectsCornV3Base[[3]]
+# 
+# appObjectsCornV3V2 = readRDS("appObjectsCornV3V2.rds")
+# Corn_CropYearObjectsV3V2 = appObjectsCornV3V2[[1]]
+# Corn_CropYearsV3V2 = appObjectsCornV3V2[[2]]
+# finalizedPriceObjectCornV3V2 = appObjectsCornV3V2[[3]]
+# 
+# appObjectsCornV3V3 = readRDS("appObjectsCornV3V3.rds")
+# Corn_CropYearObjectsV3V3 = appObjectsCornV3V3[[1]]
+# Corn_CropYearsV3V3 = appObjectsCornV3V3[[2]]
+# finalizedPriceObjectCornV3V3 = appObjectsCornV3V3[[3]]
+# 
+# appObjectsCornV3V4 = readRDS("appObjectsCornV3V4.rds")
+# Corn_CropYearObjectsV3V4 = appObjectsCornV3V4[[1]]
+# Corn_CropYearsV3V4 = appObjectsCornV3V4[[2]]
+# finalizedPriceObjectCornV3V4 = appObjectsCornV3V4[[3]]
+# 
+# appObjectsCornV3V5 = readRDS("appObjectsCornV3V5.rds")
+# Corn_CropYearObjectsV3V5 = appObjectsCornV3V5[[1]]
+# Corn_CropYearsV3V5 = appObjectsCornV3V5[[2]]
+# finalizedPriceObjectCornV3V5 = appObjectsCornV3V5[[3]]
+# 
+# # Corn March NC
+# appObjectsCornMarch = readRDS("appObjectsCornMarch.rds")
+# Corn_CropYearObjectsMarch = appObjectsCornMarch[[1]]
+# Corn_CropYearsMarch = appObjectsCornMarch[[2]]
+# finalizedPriceObjectCornMarch = appObjectsCornMarch[[3]]
+# 
+# # Corn March Baselines Only
+# appObjectsCornMarchBaselines = readRDS("appObjectsCornMarchBaselines.rds")
+# Corn_CropYearObjectsMarchBaselines = appObjectsCornMarchBaselines[[1]]
+# Corn_CropYearsMarchBaselines = appObjectsCornMarchBaselines[[2]]
+# finalizedPriceObjectCornMarchBaselines = appObjectsCornMarchBaselines[[3]]
+# 
+# 
+# # Soybean Base/__
+# appObjectsSoybean = readRDS("appObjectsSoybeanBase.rds")
+# Soybean_CropYearObjectsBase = appObjectsSoybean[[1]]
+# Soybean_CropYearsBase = appObjectsSoybean[[2]]
+# finalizedPriceObjectSoybeanBase = appObjectsSoybean[[3]]
+# 
+# appObjectsSoybeanV2 = readRDS("appObjectsSoybeanV2.rds")
+# Soybean_CropYearObjectsV2 = appObjectsSoybeanV2[[1]]
+# Soybean_CropYearsV2 = appObjectsSoybeanV2[[2]]
+# finalizedPriceObjectSoybeanV2 = appObjectsSoybeanV2[[3]]
+# 
+# appObjectsSoybeanV3 = readRDS("appObjectsSoybeanV3.rds")
+# Soybean_CropYearObjectsV3 = appObjectsSoybeanV3[[1]]
+# Soybean_CropYearsV3 = appObjectsSoybeanV3[[2]]
+# finalizedPriceObjectSoybeanV3 = appObjectsSoybeanV3[[3]]
+# 
+# appObjectsSoybeanV4 = readRDS("appObjectsSoybeanV4.rds")
+# Soybean_CropYearObjectsV4 = appObjectsSoybeanV4[[1]]
+# Soybean_CropYearsV4 = appObjectsSoybeanV4[[2]]
+# finalizedPriceObjectSoybeanV4 = appObjectsSoybeanV4[[3]]
+# 
+# appObjectsSoybeanV5 = readRDS("appObjectsSoybeanV5.rds")
+# Soybean_CropYearObjectsV5 = appObjectsSoybeanV5[[1]]
+# Soybean_CropYearsV5 = appObjectsSoybeanV5[[2]]
+# finalizedPriceObjectSoybeanV5 = appObjectsSoybeanV5[[3]]
+# 
+# 
+# # Soybean V3/__
+# appObjectsSoybeanV3Base = readRDS("appObjectsSoybeanV3Base.rds")
+# Soybean_CropYearObjectsV3Base = appObjectsSoybeanV3Base[[1]]
+# Soybean_CropYearsV3Base = appObjectsSoybeanV3Base[[2]]
+# finalizedPriceObjectSoybeanV3Base = appObjectsSoybeanV3Base[[3]]
+# 
+# appObjectsSoybeanV3V2 = readRDS("appObjectsSoybeanV3V2.rds")
+# Soybean_CropYearObjectsV3V2 = appObjectsSoybeanV3V2[[1]]
+# Soybean_CropYearsV3V2 = appObjectsSoybeanV3V2[[2]]
+# finalizedPriceObjectSoybeanV3V2 = appObjectsSoybeanV3V2[[3]]
+# 
+# appObjectsSoybeanV3V3 = readRDS("appObjectsSoybeanV3V3.rds")
+# Soybean_CropYearObjectsV3V3 = appObjectsSoybeanV3V3[[1]]
+# Soybean_CropYearsV3V3 = appObjectsSoybeanV3V3[[2]]
+# finalizedPriceObjectSoybeanV3V3 = appObjectsSoybeanV3V3[[3]]
+# 
+# appObjectsSoybeanV3V4 = readRDS("appObjectsSoybeanV3V4.rds")
+# Soybean_CropYearObjectsV3V4 = appObjectsSoybeanV3V4[[1]]
+# Soybean_CropYearsV3V4 = appObjectsSoybeanV3V4[[2]]
+# finalizedPriceObjectSoybeanV3V4 = appObjectsSoybeanV3V4[[3]]
+# 
+# appObjectsSoybeanV3V5 = readRDS("appObjectsSoybeanV3V5.rds")
+# Soybean_CropYearObjectsV3V5 = appObjectsSoybeanV3V5[[1]]
+# Soybean_CropYearsV3V5 = appObjectsSoybeanV3V5[[2]]
+# finalizedPriceObjectSoybeanV3V5 = appObjectsSoybeanV3V5[[3]]
+# 
+# # Soybean March NC
+# appObjectsSoybeanMarch = readRDS("appObjectsSoybeanMarch.rds")
+# Soybean_CropYearObjectsMarch = appObjectsSoybeanMarch[[1]]
+# Soybean_CropYearsMarch = appObjectsSoybeanMarch[[2]]
+# finalizedPriceObjectSoybeanMarch = appObjectsSoybeanMarch[[3]]
+# 
+# # Soybean March Baselines Only
+# appObjectsSoybeanMarchBaselines = readRDS("appObjectsSoybeanMarchBaselines.rds")
+# Soybean_CropYearObjectsMarchBaselines = appObjectsSoybeanMarchBaselines[[1]]
+# Soybean_CropYearsMarchBaselines = appObjectsSoybeanMarchBaselines[[2]]
+# finalizedPriceObjectSoybeanMarchBaselines = appObjectsSoybeanMarchBaselines[[3]]
 
 
 # Create strategy results tables
@@ -586,18 +590,45 @@ getRemainingSummaryTables = function(data) {
 }
 
 getSalesTable = function(data) {
-  table = formattable(data, 
-                      align = "c",
-                      list(~ formatter("span",
-                                       style = x ~ style(display = "block",
-                                                         "border-radius" = "2px",
-                                                         "padding" = "5px",
-                                                         "text-align" = "center")),
-                           `Date` = formatter("span", style = ~ style(display = "block",
-                                                                      "border-radius" = "2px",
-                                                                      "padding" = "5px",
-                                                                      "font.weight" = "bold",  
-                                                                      "text-align" = "left"))))
+  if(!is.null(data)){
+    table = as.datatable(formattable(data, 
+                        align = "c",
+                        list(~ formatter("span",
+                                         style = x ~ style(display = "block",
+                                                           "border-radius" = "2px",
+                                                           "padding" = "5px",
+                                                           "text-align" = "center")),
+                             `Date` = formatter("span", style = ~ style(display = "block",
+                                                                        "border-radius" = "2px",
+                                                                        "padding" = "5px",
+                                                                        "font.weight" = "bold",  
+                                                                        "text-align" = "left")))), 
+                        rownames = FALSE, 
+                        caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), 
+                        options = list(dom = 't'))
+  } else{
+    data = data.frame("NO SALES ACTUALIZED" = "NO SALES ACTUALIZED")
+    
+    table = as.datatable(formattable(data, 
+                                     align = "c",
+                                     list(~ formatter("span",
+                                                      style = x ~ style(display = "block",
+                                                                        "border-radius" = "2px",
+                                                                        "padding" = "5px",
+                                                                        "font-size:200%",
+                                                                        "font.weight" = "bold", 
+                                                                        "text-align" = "center")),
+                                          ` ` = formatter("span", style = ~ style(display = "block",
+                                                                                  "border-radius" = "2px",
+                                                                                  "padding" = "5px",
+                                                                                  "font-size:00%",
+                                                                                  "font.weight" = "bold",  
+                                                                                  "text-align" = "center")))), 
+                         rownames = FALSE, 
+                         caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), 
+                         options = list(dom = 't'),
+                         colnames=c(" "))
+  }
   return(table)
 }
 
@@ -2124,12 +2155,10 @@ server <- shinyServer(function(input,output,session){
   
   output$summaryTables = renderDataTable({
     if(input$cropType == "Corn"){
-      as.datatable(getSalesTable(Corn_CropYearObjectsBase[[yearPO()]]$`Sales Summary`), rownames = FALSE, 
-                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      getSalesTable(Corn_CropYearObjectsBase[[yearPO()]]$`Sales Summary`)
     }
     else if(input$cropType == "Soybeans"){
-      as.datatable(getSalesTable(Soybean_CropYearObjectsBase[[yearPO()]]$`Sales Summary`), rownames = FALSE, 
-                   caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), options = list(dom = 't'))
+      getSalesTable(Soybean_CropYearObjectsBase[[yearPO()]]$`Sales Summary`)
     }
   })
   
