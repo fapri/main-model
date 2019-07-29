@@ -6,6 +6,15 @@ output:
 
 ```{r echo = F}
 
+#####################################################################################
+# HOW TO RUN THIS:
+
+# Run entire script (Ctrl + R)
+# Enter appropriate crop type into console when prompted
+# Once everything has been completed, click "Preview" at the top.
+# Once you click to preview, the file will be saved as a notebook in the file folder.
+# Be sure to rename the file with corn or soybeans based on the crop that was run.
+#####################################################################################
 
 
 library(DT)
@@ -81,14 +90,41 @@ getYearlyResultsTable = function(data, cropType, strategy) {
 
 
 
+```{r echo = FALSE}
+
+getCropType = function() {
+  type = readline(prompt = "Enter crop type (soybean or corn. 'quit' to quit): ")
+  type = tolower(type)
+  
+  if(type == "quit"){
+    cat("\nEnding session now")
+    exit()
+  }
+  while(type != "soybean" && type != "corn") {
+    type = readline(prompt = "Enter crop type (soybean or corn. 'quit' to quit): ")
+    type = tolower(type)
+    if(type == "quit"){
+      cat("\nEnding session now")
+      exit()
+    }
+  }
+  
+  return(type)
+}
+
+type = getCropType()
+
+```
+
+
 
 ```{r}
 
-type = "Corn"
+
+type
 
 
-
-if (type == "Corn"){
+if (type == "corn"){
   
   tables = list()
   #WITHOUT MY
@@ -143,7 +179,7 @@ if (type == "Corn"){
   
   
   
-} else if (type == "Soybeans"){
+} else if (type == "soybean"){
   
   tables = list()
   #WITHOUT MY
