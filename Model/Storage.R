@@ -172,7 +172,7 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   }
   
   # When no storage is needed
-  if(is.null(firstDateRow)){
+  if(is.null(firstDateRow[1])){
     storageAdjAvg = weighted.mean(actualizedSales$onFarmPrice, actualizedSales$Percent.Sold)
     storagePostharvestAvg = weighted.mean(actualizedSales$onFarmPrice[postRows], actualizedSales$Percent.Sold[postRows])
     commercialRows = NA
@@ -180,7 +180,7 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   }
   
   # IF THE FIRST POST HARVEST DATE HAS >=50% "TOTAL.SOLD"
-  else if(actualizedSales$Total.Sold[firstDateRow - 1] >= 50){
+  else if(firstDateRow[1] != 1 && actualizedSales$Total.Sold[firstDateRow - 1] >= 50){
     # AVERAGE SALES BEFORE STORAGE + STRICTLY ON FARM STORAGE
     storageAdjAvg = weighted.mean(actualizedSales$onFarmPrice, actualizedSales$Percent.Sold)
     # Average storage-adjusted sales in the post harvest
@@ -193,6 +193,10 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   else{
     # Calculates remaining crop that needs storage
     remainingCrop = 100 - actualizedSales$Total.Sold[firstDateRow - 1]
+    if(firstDateRow[1] == 1){
+      remainingCrop = 100
+    }
+    
     # Calculates the percent of crop that needs commercial storage
     commercialCrop = remainingCrop - 50
     
@@ -239,6 +243,9 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
     
     # Updates the rows in which preharvest sales were made
     preRowsNew = which(actualizedSales$Date %within% intervalPre)
+    if(!(length(preRowsNew) > 0)){
+      preRowsNew = 0
+    }
     # Removes NA value
     commercialRows = commercialRows[!is.na(commercialRows)]
     # Finds rows in which onfarm storage was utilized
@@ -246,6 +253,9 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
     
     # Average prearvest sales
     storagePreharvestAvg = weighted.mean(actualizedSales$onFarmPrice[preRowsNew], actualizedSales$Percent.Sold[preRowsNew])
+    if(is.na(storagePreharvestAvg)){
+      storagePreharvestAvg = 0
+    }
     
     if((last(preRowsNew) + 1) != commercialRows[1]){
       # Average storage-adjusted sales in the post harvest
@@ -275,6 +285,9 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
     
     # Calculates percent sold in the preharvest and postharvest
     preharvestPercent = actualizedSales$Total.Sold[last(preRowsNew)] * 0.01
+    if(preRowsNew[1] == 0){
+      preharvestPercent = 0
+    }
     postharvestPercent = 1 - preharvestPercent
     
     # Calculates postharvest average price, accounting for storage
@@ -304,6 +317,16 @@ preharvestAverage = rep(0, 9)
 postharvestAverage = rep(0, 9)
 preharvestAverageStorage = rep(0, 9)
 postharvestAverageStorage = rep(0, 9)
+
+
+# i = 3
+# actualizedSales = cropYearObjects[[i]]$`TS Actualized`
+# cropYear = cropYearsList$CropYear[i]
+# intervalPre = cropYearObjects[[i]]$`Pre/Post Interval`$intervalPre
+# intervalPost = cropYearObjects[[i]]$`Pre/Post Interval`$intervalPost
+
+
+
 
 finalizeStorage = function(actualizedSales, cropYear, intervalPre, intervalPost){
   # Initialize variables
@@ -610,3 +633,4 @@ if(type == "corn"){
 if(type == "soybean"){
   Soybean_CropYearObjects = cropYearObjects
 }
+
