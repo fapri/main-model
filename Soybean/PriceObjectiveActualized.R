@@ -471,11 +471,11 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
       }
       
       # SEASONAL SALES
-      else if(totalSold > 0) {
+      else if(totalSold >= 0 && !(marketingYear$Date[row] %in% priceObjectiveActualized$Date)) {
         # if price < 70 percentile
         if(marketingYear$Percentile[row] < 70) {
           # if day not within 7 days of last sale
-          if(difftime(marketingYear$Date[row], priceObjectiveActualized$Date[nrow(priceObjectiveActualized)]) >= 7) {
+          if(difftime(marketingYear$Date[row], priceObjectiveActualized$Date[nrow(priceObjectiveActualized)]) >= 7 || nrow(priceObjectiveActualized) == 0) {
             if(type == "corn"){  
               # if month is march seasonal sale month
               if(month(marketingYear$Date[row]) == 3 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
@@ -612,7 +612,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
 if(type == "corn"){
   # Price Objective loading
   for(i in 1:length(Corn_CropYearObjects)){
-    if(nrow(Corn_CropYearObjects[[i]][["PO Triggers"]]) > 1){
+    if(nrow(Corn_CropYearObjects[[i]][["PO Triggers"]]) >= 0){
       Corn_CropYearObjects[[i]] = isActualizedPO(Corn_CropYearObjects[[i]], NULL, NULL, Corn_FuturesMarket, MY = FALSE)
     } else{
       Corn_CropYearObjects[[i]][["PO Actualized"]] = data.frame(matrix(ncol = 5, nrow = 0))
@@ -623,7 +623,7 @@ if(type == "corn"){
   if("Marketing Year MY" %in% names(Corn_CropYearObjects[[1]])){
     # Multi-year loading
     for(i in 1:(length(Corn_CropYearObjects) - 2)) {
-      if(nrow(Corn_CropYearObjects[[i]][["PO Triggers"]]) > 1){
+      if(nrow(Corn_CropYearObjects[[i]][["PO Triggers"]]) >= 0){
         temp = list()
         temp[[1]] = isActualizedPO(Corn_CropYearObjects[[i]], Corn_CropYearObjects[[i + 1]], Corn_CropYearObjects[[i + 2]], Corn_FuturesMarket, MY = TRUE)
         Corn_CropYearObjects[[i]] = temp[[1]][[1]]
@@ -636,7 +636,7 @@ if(type == "corn"){
     }
     
     for(i in (length(Corn_CropYearObjects) - 1):length(Corn_CropYearObjects)){
-      if(nrow(Corn_CropYearObjects[[i]][["PO Triggers"]]) > 1){
+      if(nrow(Corn_CropYearObjects[[i]][["PO Triggers"]]) >= 0){
         Corn_CropYearObjects[[i]] = isActualizedPO(Corn_CropYearObjects[[i]], NULL, NULL, Corn_FuturesMarket, MY = TRUE)
       } else{
         Corn_CropYearObjects[[i]][["PO Actualized"]] = data.frame(matrix(ncol = 5, nrow = 0))
@@ -649,7 +649,7 @@ if(type == "corn"){
 if(type == "soybean"){
   # Price Objective loading
   for(i in 1:length(Soybean_CropYearObjects)){
-    if(nrow(Soybean_CropYearObjects[[i]][["PO Triggers"]]) > 1){
+    if(nrow(Soybean_CropYearObjects[[i]][["PO Triggers"]]) >= 0){
       Soybean_CropYearObjects[[i]] = isActualizedPO(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = FALSE)
     } else{
       Soybean_CropYearObjects[[i]][["PO Actualized"]] = data.frame(matrix(ncol = 5, nrow = 0))
@@ -660,7 +660,7 @@ if(type == "soybean"){
   if("Marketing Year MY" %in% names(Soybean_CropYearObjects[[1]])){
     # Multi-year loading
     for(i in 1:(length(Soybean_CropYearObjects) - 2)) {
-      if(nrow(Soybean_CropYearObjects[[i]][["PO Triggers"]]) > 1){
+      if(nrow(Soybean_CropYearObjects[[i]][["PO Triggers"]]) >= 0){
         temp = list()
         temp[[1]] = isActualizedPO(Soybean_CropYearObjects[[i]], Soybean_CropYearObjects[[i + 1]], Soybean_CropYearObjects[[i + 2]], Soybean_FuturesMarket, MY = TRUE)
         Soybean_CropYearObjects[[i]] = temp[[1]][[1]]
@@ -673,7 +673,7 @@ if(type == "soybean"){
     }
     
     for(i in (length(Soybean_CropYearObjects) - 1):length(Soybean_CropYearObjects)){
-      if(nrow(Soybean_CropYearObjects[[i]][["PO Triggers"]]) > 1){
+      if(nrow(Soybean_CropYearObjects[[i]][["PO Triggers"]]) >= 0){
         Soybean_CropYearObjects[[i]] = isActualizedPO(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = TRUE)
       } else{
         Soybean_CropYearObjects[[i]][["PO Actualized"]] = data.frame(matrix(ncol = 5, nrow = 0))

@@ -540,11 +540,11 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
       }
       
       # SEASONAL SALES
-      else if(totalSold > 0) {
+      else if(totalSold >= 0 && !(marketingYear$Date[row] %in% priceObjectiveActualized$Date)) {
         # if price < 70 percentile
         if(marketingYear$Percentile[row] < 70) {
           # if day not within 7 days of last sale
-          if(difftime(marketingYear$Date[row], priceObjectiveActualized$Date[nrow(priceObjectiveActualized)]) >= 7) {
+          if(difftime(marketingYear$Date[row], priceObjectiveActualized$Date[nrow(priceObjectiveActualized)]) >= 7 || nrow(priceObjectiveActualized) == 0) {
             if(type == "corn"){  
               # if month is march seasonal sale month
               if(month(marketingYear$Date[row]) == 3 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
