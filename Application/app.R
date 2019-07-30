@@ -50,6 +50,11 @@ homePageHTML = url("https://raw.githubusercontent.com/fapri/main-model/feature/A
 # Corn_CropYearsV5 = appObjectsCornV5[[2]]
 # finalizedPriceObjectCornV5 = appObjectsCornV5[[3]]
 # 
+# appObjectsCornV6 = readRDS("appObjectsCornV6.rds")
+# Corn_CropYearObjectsV6 = appObjectsCornV6[[1]]
+# Corn_CropYearsV6 = appObjectsCornV6[[2]]
+# finalizedPriceObjectCornV6 = appObjectsCornV6[[3]]
+# 
 # 
 # 
 # # Corn V3/__
@@ -77,6 +82,11 @@ homePageHTML = url("https://raw.githubusercontent.com/fapri/main-model/feature/A
 # Corn_CropYearObjectsV3V5 = appObjectsCornV3V5[[1]]
 # Corn_CropYearsV3V5 = appObjectsCornV3V5[[2]]
 # finalizedPriceObjectCornV3V5 = appObjectsCornV3V5[[3]]
+# 
+# appObjectsCornV3V6 = readRDS("appObjectsCornV3V6.rds")
+# Corn_CropYearObjectsV3V6 = appObjectsCornV3V6[[1]]
+# Corn_CropYearsV3V6 = appObjectsCornV3V6[[2]]
+# finalizedPriceObjectCornV3V6 = appObjectsCornV3V6[[3]]
 # 
 # # Corn March NC
 # appObjectsCornMarch = readRDS("appObjectsCornMarch.rds")
@@ -117,6 +127,11 @@ homePageHTML = url("https://raw.githubusercontent.com/fapri/main-model/feature/A
 # Soybean_CropYearsV5 = appObjectsSoybeanV5[[2]]
 # finalizedPriceObjectSoybeanV5 = appObjectsSoybeanV5[[3]]
 # 
+# appObjectsSoybeanV6 = readRDS("appObjectsSoybeanV6.rds")
+# Soybean_CropYearObjectsV6 = appObjectsSoybeanV6[[1]]
+# Soybean_CropYearsV6 = appObjectsSoybeanV6[[2]]
+# finalizedPriceObjectSoybeanV6 = appObjectsSoybeanV6[[3]]
+# 
 # 
 # # Soybean V3/__
 # appObjectsSoybeanV3Base = readRDS("appObjectsSoybeanV3Base.rds")
@@ -144,6 +159,11 @@ homePageHTML = url("https://raw.githubusercontent.com/fapri/main-model/feature/A
 # Soybean_CropYearsV3V5 = appObjectsSoybeanV3V5[[2]]
 # finalizedPriceObjectSoybeanV3V5 = appObjectsSoybeanV3V5[[3]]
 # 
+# appObjectsSoybeanV3V6 = readRDS("appObjectsSoybeanV3V6.rds")
+# Soybean_CropYearObjectsV3V6 = appObjectsSoybeanV3V6[[1]]
+# Soybean_CropYearsV3V6 = appObjectsSoybeanV3V6[[2]]
+# finalizedPriceObjectSoybeanV3V6 = appObjectsSoybeanV3V6[[3]]
+# 
 # # Soybean March NC
 # appObjectsSoybeanMarch = readRDS("appObjectsSoybeanMarch.rds")
 # Soybean_CropYearObjectsMarch = appObjectsSoybeanMarch[[1]]
@@ -163,11 +183,13 @@ priceObjectListCorn = list(finalizedPriceObjectCornBase,
                            finalizedPriceObjectCornV3,
                            finalizedPriceObjectCornV4,
                            finalizedPriceObjectCornV5,
+                           finalizedPriceObjectCornV6,
                            finalizedPriceObjectCornV3Base,
                            finalizedPriceObjectCornV3V2,
                            finalizedPriceObjectCornV3V3,
                            finalizedPriceObjectCornV3V4,
                            finalizedPriceObjectCornV3V5,
+                           finalizedPriceObjectCornV3V6,
                            finalizedPriceObjectCornMarch,
                            finalizedPriceObjectCornMarchBaselines)
 
@@ -176,11 +198,13 @@ priceObjectListSoybean = list(finalizedPriceObjectSoybeanBase,
                               finalizedPriceObjectSoybeanV3,
                               finalizedPriceObjectSoybeanV4,
                               finalizedPriceObjectSoybeanV5,
+                              finalizedPriceObjectSoybeanV6,
                               finalizedPriceObjectSoybeanV3Base,
                               finalizedPriceObjectSoybeanV3V2,
                               finalizedPriceObjectSoybeanV3V3,
                               finalizedPriceObjectSoybeanV3V4,
                               finalizedPriceObjectSoybeanV3V5,
+                              finalizedPriceObjectSoybeanV3V6,
                               finalizedPriceObjectSoybeanMarch,
                               finalizedPriceObjectSoybeanMarchBaselines)
 
@@ -191,11 +215,13 @@ versions = c("Base",
              "V3",
              "V4",
              "V5",
+             "V6",
              "V3Base",
              "V3V2",
              "V3V3",
              "V3V4",
              "V3V5",
+             "V3V6",
              "March",
              "MarchBaselines")
 
@@ -204,11 +230,13 @@ MYversions = c("Multiyear",
                "MYV3",
                "MYV4",
                "MYV5",
+               "MYV6",
                "MYV3Base",
                "MYV3V2",
                "MYV3V3",
                "MYV3V4",
                "MYV3V5",
+               "MYV3V6",
                "MYMarch",
                "MYMarchBaselines")
 
@@ -222,6 +250,8 @@ POversions = c("Base",
                "MYV4",
                "V5",
                "MYV5",
+               "V6",
+               "MYV6",
                "March",
                "MYMarch",
                "MarchBaselines",
@@ -438,6 +468,8 @@ POCorn = c("Base" = "base",
            "Multi-Year Version 4"="MYV4",
            "Version 5" = "V5",
            "Multi-Year Version 5"="MYV5",
+           "Version 6" = "V6",
+           "Multi-Year Version 6"="MYV6",
            "March" = "March",
            "Multi-Year March" = "MYMarch",
            "March Baselines" = "MarchBaselines",
@@ -453,6 +485,8 @@ POSoybean = c("Base" = "base",
               "Multi-Year Version 4"="MYV4",
               "Version 5" = "V5",
               "Multi-Year Version 5"="MYV5",
+              "Version 6" = "V6",
+              "Multi-Year Version 6"="MYV6",
               "March" = "March",
               "Multi-Year March" = "MYMarch",
               "March Baselines" = "MarchBaselines",
@@ -468,6 +502,8 @@ TSCorn = c(Base = "base",
            "Multi-Year Version 4" = "MYV4",
            "Version 5" = "V5",
            "Multi-Year Version 5" = "MYV5",
+           "Version 6" = "V6",
+           "Multi-Year Version 6" = "MYV6",
            "Version 3/Base" = "V3Base",
            "Multi-Year Version 3/Base" = "MYV3Base",
            "Version 3/V2" = "V3V2",
@@ -478,6 +514,8 @@ TSCorn = c(Base = "base",
            "Multi-Year Version 3/V4" = "MYV3V4",
            "Version 3/V5" = "V3V5",
            "Multi-Year Version 3/V5" = "MYV3V5",
+           "Version 3/V6" = "V3V6",
+           "Multi-Year Version 3/V6" = "MYV3V6",
            "March" = "March",
            "Multi-Year March" = "MYMarch",
            "March Baselines" = "MarchBaselines",
@@ -493,6 +531,8 @@ TSSoybean = c(Base = "base",
               "Multi-Year Version 4" = "MYV4",
               "Version 5" = "V5",
               "Multi-Year Version 5" = "MYV5",
+              "Version 6" = "V6",
+              "Multi-Year Version 6" = "MYV6",
               "Version 3/Base" = "V3Base",
               "Multi-Year Version 3/Base" = "MYV3Base",
               "Version 3/V2" = "V3V2",
@@ -503,6 +543,8 @@ TSSoybean = c(Base = "base",
               "Multi-Year Version 3/V4" = "MYV3V4",
               "Version 3/V5" = "V3V5",
               "Multi-Year Version 3/V5" = "MYV3V5",
+              "Version 3/V6" = "V3V6",
+              "Multi-Year Version 3/V6" = "MYV3V6",
               "March" = "March",
               "Multi-Year March" = "MYMarch",
               "March Baselines" = "MarchBaselines",
@@ -948,6 +990,65 @@ ui <- shinyUI(
                             )
                           )
                         ),
+                        # MODEL VERSION 6
+                        conditionalPanel(
+                          condition = "input.POstrategy == 'V6'",
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('POdistPlotV6'),
+                              style = "padding-bottom:50px"
+                            ),
+                            
+                            tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearPOV6','Crop Year', choices = cropYearMenuChoices, width = "100%"),
+                                         column(12, dataTableOutput('POstorageTablesV6')),
+                                         tags$style(type="text/css", '#POstorageTablesV6 tfoot {display:none;}'))
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('POsummaryTablesV6'),
+                                  style = "padding-bottom:100px")
+                                
+                              )
+                            ),
+                            fluidRow(
+                              dataTableOutput('POyearTableV6'),
+                              style = "padding-bottom:50px"
+                            )
+                          )
+                        ),
+                        conditionalPanel(
+                          condition = "input.POstrategy == 'MYV6'",
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('POMYdistPlotV6'),
+                              style = "padding-bottom:50px"
+                            ),
+                            
+                            tags$style(type="text/css", '#POMYsummaryTablesV6 tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearPOMYV6','Crop Year', choices = cropYearMenuChoices, width = "100%"),
+                                         column(12, dataTableOutput('POMYstorageTablesV6')),
+                                         tags$style(type="text/css", '#POMYstorageTablesV6 tfoot {display:none;}'))
+                                
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('POMYsummaryTablesV6'),
+                                  style = "padding-bottom:100px")
+                              )
+                            ),
+                            fluidRow(
+                              dataTableOutput('POMYyearTableV6'),
+                              style = "padding-bottom:50px"
+                            )
+                          )
+                        ),
                         # MODEL VERSION March
                         conditionalPanel(
                           condition = "input.POstrategy == 'March'",
@@ -1370,6 +1471,66 @@ ui <- shinyUI(
                             )
                           )
                         ),
+                        # MODEL VERSION V6
+                        conditionalPanel(
+                          condition = "input.TSstrategy == 'V6'",
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('TSdistPlotV6'),
+                              style = "padding-bottom:50px"
+                            ),
+                            
+                            tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearTSV6','Crop Year', choices = cropYearMenuChoices, width = "100%"),
+                                         column(12, dataTableOutput('TSstorageTablesV6')),
+                                         tags$style(type="text/css", '#TSstorageTablesV6 tfoot {display:none;}'))
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('TSsummaryTablesV6'),
+                                  style = "padding-bottom:100px")
+                                
+                              )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSyearTableV6'),
+                              style = "padding-bottom:50px"
+                            )
+                          )
+                        ),
+                        conditionalPanel(
+                          condition = "input.TSstrategy == 'MYV6'",
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('TSMYdistPlotV6'),
+                              style = "padding-bottom:50px"
+                            ),
+                            
+                            tags$style(type="text/css", '#TSMYsummaryTablesV6 tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearTSMYV6','Crop Year', choices = cropYearMenuChoices, width = "100%"),
+                                         column(12, dataTableOutput('TSMYstorageTablesV6')),
+                                         tags$style(type="text/css", '#TSMYstorageTablesV6 tfoot {display:none;}'))
+                                
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('TSMYsummaryTablesV6'),
+                                  style = "padding-bottom:100px")
+                                
+                              )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSMYyearTableV6'),
+                              style = "padding-bottom:50px"
+                            )
+                          )
+                        ),
                         # MODEL VERSION V3/Base
                         conditionalPanel(
                           condition = "input.TSstrategy == 'V3Base'",
@@ -1666,6 +1827,66 @@ ui <- shinyUI(
                             ),
                             fluidRow(
                               dataTableOutput('TSMYyearTableV3V5'),
+                              style = "padding-bottom:50px"
+                            )
+                          )
+                        ),
+                        # MODEL VERSION 3/V6
+                        conditionalPanel(
+                          condition = "input.TSstrategy == 'V3V6'",
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('TSdistPlotV3V6'),
+                              style = "padding-bottom:50px"
+                            ),
+                            
+                            tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearTSV3V6','Crop Year', choices = cropYearMenuChoices, width = "100%"),
+                                         column(12, dataTableOutput('TSstorageTablesV3V6')),
+                                         tags$style(type="text/css", '#TSstorageTablesV3V6 tfoot {display:none;}'))
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('TSsummaryTablesV3V6'),
+                                  style = "padding-bottom:100px")
+                                
+                              )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSyearTableV3V6'),
+                              style = "padding-bottom:50px"
+                            )
+                          )
+                        ),
+                        conditionalPanel(
+                          condition = "input.TSstrategy == 'MYV3V6'",
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('TSMYdistPlotV3V6'),
+                              style = "padding-bottom:50px"
+                            ),
+                            
+                            tags$style(type="text/css", '#TSMYsummaryTablesV3V6 tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearTSMYV3V6','Crop Year', choices = cropYearMenuChoices, width = "100%"),
+                                         column(12, dataTableOutput('TSMYstorageTablesV3V6')),
+                                         tags$style(type="text/css", '#TSMYstorageTablesV3V6 tfoot {display:none;}'))
+                                
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('TSMYsummaryTablesV3V6'),
+                                  style = "padding-bottom:100px")
+                                
+                              )
+                            ),
+                            fluidRow(
+                              dataTableOutput('TSMYyearTableV3V6'),
                               style = "padding-bottom:50px"
                             )
                           )
@@ -2377,6 +2598,62 @@ server <- shinyServer(function(input,output,session){
   
   
   #################################################################################################
+  # Price Objective VERSION 6
+  #################################################################################################
+  
+  
+  yearPOV6 <- reactive({
+    switch(input$yearPOV6,
+           "2008-09" = 1,
+           "2009-10" = 2,
+           "2010-11" = 3,
+           "2011-12" = 4,
+           "2012-13" = 5,
+           "2013-14" = 6,
+           "2014-15" = 7,
+           "2015-16" = 8,
+           "2016-17" = 9,
+           "2017-18" = 10)
+  })
+  
+  output$POdistPlotV6 <- renderPlot({
+    if(input$cropType == "Corn"){
+      Corn_CropYearObjectsV6[[yearPOV6()]]$POPlot
+    }
+    else if(input$cropType == "Soybeans"){
+      Soybean_CropYearObjectsV6[[yearPOV6()]]$POPlot
+    }
+  })
+  
+  output$POstorageTablesV6 = renderDataTable({
+    if(input$cropType == "Corn"){
+      getTables(Corn_CropYearObjectsV6[[yearPOV6()]]$`PO Storage`)
+    }
+    else if(input$cropType == "Soybeans"){
+      getTables(Soybean_CropYearObjectsV6[[yearPOV6()]]$`PO Storage`)
+    }
+  })
+  
+  output$POsummaryTablesV6 = renderDataTable({
+    if(input$cropType == "Corn"){
+      getSalesTable(Corn_CropYearObjectsV6[[yearPOV6()]]$`Sales Summary`)
+    }
+    else if(input$cropType == "Soybeans"){
+      getSalesTable(Soybean_CropYearObjectsV6[[yearPOV6()]]$`Sales Summary`)
+    }
+  })
+  
+  output$POyearTableV6 = renderDataTable({
+    if (input$cropType == "Corn"){
+      getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV6, "POfinalizedPrices"), "corn")
+    }
+    else if (input$cropType == "Soybeans"){
+      getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV6, "POfinalizedPrices"), "soybean")
+    }
+  })
+  
+  
+  #################################################################################################
   # Price Objective VERSION March
   #################################################################################################
   
@@ -2770,6 +3047,62 @@ server <- shinyServer(function(input,output,session){
   
   
   #################################################################################################
+  # Trailing Stop VERSION 6
+  #################################################################################################
+  
+  
+  yearTSV6 <- reactive({
+    switch(input$yearTSV6,
+           "2008-09" = 1,
+           "2009-10" = 2,
+           "2010-11" = 3,
+           "2011-12" = 4,
+           "2012-13" = 5,
+           "2013-14" = 6,
+           "2014-15" = 7,
+           "2015-16" = 8,
+           "2016-17" = 9,
+           "2017-18" = 10)
+  })
+  
+  output$TSdistPlotV6 <- renderPlot({
+    if (input$cropType == "Corn"){
+      Corn_CropYearObjectsV6[[yearTSV6()]]$TSPlot
+    }
+    else if (input$cropType == "Soybeans"){
+      Soybean_CropYearObjectsV6[[yearTSV6()]]$TSPlot
+    }
+  })
+  
+  output$TSstorageTablesV6 = renderDataTable({
+    if (input$cropType == "Corn"){
+      getTables(Corn_CropYearObjectsV6[[yearTSV6()]]$`TS Storage`)
+    }
+    else if (input$cropType == "Soybeans"){
+      getTables(Soybean_CropYearObjectsV6[[yearTSV6()]]$`TS Storage`)
+    }
+  })
+  
+  output$TSsummaryTablesV6 = renderDataTable({
+    if (input$cropType == "Corn"){
+      getSalesTable(Corn_CropYearObjectsV6[[yearTSV6()]]$`TS Sales Summary`)
+    }
+    else if (input$cropType == "Soybeans"){
+      getSalesTable(Soybean_CropYearObjectsV6[[yearTSV6()]]$`TS Sales Summary`)
+    }
+  })
+  
+  output$TSyearTableV6 = renderDataTable({
+    if (input$cropType == "Corn"){
+      getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV6, "TSfinalizedPrices"), "corn")
+    }
+    else if (input$cropType == "Soybeans"){
+      getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV6, "TSfinalizedPrices"), "soybean")
+    }
+  })
+  
+  
+  #################################################################################################
   # Trailing Stop VERSION 3/BASE
   #################################################################################################
   
@@ -3044,6 +3377,62 @@ server <- shinyServer(function(input,output,session){
     }
     else if (input$cropType == "Soybeans"){
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V5, "TSfinalizedPrices"), "soybean")
+    }
+  })
+  
+  
+  #################################################################################################
+  # Trailing Stop VERSION 3/V6
+  #################################################################################################
+  
+  
+  yearTSV3V6 <- reactive({
+    switch(input$yearTSV3V6,
+           "2008-09" = 1,
+           "2009-10" = 2,
+           "2010-11" = 3,
+           "2011-12" = 4,
+           "2012-13" = 5,
+           "2013-14" = 6,
+           "2014-15" = 7,
+           "2015-16" = 8,
+           "2016-17" = 9,
+           "2017-18" = 10)
+  })
+  
+  output$TSdistPlotV3V6 <- renderPlot({
+    if (input$cropType == "Corn"){
+      Corn_CropYearObjectsV3V6[[yearTSV3V6()]]$TSPlot
+    }
+    else if (input$cropType == "Soybeans"){
+      Soybean_CropYearObjectsV3V6[[yearTSV3V6()]]$TSPlot
+    }
+  })
+  
+  output$TSstorageTablesV3V6 = renderDataTable({
+    if (input$cropType == "Corn"){
+      getTables(Corn_CropYearObjectsV3V6[[yearTSV3V6()]]$`TS Storage`)
+    }
+    else if (input$cropType == "Soybeans"){
+      getTables(Soybean_CropYearObjectsV3V6[[yearTSV3V6()]]$`TS Storage`)
+    }
+  })
+  
+  output$TSsummaryTablesV3V6 = renderDataTable({
+    if (input$cropType == "Corn"){
+      getSalesTable(Corn_CropYearObjectsV3V6[[yearTSV3V6()]]$`TS Sales Summary`)
+    }
+    else if (input$cropType == "Soybeans"){
+      getSalesTable(Soybean_CropYearObjectsV3V6[[yearTSV3V6()]]$`TS Sales Summary`)
+    }
+  })
+  
+  output$TSyearTableV3V6 = renderDataTable({
+    if (input$cropType == "Corn"){
+      getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V6, "TSfinalizedPrices"), "corn")
+    }
+    else if (input$cropType == "Soybeans"){
+      getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V6, "TSfinalizedPrices"), "soybean")
     }
   })
   
@@ -3609,6 +3998,62 @@ server <- shinyServer(function(input,output,session){
   
   
   #################################################################################################
+  # Price Objective Multi Year VERSION 6
+  #################################################################################################
+  
+  
+  yearPOMYV6 <- reactive({
+    switch(input$yearPOMYV6,
+           "2008-09" = 1,
+           "2009-10" = 2,
+           "2010-11" = 3,
+           "2011-12" = 4,
+           "2012-13" = 5,
+           "2013-14" = 6,
+           "2014-15" = 7,
+           "2015-16" = 8,
+           "2016-17" = 9,
+           "2017-18" = 10)
+  })
+  
+  output$POMYdistPlotV6 <- renderPlot({
+    if (input$cropType == "Corn"){
+      Corn_CropYearObjectsV6[[yearPOMYV6()]]$POMYPlot
+    }
+    else if (input$cropType == "Soybeans"){
+      Soybean_CropYearObjectsV6[[yearPOMYV6()]]$POMYPlot
+    }
+  })
+  
+  output$POMYstorageTablesV6 = renderDataTable({
+    if(input$cropType == "Corn") {
+      getTables(Corn_CropYearObjectsV6[[yearPOMYV6()]]$`PO Storage MY`)
+    }
+    else if(input$cropType == "Soybeans") {
+      getTables(Soybean_CropYearObjectsV6[[yearPOMYV6()]]$`PO Storage MY`)
+    }
+  })
+  
+  output$POMYsummaryTablesV6 = renderDataTable({
+    if (input$cropType == "Corn"){
+      getSalesTable(Corn_CropYearObjectsV6[[yearPOMYV6()]]$`PO Sales Summary MY`)
+    }
+    else if (input$cropType == "Soybeans"){
+      getSalesTable(Soybean_CropYearObjectsV6[[yearPOMYV6()]]$`PO Sales Summary MY`)
+    }
+  })
+  
+  output$POMYyearTableV6 = renderDataTable({
+    if (input$cropType == "Corn"){
+      getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV6, "POfinalizedPricesMY"), "corn")
+    }
+    else if (input$cropType == "Soybeans"){
+      getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV6, "POfinalizedPricesMY"), "soybean")
+    }
+  })
+  
+  
+  #################################################################################################
   # Price Objective Multi Year March
   #################################################################################################
   
@@ -4001,6 +4446,62 @@ server <- shinyServer(function(input,output,session){
   
   
   #################################################################################################
+  # Trailing Stop Multi Year VERSION 6
+  #################################################################################################
+  
+  
+  yearTSMYV6 <- reactive({
+    switch(input$yearTSMYV6,
+           "2008-09" = 1,
+           "2009-10" = 2,
+           "2010-11" = 3,
+           "2011-12" = 4,
+           "2012-13" = 5,
+           "2013-14" = 6,
+           "2014-15" = 7,
+           "2015-16" = 8,
+           "2016-17" = 9,
+           "2017-18" = 10)
+  })
+  
+  output$TSMYdistPlotV6 <- renderPlot({
+    if (input$cropType == "Corn"){
+      Corn_CropYearObjectsV6[[yearTSMYV6()]]$TSMYPlot
+    }
+    else if (input$cropType == "Soybeans"){
+      Soybean_CropYearObjectsV6[[yearTSMYV6()]]$TSMYPlot
+    }
+  })
+  
+  output$TSMYstorageTablesV6 = renderDataTable({
+    if(input$cropType == "Corn") {
+      getTables(Corn_CropYearObjectsV6[[yearTSMYV6()]]$`TS Storage MY`)
+    }
+    else if(input$cropType == "Soybeans") {
+      getTables(Soybean_CropYearObjectsV6[[yearTSMYV6()]]$`TS Storage MY`)
+    }
+  })
+  
+  output$TSMYsummaryTablesV6 = renderDataTable({
+    if (input$cropType == "Corn"){
+      getSalesTable(Corn_CropYearObjectsV6[[yearTSMYV6()]]$`TS Sales Summary MY`)
+    }
+    else if (input$cropType == "Soybeans"){
+      getSalesTable(Soybean_CropYearObjectsV6[[yearTSMYV6()]]$`TS Sales Summary MY`)
+    }
+  })
+  
+  output$TSMYyearTableV6 = renderDataTable({
+    if (input$cropType == "Corn"){
+      getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV6, "TSfinalizedPricesMY"), "corn")
+    }
+    else if (input$cropType == "Soybeans"){
+      getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV6, "TSfinalizedPricesMY"), "soybean")
+    }
+  })
+  
+  
+  #################################################################################################
   # Trailing Stop Multi Year VERSION 3/BASE
   #################################################################################################
   
@@ -4276,6 +4777,62 @@ server <- shinyServer(function(input,output,session){
     }
     else if (input$cropType == "Soybeans"){
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V5, "TSfinalizedPricesMY"), "soybean")
+    }
+  })
+  
+  
+  #################################################################################################
+  # Trailing Stop Multi Year VERSION 3/V6
+  #################################################################################################
+  
+  
+  yearTSMYV3V6 <- reactive({
+    switch(input$yearTSMYV3V6,
+           "2008-09" = 1,
+           "2009-10" = 2,
+           "2010-11" = 3,
+           "2011-12" = 4,
+           "2012-13" = 5,
+           "2013-14" = 6,
+           "2014-15" = 7,
+           "2015-16" = 8,
+           "2016-17" = 9,
+           "2017-18" = 10)
+  })
+  
+  output$TSMYdistPlotV3V6 <- renderPlot({
+    if (input$cropType == "Corn"){
+      Corn_CropYearObjectsV3V6[[yearTSMYV3V6()]]$TSMYPlot
+    }
+    else if (input$cropType == "Soybeans"){
+      Soybean_CropYearObjectsV3V6[[yearTSMYV3V6()]]$TSMYPlot
+    }
+  })
+  
+  output$TSMYstorageTablesV3V6 = renderDataTable({
+    if(input$cropType == "Corn") {
+      getTables(Corn_CropYearObjectsV3V6[[yearTSMYV3V6()]]$`TS Storage MY`)
+    }
+    else if(input$cropType == "Soybeans") {
+      getTables(Soybean_CropYearObjectsV3V6[[yearTSMYV3V6()]]$`TS Storage MY`)
+    }
+  })
+  
+  output$TSMYsummaryTablesV3V6 = renderDataTable({
+    if (input$cropType == "Corn"){
+      getSalesTable(Corn_CropYearObjectsV3V6[[yearTSMYV3V6()]]$`TS Sales Summary MY`)
+    }
+    else if (input$cropType == "Soybeans"){
+      getSalesTable(Soybean_CropYearObjectsV3V6[[yearTSMYV3V6()]]$`TS Sales Summary MY`)
+    }
+  })
+  
+  output$TSMYyearTableV3V6 = renderDataTable({
+    if (input$cropType == "Corn"){
+      getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V6, "TSfinalizedPricesMY"), "corn")
+    }
+    else if (input$cropType == "Soybeans"){
+      getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V6, "TSfinalizedPricesMY"), "soybean")
     }
   })
   
