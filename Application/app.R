@@ -8,10 +8,7 @@ library(lubridate)
 # REFER TO THE MANUAL FOR INSTRUCTIONS ON HOW TO SET EVERYTHING UP FOR REMOTE ACCESS
 ####################################################################################
 
-# Load GitHub links for Remote Access to appObjects and HTML files
-
-
-
+# Load GitHub links for remote access to appObjects and HTML files
 load(url("https://github.com/fapri/main-model/blob/feature/AddCropYears/Application/cornV1.RData?raw=true"))
 load(url("https://github.com/fapri/main-model/blob/feature/AddCropYears/Application/cornV3.RData?raw=true"))
 load(url("https://github.com/fapri/main-model/blob/feature/AddCropYears/Application/soybeanV1.RData?raw=true"))
@@ -2171,8 +2168,7 @@ server <- shinyServer(function(input,output,session){
            "2016-17" = 9,
            "2017-18" = 10)
   })
-  
-  
+
   output$POdistPlotV2 <- renderPlot({
     if(input$cropType == "Corn"){
       Corn_CropYearObjectsV2[[yearPOV2()]]$POPlot
@@ -2228,8 +2224,7 @@ server <- shinyServer(function(input,output,session){
            "2016-17" = 9,
            "2017-18" = 10)
   })
-  
-  
+
   output$POdistPlotV3 <- renderPlot({
     if(input$cropType == "Corn"){
       Corn_CropYearObjectsV3[[yearPOV3()]]$POPlot
@@ -3761,8 +3756,7 @@ server <- shinyServer(function(input,output,session){
       getTables(Soybean_CropYearObjectsBase[[yearTSMY()]]$`TS Storage MY`)
     }
   })
-  
-  
+
   output$TSMYsummaryTables = renderDataTable({
     if (input$cropType == "Corn"){
       getSalesTable(Corn_CropYearObjectsBase[[yearTSMY()]]$`TS Sales Summary MY`)
