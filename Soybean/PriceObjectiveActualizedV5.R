@@ -5,10 +5,10 @@
 # V5
 
 # Check if sales have been actualized for this crop year yet. Useful in MY sales
-isActualizedPresent = function(cropYear){
-  if ("PO Actualized MY" %in% names(cropYear)){
+isActualizedPresent = function(cropYear) {
+  if ("PO Actualized MY" %in% names(cropYear)) {
     return(cropYear[["PO Actualized MY"]])
-  } else{
+  } else {
     priceObjectiveActualized = data.frame(matrix(ncol = 7, nrow = 0))
     colnames(priceObjectiveActualized) = c("Date", "Percentile", "Type", "PercentSold", "TotalSold", "Price")
     return(priceObjectiveActualized)
@@ -16,94 +16,90 @@ isActualizedPresent = function(cropYear){
 }
 
 # Returns the current total sold for a given year
-getTotalSold = function(actualizedSales){
-  if(nrow(actualizedSales) == 0){
+getTotalSold = function(actualizedSales) {
+  if (nrow(actualizedSales) == 0) {
     return(0)
-  } else{
+  } else {
     return(last(actualizedSales$Total.Sold))
   }
 }
 
 # Returns what percent was sold in the last
-getPercentSold = function(actualizedSales){
-  if(nrow(actualizedSales) == 0){
+getPercentSold = function(actualizedSales) {
+  if (nrow(actualizedSales) == 0) {
     return(0)
-  } else{
+  } else {
     return(last(actualizedSales$Percent.Sold))
   }
 }
 
 # Implements correct percent sold for PO
-variablePercentSold = function(triggerType, postHarvestPercent){
+variablePercentSold = function(triggerType, postHarvestPercent) {
   # Check if we are in post harvest yet by if the percent has been calculated
-  if(!is.null(postHarvestPercent)){
+  if (!is.null(postHarvestPercent)) {
     # Only implemented for PO
-    if(triggerType == "Price Objective" || triggerType == "Price Objective Special"){
+    if (triggerType == "Price Objective" || triggerType == "Price Objective Special") {
       return(postHarvestPercent)
-    }
-    # All other sales at 10%
-    else{
+    } else {
+      # All other sales at 10%
       return(10)
     }
-  }
-  # Pre-havest sales still at 10%
-  else{
+  } else {
+    # Pre-havest sales still at 10%
     return(10)
   }
 }
 
 # Returns the percentage that post-harvest Price Objective sales should be made at
-getPostHarvestPercent = function(postHarvestPercent, actualizedSales, intervalPost, total){
+getPostHarvestPercent = function(postHarvestPercent, actualizedSales, intervalPost, total) {
   # check if postHarvestPercent has been calculated yet
-  if(is.null(postHarvestPercent)){
+  if (is.null(postHarvestPercent)) {
     # check if any sales have been actualzed yet
-    if(nrow(actualizedSales) > 0){
+    if (nrow(actualizedSales) > 0) {
       # check if this is the first post harvest sale
-      if(length(which(actualizedSales$Date %within% intervalPost)) == 0){
+      if (length(which(actualizedSales$Date %within% intervalPost)) == 0) {
         percent = (100 - total) * 0.20
         return(percent)
       }
-    } 
-    # if no sales have been actualized by the post harvest, we need to sell at 20%
-    else {
+    } else {
+      # if no sales have been actualized by the post harvest, we need to sell at 20%
       return(20)
     }
-  } 
-  # if postHarvestPercent has already been calculated we can just return it
-  else{
+  } else {
+    # if postHarvestPercent has already been calculated we can just return it
     return(postHarvestPercent)
   }
 }
 
 # Returns True for dump days, 5/20 or 7/20
-isDumpDate = function(type, month, day, year, stopYear){
-  if(type == "corn"){
-    if(month == 6 && year == stopYear){
-      if(day == 20 || day == 21 || day == 22 || day == 23) {
+isDumpDate = function(type, month, day, year, stopYear) {
+  if (type == "corn") {
+    if (month == 6 && year == stopYear) {
+      if (day == 20 || day == 21 || day == 22 || day == 23) {
         return(TRUE)
-      } else{
+      } else {
         return(FALSE)
       }
-    }else{
+    } else {
       return(FALSE)
     }
-  } else if(type == "soybean"){
-    if(month == 7 && year == stopYear){
-      if(day == 20 || day == 21 || day == 22 || day == 23) {
+  } else if (type == "soybean") {
+    if (month == 7 && year == stopYear) {
+      if (day == 20 || day == 21 || day == 22 || day == 23) {
         return(TRUE)
-      }else{
+      } else {
         return(FALSE)
       }
-    }else{
+    } else {
       return(FALSE)
     }
-  } else{
+  } else {
     return(FALSE)
   }
 }
 
 # Finds actualized Price Objective sales
-isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
+isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY) {
   priceObjectiveActualized = isActualizedPresent(cropYear)
   priceObjectiveActualized1year = isActualizedPresent(cropYear1)
   priceObjectiveActualized2year = isActualizedPresent(cropYear2)
@@ -118,14 +114,14 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
   intervalPre = cropYear$`Pre/Post Interval`$intervalPre
   intervalPost = cropYear$`Pre/Post Interval`$intervalPost
   
-  jan1NC = paste("01-01", toString(year(mdy(cropYear$`Start Date`))), sep="-")
-  may31NC = paste("05-31", toString(year(mdy(cropYear$`Start Date`))), sep="-")
-  june1NC = paste("06-01", toString(year(mdy(cropYear$`Start Date`))), sep="-")
-  aug31NC = paste("08-31", toString(year(mdy(cropYear$`Start Date`))), sep="-")
-  sep1OC = paste("09-01", toString(year(mdy(cropYear$`Start Date`))), sep="-")
-  dec31OC = paste("12-31", toString(year(mdy(cropYear$`Start Date`))), sep="-")
-  jan1OC = paste("01-01", toString(year(mdy(cropYear$`Stop Date`))), sep="-")
-  aug31OC = paste("08-31", toString(year(mdy(cropYear$`Stop Date`))), sep="-")
+  jan1NC = paste("01-01", toString(year(mdy(cropYear$`Start Date`))), sep = "-")
+  may31NC = paste("05-31", toString(year(mdy(cropYear$`Start Date`))), sep = "-")
+  june1NC = paste("06-01", toString(year(mdy(cropYear$`Start Date`))), sep = "-")
+  aug31NC = paste("08-31", toString(year(mdy(cropYear$`Start Date`))), sep = "-")
+  sep1OC = paste("09-01", toString(year(mdy(cropYear$`Start Date`))), sep = "-")
+  dec31OC = paste("12-31", toString(year(mdy(cropYear$`Start Date`))), sep = "-")
+  jan1OC = paste("01-01", toString(year(mdy(cropYear$`Stop Date`))), sep = "-")
+  aug31OC = paste("08-31", toString(year(mdy(cropYear$`Stop Date`))), sep = "-")
   interval1 = interval(mdy(jan1NC), mdy(may31NC))
   interval2 = interval(mdy(june1NC), mdy(aug31NC))
   interval3 = interval(mdy(sep1OC), mdy(dec31OC))
@@ -143,37 +139,37 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
   
   futuresMarket$Date = mdy(futuresMarket$Date)
   
-  if(type == "corn"){
+  if (type == "corn") {
     NC = futuresMarket$DecNC
     NC1yr = futuresMarket$DecNC1yr
     NC2yr = futuresMarket$DecNC2yr
   }
   
-  if(type == "soybean"){
+  if (type == "soybean") {
     NC = futuresMarket$NovNC
     NC1yr = futuresMarket$NovNC1yr
     NC2yr = futuresMarket$NovNC2yr
   }
   
-  if(totalSold > 0){
+  if (totalSold > 0) {
     totalSoldMax = 60
-  } else{
+  } else {
     totalSoldMax = 50
   }
   
-  if(is.null(cropYear1) || !is.null(cropYear1)){
-    for(row in 1:nrow(marketingYear)) {
-      if(!is.null(cropYear1)){
-        if(row <= nrow(marketingYear1)){
-          if(marketingYear$Date[row] %in% multiyearTriggers$Date) {
+  if (is.null(cropYear1) || !is.null(cropYear1)) {
+    for (row in 1:nrow(marketingYear)) {
+      if (!is.null(cropYear1)) {
+        if (row <= nrow(marketingYear1)) {
+          if (marketingYear$Date[row] %in% multiyearTriggers$Date) {
             mytRow = which(marketingYear$Date[row] == multiyearTriggers$Date)
             futuresMarketRow = which(futuresMarket$Date == marketingYear$Date[row])
             
-            if(!(multiyearTriggers$Date[mytRow] %within% interval4)){
-              if(!(nrow(priceObjectiveActualized1year) == 0)){
-                if(abs(difftime(multiyearTriggers$Date[mytRow], priceObjectiveActualized1year$Date[nrow(priceObjectiveActualized1year)])) >= 7) {
-                  if(multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High"){
-                    if(totalSold1year < 60){
+            if (!(multiyearTriggers$Date[mytRow] %within% interval4)) {
+              if (!(nrow(priceObjectiveActualized1year) == 0)) {
+                if (abs(difftime(multiyearTriggers$Date[mytRow], priceObjectiveActualized1year$Date[nrow(priceObjectiveActualized1year)])) >= 7) {
+                  if (multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High") {
+                    if (totalSold1year < 60) {
                       totalSold1year = totalSold1year + 10
                       priceObjectiveActualized1year = rbind(priceObjectiveActualized1year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
                                                                                                       "Percentile" = multiyearTriggers$Percentile[mytRow],
@@ -182,9 +178,9 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                                                                                                       "Total Sold" = totalSold1year,
                                                                                                       "Price" = NC1yr[futuresMarketRow]))
                       
-                      if(multiyearTriggers$Date[mytRow] %within% interval1 || multiyearTriggers$Date[mytRow] %within% interval2){
-                        if(nrow(priceObjectiveActualized) == 0 || min(abs(difftime(multiyearTriggers$Date[mytRow], priceObjectiveActualized$Date))) >= 7){
-                          if(totalSold < 60){  
+                      if (multiyearTriggers$Date[mytRow] %within% interval1 || multiyearTriggers$Date[mytRow] %within% interval2) {
+                        if (nrow(priceObjectiveActualized) == 0 || min(abs(difftime(multiyearTriggers$Date[mytRow], priceObjectiveActualized$Date))) >= 7) {
+                          if (totalSold < 60) {  
                             tRow = which(marketingYear$Date[row] == triggers$Date)
                             totalSold = totalSold + 10
                             priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
@@ -201,8 +197,8 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                 }
               }
               
-              else{            
-                if(multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High"){
+              else {            
+                if (multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High") {
                   totalSold1year = totalSold1year + 10
                   priceObjectiveActualized1year = rbind(priceObjectiveActualized1year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
                                                                                                   "Percentile" = multiyearTriggers$Percentile[mytRow],
@@ -211,9 +207,9 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                                                                                                   "Total Sold" = totalSold1year,
                                                                                                   "Price" = NC1yr[futuresMarketRow]))
                   
-                  if(multiyearTriggers$Date[mytRow] %within% interval1 || multiyearTriggers$Date[mytRow] %within% interval2){
-                    if(nrow(priceObjectiveActualized) == 0 || min(abs(difftime(multiyearTriggers$Date[mytRow], priceObjectiveActualized$Date))) >= 7){
-                      if(totalSold < 60){  
+                  if (multiyearTriggers$Date[mytRow] %within% interval1 || multiyearTriggers$Date[mytRow] %within% interval2) {
+                    if (nrow(priceObjectiveActualized) == 0 || min(abs(difftime(multiyearTriggers$Date[mytRow], priceObjectiveActualized$Date))) >= 7) {
+                      if (totalSold < 60) {  
                         tRow = which(marketingYear$Date[row] == triggers$Date)
                         totalSold = totalSold + 10
                         priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
@@ -232,15 +228,15 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
         }
         
         #Keep going 
-        if(row <= nrow(marketingYear2)){
-          if(marketingYear$Date[row] %in% multiyearTriggers$Date) {
+        if (row <= nrow(marketingYear2)) {
+          if (marketingYear$Date[row] %in% multiyearTriggers$Date) {
             mytRow = which(marketingYear$Date[row] == multiyearTriggers$Date)
             futuresMarketRow = which(marketingYear$Date[row] == futuresMarket$Date)
-            if(!(multiyearTriggers$Date[mytRow] %within% interval4)){
-              if(nrow(priceObjectiveActualized2year) != 0){
-                if(abs(difftime(multiyearTriggers$Date[mytRow], priceObjectiveActualized2year$Date[nrow(priceObjectiveActualized2year)])) >= 7) {
-                  if(multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High"){
-                    if(totalSold2year < 60){
+            if (!(multiyearTriggers$Date[mytRow] %within% interval4)) {
+              if (nrow(priceObjectiveActualized2year) != 0) {
+                if (abs(difftime(multiyearTriggers$Date[mytRow], priceObjectiveActualized2year$Date[nrow(priceObjectiveActualized2year)])) >= 7) {
+                  if (multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High") {
+                    if (totalSold2year < 60) {
                       totalSold2year = totalSold2year + 10
                       priceObjectiveActualized2year = rbind(priceObjectiveActualized2year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
                                                                                                       "Percentile" = multiyearTriggers$Percentile[mytRow],
@@ -253,8 +249,8 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                 }
               }
               
-              else{
-                if(multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High"){
+              else {
+                if (multiyearTriggers$Type[mytRow] == "Ten Day High" || multiyearTriggers$Type[mytRow] == "All Time High") {
                   totalSold2year = totalSold2year + 10
                   priceObjectiveActualized2year = rbind(priceObjectiveActualized2year, data.frame("Date" = multiyearTriggers$Date[mytRow], 
                                                                                                   "Percentile" = multiyearTriggers$Percentile[mytRow],
@@ -270,29 +266,29 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
       }
       
       #check if the day is a trigger date and if the sale was already actualized in the multiyear sales
-      if(marketingYear$Date[row] %in% triggers$Date){
-        if(!(marketingYear$Date[row] %in% priceObjectiveActualized$Date)) {
+      if (marketingYear$Date[row] %in% triggers$Date) {
+        if (!(marketingYear$Date[row] %in% priceObjectiveActualized$Date)) {
           #find trigger row
           tRow = which(marketingYear$Date[row] == triggers$Date)
           #check if preharvest
-          if(triggers$Date[tRow] %within% intervalPre) {
+          if (triggers$Date[tRow] %within% intervalPre) {
             #check if sale was made in last 7 days. min() makes sure the closest day is being checked. This is intergral for MY sales
-            if(nrow(priceObjectiveActualized) == 0 || min(abs(difftime(triggers$Date[tRow], priceObjectiveActualized$Date))) >= 7) {
+            if (nrow(priceObjectiveActualized) == 0 || min(abs(difftime(triggers$Date[tRow], priceObjectiveActualized$Date))) >= 7) {
               #if < 50% sold preharvest
-              if(totalSold < totalSoldMax) {
+              if (totalSold < totalSoldMax) {
                 #check if this was the first sale. If so, then there wont be any old percentlies to check
-                if(dim(priceObjectiveActualized)[1] != 0) {
+                if (dim(priceObjectiveActualized)[1] != 0) {
                   #check if trigger date is in a restricted interval. Also check Ten Day high because they are unrestricted.
-                  if(triggers$Date[tRow] %within% interval1 && triggers$Type[tRow] != "Ten Day High" && triggers$Type[tRow] != "All Time High" && triggers$Type[tRow] != "Seasonal") {
+                  if (triggers$Date[tRow] %within% interval1 && triggers$Type[tRow] != "Ten Day High" && triggers$Type[tRow] != "All Time High" && triggers$Type[tRow] != "Seasonal") {
                     tempRows = NA
                     #create a list to get the actualized sales rows within an interval. This will be used to ensure 1 sale per percentile
                     tempRows = which(priceObjectiveActualized$Date %within% interval1 & priceObjectiveActualized$Type == "Price Objective")
                     tempRows = c(tempRows, which(priceObjectiveActualized$Date %within% interval1 & priceObjectiveActualized$Type == "Price Objective Special"))
                     #check if a sale was made in that percentile
-                    if(!(triggers$Percentile[tRow] %in% priceObjectiveActualized$Percentile[tempRows])) {
+                    if (!(triggers$Percentile[tRow] %in% priceObjectiveActualized$Percentile[tempRows])) {
                       currentPercentSold = variablePercentSold(triggers$Type[tRow], postHarvestPercent)
                       totalSold = totalSold + currentPercentSold
-                      if (MY == TRUE && totalSold > tail(priceObjectiveActualized$Total.Sold, 1)){
+                      if (MY == TRUE && totalSold > tail(priceObjectiveActualized$Total.Sold, 1)) {
                         priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow],
                                                                                               "Percentile" = triggers$Percentile[tRow],
                                                                                               "Type" = triggers$Type[tRow],
@@ -301,12 +297,13 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                                                                                               "Price" = marketingYear$`Price`[row]))
                         priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                         percentSold = 0
-                        for (i in 1:nrow(priceObjectiveActualized)){
+                        for (i in 1:nrow(priceObjectiveActualized)) {
                           priceObjectiveActualized$Total.Sold[i] = percentSold + priceObjectiveActualized$Percent.Sold[i]
                           percentSold = priceObjectiveActualized$Total.Sold[i]
                         }
                       }
-                      else{
+                      
+                      else {
                         priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                               "Percentile" = triggers$Percentile[tRow],
                                                                                               "Type" = triggers$Type[tRow],
@@ -323,7 +320,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                   else {
                     currentPercentSold = variablePercentSold(triggers$Type[tRow], postHarvestPercent)
                     totalSold = totalSold + currentPercentSold
-                    if (MY == TRUE && totalSold > tail(priceObjectiveActualized$Total.Sold, 1)){
+                    if (MY == TRUE && totalSold > tail(priceObjectiveActualized$Total.Sold, 1)) {
                       priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                             "Percentile" = triggers$Percentile[tRow],
                                                                                             "Type" = triggers$Type[tRow],
@@ -332,12 +329,13 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                                                                                             "Price" = marketingYear$`Price`[row]))
                       priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                       percentSold = 0
-                      for (i in 1:nrow(priceObjectiveActualized)){
+                      for (i in 1:nrow(priceObjectiveActualized)) {
                         priceObjectiveActualized$Total.Sold[i] = percentSold + priceObjectiveActualized$Percent.Sold[i]
                         percentSold = priceObjectiveActualized$Total.Sold[i]
                       }
                     }
-                    else{
+                    
+                    else {
                       priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
                                                                                             "Percentile" = triggers$Percentile[tRow],
                                                                                             "Type" = triggers$Type[tRow],
@@ -366,26 +364,26 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
           } 
           
           #check if postharvest
-          else if(triggers$Date[tRow] %within% intervalPost) {
+          else if (triggers$Date[tRow] %within% intervalPost) {
             #if > 0% of crop remains
-            if(totalSold < 100) {
+            if (totalSold < 100) {
               postHarvestPercent = getPostHarvestPercent(postHarvestPercent, priceObjectiveActualized, intervalPost, totalSold)
               #Check if any sales have been made yet
-              if(nrow(priceObjectiveActualized) != 0) {
+              if (nrow(priceObjectiveActualized) != 0) {
                 #if day not within 7 days of last sale
-                if(abs(difftime(triggers$Date[tRow], priceObjectiveActualized$Date[nrow(priceObjectiveActualized)])) >= 7){
+                if (abs(difftime(triggers$Date[tRow], priceObjectiveActualized$Date[nrow(priceObjectiveActualized)])) >= 7) {
                   #if >=10% of crop remains
-                  if(totalSold < 100) {
+                  if (totalSold < 100) {
                     #check if this percentile has had a sale yet. Also Check Ten Day high because they are unrestricted
-                    if(triggers$Date[tRow] %within% interval3 && triggers$Type[tRow] != "Ten Day High" && triggers$Type[tRow] != "All Time High" && triggers$Type[tRow] != "Seasonal" && triggers$Type[tRow] != "End of Year Trailing Stop") {
+                    if (triggers$Date[tRow] %within% interval3 && triggers$Type[tRow] != "Ten Day High" && triggers$Type[tRow] != "All Time High" && triggers$Type[tRow] != "Seasonal" && triggers$Type[tRow] != "End of Year Trailing Stop") {
                       
                       tempRows = NA
                       #create a list to get the actualized sales rows within an interval. This will be used to ensure 1 sale per percentile
                       tempRows = which(priceObjectiveActualized$Date %within% interval3 & priceObjectiveActualized$Type == "Price Objective")
                       tempRows = c(tempRows, which(priceObjectiveActualized$Date %within% interval3 & priceObjectiveActualized$Type == "Price Objective Special"))
                       #check if a sale was made in that percentile. 
-                      if(!(triggers$Percentile[tRow] %in% priceObjectiveActualized$Percentile[tempRows])) {
-                        if(variablePercentSold(triggers$Type[tRow], postHarvestPercent) < (100 - totalSold)){
+                      if (!(triggers$Percentile[tRow] %in% priceObjectiveActualized$Percentile[tempRows])) {
+                        if (variablePercentSold(triggers$Type[tRow], postHarvestPercent) < (100 - totalSold)) {
                           currentPercentSold = variablePercentSold(triggers$Type[tRow], postHarvestPercent)
                         } else {
                           currentPercentSold = 100 - totalSold
@@ -401,8 +399,8 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                       }
                     } 
                     #if trigger date is in an unrestricted interval or ATH/TDH we can just make the sale
-                    else if (triggers$Type[tRow] != "End of Year Trailing Stop"){
-                      if(variablePercentSold(triggers$Type[tRow], postHarvestPercent) < (100 - totalSold)){
+                    else if (triggers$Type[tRow] != "End of Year Trailing Stop") {
+                      if (variablePercentSold(triggers$Type[tRow], postHarvestPercent) < (100 - totalSold)) {
                         currentPercentSold = variablePercentSold(triggers$Type[tRow], postHarvestPercent)
                       } else {
                         currentPercentSold = 100 - totalSold
@@ -419,77 +417,77 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                       priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                     }
                     
-                    else if (month(marketingYear$Date[row]) >= 6){
-                      if (triggers$Type[tRow] == "End of Year Trailing Stop"){
-                        if (triggers$Percentile[tRow] >= 60){
-                          if (marketingYear$Percentile[row] == 90 && marketingYear$Percentile[row - 1] == 95){
+                    else if (month(marketingYear$Date[row]) >= 6) {
+                      if (triggers$Type[tRow] == "End of Year Trailing Stop") {
+                        if (triggers$Percentile[tRow] >= 60) {
+                          if (marketingYear$Percentile[row] == 90 && marketingYear$Percentile[row - 1] == 95) {
                             percentSold = (100 - totalSold) / 4
-                            if(percentSold < 10){
+                            if (percentSold < 10) {
                               percentSold = (100 - totalSold)
-                        }
-                        totalSold = totalSold + percentSold
-                        priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow],
-                                                                                                "Percentile" = triggers$Percentile[tRow],
-                                                                                                "Type" = triggers$Type[tRow],
-                                                                                                "Percent Sold" = percentSold,
-                                                                                                "Total Sold" = totalSold,
-                                                                                                "Price" = marketingYear$`Price`[row]))
-                          priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
-                        } 
-                        
-                        else if (marketingYear$Percentile[row] == 80 && marketingYear$Percentile[row - 1] == 90){
-                          percentSold = (100 - totalSold) / 3
-                          if(percentSold < 10){
-                            percentSold = (100 - totalSold)
+                            }
+                            totalSold = totalSold + percentSold
+                            priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow],
+                                                                                                  "Percentile" = triggers$Percentile[tRow],
+                                                                                                  "Type" = triggers$Type[tRow],
+                                                                                                  "Percent Sold" = percentSold,
+                                                                                                  "Total Sold" = totalSold,
+                                                                                                  "Price" = marketingYear$`Price`[row]))
+                            priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
+                          } 
+                          
+                          else if (marketingYear$Percentile[row] == 80 && marketingYear$Percentile[row - 1] == 90) {
+                            percentSold = (100 - totalSold) / 3
+                            if (percentSold < 10) {
+                              percentSold = (100 - totalSold)
+                            }
+                            totalSold = totalSold + percentSold
+                            priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow],
+                                                                                                  "Percentile" = triggers$Percentile[tRow],
+                                                                                                  "Type" = triggers$Type[tRow],
+                                                                                                  "Percent Sold" = percentSold,
+                                                                                                  "Total Sold" = totalSold,
+                                                                                                  "Price" = marketingYear$`Price`[row]))
+                            priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
+                          } 
+                          
+                          else if (marketingYear$Percentile[row] == 70 && marketingYear$Percentile[row - 1] == 80) {
+                            percentSold = (100 - totalSold) / 2
+                            if (percentSold < 10) {
+                              percentSold = (100 - totalSold)
+                            }
+                            totalSold = totalSold + percentSold
+                            priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
+                                                                                                  "Percentile" = triggers$Percentile[tRow],
+                                                                                                  "Type" = triggers$Type[tRow],
+                                                                                                  "Percent Sold" = percentSold,
+                                                                                                  "Total Sold" = totalSold,
+                                                                                                  "Price" = marketingYear$`Price`[row]))
+                            priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                           }
-                          totalSold = totalSold + percentSold
-                          priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow],
-                                                                                                "Percentile" = triggers$Percentile[tRow],
-                                                                                                "Type" = triggers$Type[tRow],
-                                                                                                "Percent Sold" = percentSold,
-                                                                                                "Total Sold" = totalSold,
-                                                                                                "Price" = marketingYear$`Price`[row]))
-                          priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
-                        } 
-                        
-                        else if (marketingYear$Percentile[row] == 70 && marketingYear$Percentile[row - 1] == 80){
-                          percentSold = (100 - totalSold) / 2
-                          if(percentSold < 10){
-                            percentSold = (100 - totalSold)
+                          
+                          else if (marketingYear$Percentile[row] == 60 && marketingYear$Percentile[row - 1] == 70) {
+                            percentSold = (100 - totalSold) / 1
+                            totalSold = totalSold + percentSold
+                            priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow],
+                                                                                                  "Percentile" = triggers$Percentile[tRow],
+                                                                                                  "Type" = triggers$Type[tRow],
+                                                                                                  "Percent Sold" = percentSold,
+                                                                                                  "Total Sold" = totalSold,
+                                                                                                  "Price" = marketingYear$`Price`[row]))
+                            priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                           }
-                          totalSold = totalSold + percentSold
-                          priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow], 
-                                                                                                "Percentile" = triggers$Percentile[tRow],
-                                                                                                "Type" = triggers$Type[tRow],
-                                                                                                "Percent Sold" = percentSold,
-                                                                                                "Total Sold" = totalSold,
-                                                                                                "Price" = marketingYear$`Price`[row]))
-                          priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
-                        }
-                        
-                        else if (marketingYear$Percentile[row] == 60 && marketingYear$Percentile[row - 1] == 70){
-                          percentSold = (100 - totalSold) / 1
-                          totalSold = totalSold + percentSold
-                          priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow],
-                                                                                                "Percentile" = triggers$Percentile[tRow],
-                                                                                                "Type" = triggers$Type[tRow],
-                                                                                                "Percent Sold" = percentSold,
-                                                                                                "Total Sold" = totalSold,
-                                                                                                "Price" = marketingYear$`Price`[row]))
-                          priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                         }
                       }
                     }
                   }
-                }
-              } 
-              
-                else if (month(marketingYear$Date[row]) >= 6){
-                  if (triggers$Type[tRow] == "End of Year Trailing Stop"){
-                    if (triggers$Percentile[tRow] >= 60){
-                      if (marketingYear$Percentile[row] == 90 && marketingYear$Percentile[row - 1] == 95){
+                } 
+                
+                else if (month(marketingYear$Date[row]) >= 6) {
+                  if (triggers$Type[tRow] == "End of Year Trailing Stop") {
+                    if (triggers$Percentile[tRow] >= 60) {
+                      if (marketingYear$Percentile[row] == 90 && marketingYear$Percentile[row - 1] == 95) {
                         percentSold = (100 - totalSold) / 4
-                        if(percentSold < 10){
+                        if (percentSold < 10) {
                           percentSold = (100 - totalSold)
                         }
                         totalSold = totalSold + percentSold
@@ -502,9 +500,9 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                         priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                       } 
                       
-                      else if (marketingYear$Percentile[row] == 80 && marketingYear$Percentile[row - 1] == 90){
+                      else if (marketingYear$Percentile[row] == 80 && marketingYear$Percentile[row - 1] == 90) {
                         percentSold = (100 - totalSold) / 3
-                        if(percentSold < 10){
+                        if (percentSold < 10) {
                           percentSold = (100 - totalSold)
                         }
                         totalSold = totalSold + percentSold
@@ -517,9 +515,9 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                         priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                       } 
                       
-                      else if (marketingYear$Percentile[row] == 70 && marketingYear$Percentile[row - 1] == 80){
+                      else if (marketingYear$Percentile[row] == 70 && marketingYear$Percentile[row - 1] == 80) {
                         percentSold = (100 - totalSold) / 2
-                        if(percentSold < 10){
+                        if (percentSold < 10) {
                           percentSold = (100 - totalSold)
                         }
                         totalSold = totalSold + percentSold
@@ -532,7 +530,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                         priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                       }
                       
-                      else if (marketingYear$Percentile[row] == 60 && marketingYear$Percentile[row - 1] == 70){
+                      else if (marketingYear$Percentile[row] == 60 && marketingYear$Percentile[row - 1] == 70) {
                         percentSold = (100 - totalSold) / 1
                         totalSold = totalSold + percentSold
                         priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = triggers$Date[tRow],
@@ -550,7 +548,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
               
               #if trigger is the first one we can just make the sale
               else {
-                if(variablePercentSold(triggers$Type[tRow], postHarvestPercent) < (100 - totalSold)){
+                if (variablePercentSold(triggers$Type[tRow], postHarvestPercent) < (100 - totalSold)) {
                   currentPercentSold = variablePercentSold(triggers$Type[tRow], postHarvestPercent)
                 } else {
                   currentPercentSold = 100 - totalSold
@@ -570,17 +568,17 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
       } 
       
       # SEASONAL SALES
-      else if(totalSold >= 0 && !(marketingYear$Date[row] %in% priceObjectiveActualized$Date)) {
+      else if (totalSold >= 0 && !(marketingYear$Date[row] %in% priceObjectiveActualized$Date)) {
         # if price < 70 percentile
-        if(marketingYear$Percentile[row] < 70) {
+        if (marketingYear$Percentile[row] < 70) {
           # if day not within 7 days of last sale
-          if(difftime(marketingYear$Date[row], priceObjectiveActualized$Date[nrow(priceObjectiveActualized)]) >= 7 || nrow(priceObjectiveActualized) == 0) {
-            if (type == "corn"){
+          if (difftime(marketingYear$Date[row], priceObjectiveActualized$Date[nrow(priceObjectiveActualized)]) >= 7 || nrow(priceObjectiveActualized) == 0) {
+            if (type == "corn") {
               # if month is march seasonal sale month
-              if(month(marketingYear$Date[row]) == 3 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
+              if (month(marketingYear$Date[row]) == 3 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
                 # if the day is within a seasonal sale date
                 day = day(marketingYear$Date[row])
-                if(day == 10 || day == 11 || day == 12 || day == 13){ 
+                if (day == 10 || day == 11 || day == 12 || day == 13) { 
                   if (totalSold <= 60) {
                     # seasonal sales must be at least 10%
                     percentSold = ((100 - totalSold) / 4)
@@ -595,7 +593,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                   }
                 } 
                 
-                else if(day == 20 || day == 21 || day == 22 || day == 23) {
+                else if (day == 20 || day == 21 || day == 22 || day == 23) {
                   if (totalSold <= 70) {
                     # seasonal sales must be at least 10%
                     percentSold = ((100 - totalSold) / 3)
@@ -611,10 +609,10 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                 }
               }
               
-              else if(month(marketingYear$Date[row]) == 6 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
+              else if (month(marketingYear$Date[row]) == 6 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
                 # if the day is within a seasonal sale date
                 day = day(marketingYear$Date[row])
-                if(day == 10 || day == 11 || day == 12 || day == 13) {
+                if (day == 10 || day == 11 || day == 12 || day == 13) {
                   if (totalSold <= 80) {
                     #seasonal sales must be at least 10%
                     percentSold = ((100 - totalSold) / 2)
@@ -629,8 +627,8 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                   }
                 }
                 
-                else if(day == 20 || day == 21 || day == 22 || day == 23) {
-                  if(totalSold <= 90) {
+                else if (day == 20 || day == 21 || day == 22 || day == 23) {
+                  if (totalSold <= 90) {
                     #seasonal sales must be at least 10%
                     percentSold = ((100 - totalSold) / 1)
                     totalSold = totalSold + percentSold
@@ -646,12 +644,12 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
               }
             }
             
-            if (type == "soybean"){
+            if (type == "soybean") {
               # if month is march seasonal sale month
-              if(month(marketingYear$Date[row]) == 5 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
+              if (month(marketingYear$Date[row]) == 5 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
                 # if the day is within a seasonal sale date
                 day = day(marketingYear$Date[row])
-                if(day == 10 || day == 11 || day == 12 || day == 13){ 
+                if (day == 10 || day == 11 || day == 12 || day == 13) { 
                   if (totalSold <= 60) {
                     # seasonal sales must be at least 10%
                     percentSold = ((100 - totalSold) / 4)
@@ -666,7 +664,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                   }
                 }
                 
-                else if(day == 20 || day == 21 || day == 22 || day == 23) {
+                else if (day == 20 || day == 21 || day == 22 || day == 23) {
                   if (totalSold <= 70) {
                     # seasonal sales must be at least 10%
                     percentSold = ((100 - totalSold) / 3)
@@ -682,10 +680,10 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                 }
               }
               
-              else if(month(marketingYear$Date[row]) == 7 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
+              else if (month(marketingYear$Date[row]) == 7 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
                 # if the day is within a seasonal sale date
                 day = day(marketingYear$Date[row])
-                if(day == 10 || day == 11 || day == 12 || day == 13) {
+                if (day == 10 || day == 11 || day == 12 || day == 13) {
                   if (totalSold <= 80) {
                     #seasonal sales must be at least 10%
                     percentSold = ((100 - totalSold) / 2)
@@ -700,8 +698,8 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                   }
                 }
                 
-                else if(day == 20 || day == 21 || day == 22 || day == 23) {
-                  if(totalSold <= 90) {
+                else if (day == 20 || day == 21 || day == 22 || day == 23) {
+                  if (totalSold <= 90) {
                     #seasonal sales must be at least 10%
                     percentSold = ((100 - totalSold) / 1)
                     totalSold = totalSold + percentSold
@@ -722,20 +720,18 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
     }
   }
   
-  if(MY == TRUE) {
+  if (MY == TRUE) {
     cropYear[['PO Actualized MY']] = priceObjectiveActualized
-    if(!is.null(cropYear1)){
+    if (!is.null(cropYear1)) {
       cropYear1[['PO Actualized MY']] = priceObjectiveActualized1year
       cropYear2[['PO Actualized MY']] = priceObjectiveActualized2year
       actualizedList = list(cropYear, cropYear1, cropYear2)
-    }
-    
-    else{
+    } else {
       actualizedList = cropYear
     }
   }
   
-  if(MY == FALSE) {
+  if (MY == FALSE) {
     cropYear[['PO Actualized']] = priceObjectiveActualized
     actualizedList = cropYear
   }
@@ -743,36 +739,36 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
   return(actualizedList)
 }
 
-if(type == "corn"){
+if (type == "corn") {
   # Price Objective loading
-  for(i in 1:length(Corn_CropYearObjects)){
-    if(nrow(Corn_CropYearObjects[[i]][["PO Triggers"]]) >= 0){
+  for (i in 1:length(Corn_CropYearObjects)) {
+    if (nrow(Corn_CropYearObjects[[i]][["PO Triggers"]]) >= 0) {
       Corn_CropYearObjects[[i]] = isActualizedPO(Corn_CropYearObjects[[i]], NULL, NULL, Corn_FuturesMarket, MY = FALSE)
-    } else{
+    } else {
       Corn_CropYearObjects[[i]][["PO Actualized"]] = data.frame(matrix(ncol = 5, nrow = 0))
       colnames(Soybean_CropYearObjects[[i]][["PO Actualized"]]) = c("Date", "Percentile", "Type", "PercentSold", "TotalSold")
     } 
   }
   
-  if("Marketing Year MY" %in% names(Corn_CropYearObjects[[1]])){
+  if ("Marketing Year MY" %in% names(Corn_CropYearObjects[[1]])) {
     # Multi-year loading
-    for(i in 1:(length(Corn_CropYearObjects) - 2)) {
-      if(nrow(Corn_CropYearObjects[[i]][["PO Triggers"]]) >= 0){
+    for (i in 1:(length(Corn_CropYearObjects) - 2)) {
+      if (nrow(Corn_CropYearObjects[[i]][["PO Triggers"]]) >= 0) {
         temp = list()
         temp[[1]] = isActualizedPO(Corn_CropYearObjects[[i]], Corn_CropYearObjects[[i + 1]], Corn_CropYearObjects[[i + 2]], Corn_FuturesMarket, MY = TRUE)
         Corn_CropYearObjects[[i]] = temp[[1]][[1]]
         Corn_CropYearObjects[[i + 1]] = temp[[1]][[2]]
         Corn_CropYearObjects[[i + 2]] = temp[[1]][[3]]
-      } else{
+      } else {
         Corn_CropYearObjects[[i]][["PO Actualized"]] = data.frame(matrix(ncol = 5, nrow = 0))
         colnames(Corn_CropYearObjects[[i]][["PO Actualized"]]) = c("Date", "Percentile", "Type", "PercentSold", "TotalSold")
       } 
     }
     
-    for(i in (length(Corn_CropYearObjects) - 1):length(Corn_CropYearObjects)){
-      if(nrow(Corn_CropYearObjects[[i]][["PO Triggers"]]) >= 0){
+    for (i in (length(Corn_CropYearObjects) - 1):length(Corn_CropYearObjects)) {
+      if (nrow(Corn_CropYearObjects[[i]][["PO Triggers"]]) >= 0) {
         Corn_CropYearObjects[[i]] = isActualizedPO(Corn_CropYearObjects[[i]], NULL, NULL, Corn_FuturesMarket, MY = TRUE)
-      } else{
+      } else {
         Corn_CropYearObjects[[i]][["PO Actualized"]] = data.frame(matrix(ncol = 5, nrow = 0))
         colnames(Corn_CropYearObjects[[i]][["PO Actualized"]]) = c("Date", "Percentile", "Type", "PercentSold", "TotalSold")
       }   
@@ -780,36 +776,36 @@ if(type == "corn"){
   }
 }
 
-if(type == "soybean"){
+if (type == "soybean") {
   # Price Objective loading
-  for(i in 1:length(Soybean_CropYearObjects)){
-    if(nrow(Soybean_CropYearObjects[[i]][["PO Triggers"]]) >= 0){
+  for (i in 1:length(Soybean_CropYearObjects)) {
+    if (nrow(Soybean_CropYearObjects[[i]][["PO Triggers"]]) >= 0) {
       Soybean_CropYearObjects[[i]] = isActualizedPO(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = FALSE)
-    } else{
+    } else {
       Soybean_CropYearObjects[[i]][["PO Actualized"]] = data.frame(matrix(ncol = 5, nrow = 0))
       colnames(Soybean_CropYearObjects[[i]][["PO Actualized"]]) = c("Date", "Percentile", "Type", "PercentSold", "TotalSold")
     } 
   }
   
-  if("Marketing Year MY" %in% names(Soybean_CropYearObjects[[1]])){
+  if ("Marketing Year MY" %in% names(Soybean_CropYearObjects[[1]])) {
     # Multi-year loading
-    for(i in 1:(length(Soybean_CropYearObjects) - 2)) {
-      if(nrow(Soybean_CropYearObjects[[i]][["PO Triggers"]]) >= 0){
+    for (i in 1:(length(Soybean_CropYearObjects) - 2)) {
+      if (nrow(Soybean_CropYearObjects[[i]][["PO Triggers"]]) >= 0) {
         temp = list()
         temp[[1]] = isActualizedPO(Soybean_CropYearObjects[[i]], Soybean_CropYearObjects[[i + 1]], Soybean_CropYearObjects[[i + 2]], Soybean_FuturesMarket, MY = TRUE)
         Soybean_CropYearObjects[[i]] = temp[[1]][[1]]
         Soybean_CropYearObjects[[i + 1]] = temp[[1]][[2]]
         Soybean_CropYearObjects[[i + 2]] = temp[[1]][[3]]
-      } else{
+      } else {
         Soybean_CropYearObjects[[i]][["PO Actualized"]] = data.frame(matrix(ncol = 5, nrow = 0))
         colnames(Soybean_CropYearObjects[[i]][["PO Actualized"]]) = c("Date", "Percentile", "Type", "PercentSold", "TotalSold")
       } 
     }
     
-    for(i in (length(Soybean_CropYearObjects) - 1):length(Soybean_CropYearObjects)){
-      if(nrow(Soybean_CropYearObjects[[i]][["PO Triggers"]]) >= 0){
+    for (i in (length(Soybean_CropYearObjects) - 1):length(Soybean_CropYearObjects)) {
+      if (nrow(Soybean_CropYearObjects[[i]][["PO Triggers"]]) >= 0) {
         Soybean_CropYearObjects[[i]] = isActualizedPO(Soybean_CropYearObjects[[i]], NULL, NULL, Soybean_FuturesMarket, MY = TRUE)
-      } else{
+      } else {
         Soybean_CropYearObjects[[i]][["PO Actualized"]] = data.frame(matrix(ncol = 5, nrow = 0))
         colnames(Soybean_CropYearObjects[[i]][["PO Actualized"]]) = c("Date", "Percentile", "Type", "PercentSold", "TotalSold")
       }  
