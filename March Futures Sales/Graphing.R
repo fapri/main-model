@@ -35,11 +35,11 @@ colorLabels = c("Price Objective",
 names(myColors) = colorLabels 
 
 plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actualizedSales, dynamicTitle) {
-  harvest = mdy(paste("09-01", toString(year(startDate)), sep="-"))
-  marchUpdate1 = mdy(paste("03-01", toString(year(startDate)), sep="-"))
-  marchUpdate2 = mdy(paste("03-01", toString(year(stopDate)), sep="-"))
-  xcenter = c((startDate + floor((marchUpdate1 - startDate)/2)), (marchUpdate1 + floor((harvest - marchUpdate1)/2)), 
-              (harvest + floor((marchUpdate2 - harvest)/2)), (marchUpdate2 + floor((stopDate - marchUpdate2)/2)))
+  harvest = mdy(paste("09-01", toString(year(startDate)), sep = "-"))
+  marchUpdate1 = mdy(paste("03-01", toString(year(startDate)), sep = "-"))
+  marchUpdate2 = mdy(paste("03-01", toString(year(stopDate)), sep = "-"))
+  xcenter = c((startDate + floor((marchUpdate1 - startDate) / 2)), (marchUpdate1 + floor((harvest - marchUpdate1) / 2)), 
+              (harvest + floor((marchUpdate2 - harvest) / 2)), (marchUpdate2 + floor((stopDate - marchUpdate2) / 2)))
   
   # initialize variables
   baseline = NA
@@ -50,7 +50,7 @@ plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actua
   ninetyFive = NA
   
   # read in basis adjusted baseline values
-  for(j in 1:4){
+  for (j in 1:4) {
     baseline[j] = unique(marketingYear$Baseline)[j]
     sixty[j] = unique(marketingYear$`60th`)[j]
     seventy[j] = unique(marketingYear$`70th`)[j]
@@ -59,37 +59,32 @@ plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actua
     ninetyFive[j] = unique(marketingYear$`95th`)[j]
   }
   
-  if(actualizedSales$Type[1] == "Multi-Year"){
+  if (actualizedSales$Type[1] == "Multi-Year") {
     marketingInterval = interval(startDate, stopDate)
     multiyearRows = 1:(which(ymd(actualizedSales$Date) %within% marketingInterval)[1] - 1)
-    for(i in 1:last(multiyearRows)){
-      if(!(ymd(actualizedSales$Date[i]) %within% marketingInterval)){
+    for (i in 1:last(multiyearRows)) {
+      if (!(ymd(actualizedSales$Date[i]) %within% marketingInterval)) {
         priceDiff = actualizedSales$Price[i] - actualizedSales$Price[multiyearRows]
-        for(j in 1:length(priceDiff)){
-          if(abs(priceDiff[j]) < .10 && abs(priceDiff[j]) != 0){
-            actualizedSales$Date[j] = mdy(paste("12-10", toString(year(startDate)), sep="-"))
-          }
-          else{
-            actualizedSales$Date[i] = mdy(paste("12-01", toString(year(startDate)), sep="-"))
+        for (j in 1:length(priceDiff)) {
+          if (abs(priceDiff[j]) < .10 && abs(priceDiff[j]) != 0) {
+            actualizedSales$Date[j] = mdy(paste("12-10", toString(year(startDate)), sep = "-"))
+          } else {
+            actualizedSales$Date[i] = mdy(paste("12-01", toString(year(startDate)), sep = "-"))
           }
         }
       }
     }
   }
   
-  if(length(which(grepl("March", actualizedSales$Type))) > 0){
-    
+  if (length(which(grepl("March", actualizedSales$Type))) > 0) {
     marchRows = which(grepl("March", actualizedSales$Type))
-    
-    for(i in marchRows){
+    for (i in marchRows) {
       priceDiff = actualizedSales$Price[i] - actualizedSales$Price[marchRows]
-      
-      for(j in 1:length(priceDiff)){
-        if(abs(priceDiff[j]) < .10 && abs(priceDiff[j]) != 0){
-          actualizedSales$Date[i] = mdy(paste("03-10", toString(year(stopDate)), sep="-"))
-        }
-        else{
-          actualizedSales$Date[i] = mdy(paste("03-01", toString(year(stopDate)), sep="-"))
+      for (j in 1:length(priceDiff)) {
+        if (abs(priceDiff[j]) < .10 && abs(priceDiff[j]) != 0) {
+          actualizedSales$Date[i] = mdy(paste("03-10", toString(year(stopDate)), sep = "-"))
+        } else {
+          actualizedSales$Date[i] = mdy(paste("03-01", toString(year(stopDate)), sep = "-"))
         }
       }
     }
@@ -133,14 +128,14 @@ plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actua
     geom_text(data = segment_data[3:4,], aes(x = xcenter, y = ninetyFive, fontface = "bold"), label = "95th", color = "#04dd04", size = 4) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = c(0.70, 0.75)) + 
     scale_fill_manual(name = "Sale", values = myColors) + 
-    theme(legend.position="bottom")
+    theme(legend.position = "bottom")
   
   return(plot)
 }
 
-if (type == "corn"){
-  for(i in 1:length(Corn_CropYearObjects)) {
-    if(nrow(Corn_CropYearObjects[[i]][['PO Actualized']]) > 0){
+if (type == "corn") {
+  for (i in 1:length(Corn_CropYearObjects)) {
+    if (nrow(Corn_CropYearObjects[[i]][['PO Actualized']]) > 0) {
       POTitle = "Price Objective w/o Multi-Year"
       Corn_CropYearObjects[[i]]$POPlot = plotMarketingYear(Corn_CropYearObjects[[i]]$`Crop Year`,
                                                            mdy(Corn_CropYearObjects[[i]]$`Start Date`),
@@ -158,7 +153,7 @@ if (type == "corn"){
                                                              Corn_CropYearObjects[[i]]$`PO Actualized MY`,
                                                              POMYTitle)
     }
-    if(nrow(Corn_CropYearObjects[[i]][['TS Actualized']]) > 0){
+    if (nrow(Corn_CropYearObjects[[i]][['TS Actualized']]) > 0) {
       TSTitle = "Trailing Stop w/o Multi-Year"
       Corn_CropYearObjects[[i]]$TSPlot = plotMarketingYear(Corn_CropYearObjects[[i]]$`Crop Year`,
                                                            mdy(Corn_CropYearObjects[[i]]$`Start Date`),
@@ -193,9 +188,9 @@ if (type == "corn"){
   }
 }
 
-if (type == "soybean"){
-  for(i in 1:length(Soybean_CropYearObjects)) {
-    if(nrow(Soybean_CropYearObjects[[i]][['PO Actualized']]) > 0){
+if (type == "soybean") {
+  for (i in 1:length(Soybean_CropYearObjects)) {
+    if (nrow(Soybean_CropYearObjects[[i]][['PO Actualized']]) > 0) {
       POTitle = "Price Objective w/o Multi-Year"
       Soybean_CropYearObjects[[i]]$POPlot = plotMarketingYear(Soybean_CropYearObjects[[i]]$`Crop Year`,
                                                               mdy(Soybean_CropYearObjects[[i]]$`Start Date`),
@@ -213,7 +208,7 @@ if (type == "soybean"){
                                                                 Soybean_CropYearObjects[[i]]$`PO Actualized MY`,
                                                                 POMYTitle)
     }
-    if(nrow(Soybean_CropYearObjects[[i]][['TS Actualized']]) > 0){
+    if (nrow(Soybean_CropYearObjects[[i]][['TS Actualized']]) > 0) {
       TSTitle = "Trailing Stop w/o Multi-Year"
       Soybean_CropYearObjects[[i]]$TSPlot = plotMarketingYear(Soybean_CropYearObjects[[i]]$`Crop Year`,
                                                               mdy(Soybean_CropYearObjects[[i]]$`Start Date`),
