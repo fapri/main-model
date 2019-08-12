@@ -1,7 +1,7 @@
 # Main 
 # Corn and Soybean
 
-if(type == "soybean"){
+if (type == "soybean") {
   Soybean_CropYears = read.csv("Data/Soybean_CropYears.csv", stringsAsFactors = FALSE)
   Soybean_FuturesMarket = read.csv("Data/Soybean_FuturesMarket.csv", stringsAsFactors = FALSE)
   Soybean_Basis = read.csv("Data/Soybean_Basis.csv", stringsAsFactors = FALSE)
@@ -13,7 +13,7 @@ if(type == "soybean"){
   lockBinding("Soybean_Baseline", globalenv())
 }
 
-if(type == "corn"){
+if (type == "corn") {
   Corn_CropYears = read.csv("Data/Corn_CropYears.csv", stringsAsFactors = FALSE)
   Corn_FuturesMarket = read.csv("Data/Corn_FuturesMarket.csv", stringsAsFactors = FALSE)
   Corn_Basis = read.csv("Data/Corn_Basis.csv", stringsAsFactors = FALSE)
@@ -35,7 +35,7 @@ createFeatures = function(date, OC, NC, rowMax) {
   ATH_OC = NA
   ATH_OC[1] = OC[1]
   for (row in 2:rowMax) {
-    if(OC[row] > ATH_OC[row - 1])
+    if (OC[row] > ATH_OC[row - 1])
       ATH_OC[row] = OC[row]
     else 
       ATH_OC[row] = ATH_OC[row - 1]
@@ -44,7 +44,7 @@ createFeatures = function(date, OC, NC, rowMax) {
   ATH_NC = NA
   ATH_NC[1] = OC[1]
   for (row in 2:rowMax) {
-    if(NC[row] > ATH_NC[row - 1])
+    if (NC[row] > ATH_NC[row - 1])
       ATH_NC[row] = NC[row]
     else 
       ATH_NC[row] = ATH_NC[row - 1]
@@ -54,13 +54,13 @@ createFeatures = function(date, OC, NC, rowMax) {
   
   # Ten Day High
   TDH_OC = NA
-  for(row in 1:(rowMax - 10)) {
-    tempCount = row+9
+  for (row in 1:(rowMax - 10)) {
+    tempCount = row + 9
     TDH_OC[tempCount + 1] = max(OC[row:tempCount])
   }
   
   TDH_NC = NA
-  for(row in 1:(rowMax - 10)) {
+  for (row in 1:(rowMax - 10)) {
     tempCount = row + 9
     TDH_NC[tempCount + 1] = max(NC[row:tempCount])
   }
@@ -70,7 +70,7 @@ createFeatures = function(date, OC, NC, rowMax) {
   # 95% of Ten Day High
   TDH_OC_95 = NA
   TDH_NC_95 = NA
-  for(row in 11:(rowMax)) {
+  for (row in 11:(rowMax)) {
     TDH_OC_95[row] = TDH_OC[row] * 0.95
     TDH_NC_95[row] = TDH_NC[row] * 0.95
   }
@@ -82,30 +82,17 @@ createFeatures = function(date, OC, NC, rowMax) {
   return(featuresObj)
 }
 
-
-
-
-
-
-# i = 1
-# cropYear = Soybean_CropYears[i,1]
-# startDate = Soybean_CropYears[i,2]
-# stopDate = Soybean_CropYears[i,3]
-
-
-
-
 # Creates a crop year based on the input parameters
 createCropYear = function(cropYear, startDate, stopDate, type) {
-  harvest = paste("09-01", toString(year(mdy(startDate))), sep="-")
-  marchUpdate1 = paste("03-01", toString(year(mdy(startDate))), sep="-")
-  marchUpdate2 = paste("03-01", toString(year(mdy(stopDate))), sep="-")
+  harvest = paste("09-01", toString(year(mdy(startDate))), sep = "-")
+  marchUpdate1 = paste("03-01", toString(year(mdy(startDate))), sep = "-")
+  marchUpdate2 = paste("03-01", toString(year(mdy(stopDate))), sep = "-")
   
   intervalPre = interval(mdy(startDate), mdy(harvest) - days(1))
   intervalPost = interval(mdy(harvest), mdy(stopDate))
   intervalPrePost = data.frame(intervalPre, intervalPost)
   
-  if(type == "soybean"){
+  if (type == "soybean") {
     futuresMarket = Soybean_FuturesMarket
     basisData = Soybean_Basis
     baseline = Soybean_Baseline
@@ -118,7 +105,7 @@ createCropYear = function(cropYear, startDate, stopDate, type) {
     MarNCCol = which(colnames(futuresMarket) == "MarNC")
   }
   
-  if(type == "corn"){
+  if (type == "corn") {
     futuresMarket = Corn_FuturesMarket
     basisData = Corn_Basis
     baseline = Corn_Baseline
@@ -151,8 +138,8 @@ createCropYear = function(cropYear, startDate, stopDate, type) {
   interval3 = interval(mdy(harvest), mdy(marchUpdate2) - days(1))
   interval4 = interval(mdy(marchUpdate2), mdy(stopDate))
   
-  for(row in 1:nrow(marketingYear)) {
-    if(mdy(marketingYear$Date[row]) %within% interval1) {
+  for (row in 1:nrow(marketingYear)) {
+    if (mdy(marketingYear$Date[row]) %within% interval1) {
       basis = marketingYear[row, "Basis"] = marketingYearMY[row, "Basis"] = basisData[which(basisData$CropYearStart == year(interval1$start)), 3]
       marketingYear[row, "Baseline"] = marketingYearMY[row, "NC Baseline"] = baseline[which(mdy(baseline$Date) %within% interval1), 8] - basis
       marketingYear[row, "60th"] = marketingYearMY[row, "NC60th"] = baseline[which(mdy(baseline$Date) %within% interval1), 9] - basis
@@ -161,7 +148,7 @@ createCropYear = function(cropYear, startDate, stopDate, type) {
       marketingYear[row, "90th"] = marketingYearMY[row, "NC90th"] = baseline[which(mdy(baseline$Date) %within% interval1), 12] - basis
       marketingYear[row, "95th"] = marketingYearMY[row, "NC95th"] = baseline[which(mdy(baseline$Date) %within% interval1), 13] - basis
     }
-    else if(mdy(marketingYear$Date[row]) %within% interval2) {
+    else if (mdy(marketingYear$Date[row]) %within% interval2) {
       basis = marketingYear[row, "Basis"] = marketingYearMY[row, "Basis"] = basisData[which(basisData$CropYearEnd == year(interval2$start)), 3]
       marketingYear[row, "Baseline"] = marketingYearMY[row, "NC Baseline"] = baseline[which(mdy(baseline$Date) %within% interval2), 8] - basis
       marketingYear[row, "60th"] = marketingYearMY[row, "NC60th"] = baseline[which(mdy(baseline$Date) %within% interval2), 9] - basis
@@ -170,7 +157,7 @@ createCropYear = function(cropYear, startDate, stopDate, type) {
       marketingYear[row, "90th"] = marketingYearMY[row, "NC90th"] = baseline[which(mdy(baseline$Date) %within% interval2), 12] - basis
       marketingYear[row, "95th"] = marketingYearMY[row, "NC95th"] = baseline[which(mdy(baseline$Date) %within% interval2), 13] - basis
     }
-    else if(mdy(marketingYear$Date[row]) %within% interval3) {
+    else if (mdy(marketingYear$Date[row]) %within% interval3) {
       basis = marketingYear[row, "Basis"] = marketingYearMY[row, "Basis"] = basisData[which(basisData$CropYearStart == year(interval3$start)), 3]
       marketingYear[row, "Baseline"] = baseline[which(mdy(baseline$Date) %within% interval3), 2] - basis
       marketingYear[row, "60th"] = baseline[which(mdy(baseline$Date) %within% interval3), 3] - basis
@@ -187,7 +174,7 @@ createCropYear = function(cropYear, startDate, stopDate, type) {
       marketingYearMY[row, "NC90th"] = baseline[which(mdy(baseline$Date) %within% interval3), 12] - basis
       marketingYearMY[row, "NC95th"] = baseline[which(mdy(baseline$Date) %within% interval3), 13] - basis
     }
-    else if(mdy(marketingYear$Date[row]) %within% interval4) {
+    else if (mdy(marketingYear$Date[row]) %within% interval4) {
       basis = marketingYear[row, "Basis"] = marketingYearMY[row, "Basis"] = basisData[which(basisData$CropYearEnd == year(interval4$start)), 3]
       marketingYear[row, "Baseline"] = baseline[which(mdy(baseline$Date) %within% interval4), 2] - basis
       marketingYear[row, "60th"] = baseline[which(mdy(baseline$Date) %within% interval4), 3] - basis
@@ -207,53 +194,53 @@ createCropYear = function(cropYear, startDate, stopDate, type) {
   }
   
   # Determines the percentile
-  for(row in 1:nrow(marketingYear)) {
-    if(marketingYear$Price[row] > marketingYear$`95th`[row])
+  for (row in 1:nrow(marketingYear)) {
+    if (marketingYear$Price[row] > marketingYear$`95th`[row])
       marketingYear[row, "Percentile"] = 95
-    else if(marketingYear$Price[row] >= marketingYear$`90th`[row])
+    else if (marketingYear$Price[row] >= marketingYear$`90th`[row])
       marketingYear[row, "Percentile"] = 90
-    else if(marketingYear$Price[row] >= marketingYear$`80th`[row])
+    else if (marketingYear$Price[row] >= marketingYear$`80th`[row])
       marketingYear[row, "Percentile"] = 80
-    else if(marketingYear$Price[row] >= marketingYear$`70th`[row])
+    else if (marketingYear$Price[row] >= marketingYear$`70th`[row])
       marketingYear[row, "Percentile"] = 70
-    else if(marketingYear$Price[row] >= marketingYear$`60th`[row])
+    else if (marketingYear$Price[row] >= marketingYear$`60th`[row])
       marketingYear[row, "Percentile"] = 60
-    else if(marketingYear$Price[row] >= marketingYear$Baseline[row])
+    else if (marketingYear$Price[row] >= marketingYear$Baseline[row])
       marketingYear[row, "Percentile"] = 50
     else
       marketingYear[row, "Percentile"] = 0
   }
   
   # Determines the percentile for March NC
-  for(row in 1:nrow(marketingYear)) {
-    if(marketingYear$MarNCPrice[row] > marketingYear$`95th`[row])
+  for (row in 1:nrow(marketingYear)) {
+    if (marketingYear$MarNCPrice[row] > marketingYear$`95th`[row])
       marketingYear[row, "MarPercentile"] = 95
-    else if(marketingYear$MarNCPrice[row] >= marketingYear$`90th`[row])
+    else if (marketingYear$MarNCPrice[row] >= marketingYear$`90th`[row])
       marketingYear[row, "MarPercentile"] = 90
-    else if(marketingYear$MarNCPrice[row] >= marketingYear$`80th`[row])
+    else if (marketingYear$MarNCPrice[row] >= marketingYear$`80th`[row])
       marketingYear[row, "MarPercentile"] = 80
-    else if(marketingYear$MarNCPrice[row] >= marketingYear$`70th`[row])
+    else if (marketingYear$MarNCPrice[row] >= marketingYear$`70th`[row])
       marketingYear[row, "MarPercentile"] = 70
-    else if(marketingYear$MarNCPrice[row] >= marketingYear$`60th`[row])
+    else if (marketingYear$MarNCPrice[row] >= marketingYear$`60th`[row])
       marketingYear[row, "MarPercentile"] = 60
-    else if(marketingYear$MarNCPrice[row] >= marketingYear$Baseline[row])
+    else if (marketingYear$MarNCPrice[row] >= marketingYear$Baseline[row])
       marketingYear[row, "MarPercentile"] = 50
     else
       marketingYear[row, "MarPercentile"] = 0
   }
   
-  for(row in 1:nrow(marketingYearMY)) {
-    if(marketingYearMY$`NC Price`[row] > marketingYearMY$`NC95th`[row])
+  for (row in 1:nrow(marketingYearMY)) {
+    if (marketingYearMY$`NC Price`[row] > marketingYearMY$`NC95th`[row])
       marketingYearMY[row, "Percentile"] = 95
-    else if(marketingYearMY$`NC Price`[row] >= marketingYearMY$`NC90th`[row])
+    else if (marketingYearMY$`NC Price`[row] >= marketingYearMY$`NC90th`[row])
       marketingYearMY[row, "Percentile"] = 90
-    else if(marketingYearMY$`NC Price`[row] >= marketingYearMY$`NC80th`[row])
+    else if (marketingYearMY$`NC Price`[row] >= marketingYearMY$`NC80th`[row])
       marketingYearMY[row, "Percentile"] = 80
-    else if(marketingYearMY$`NC Price`[row] >= marketingYearMY$`NC70th`[row])
+    else if (marketingYearMY$`NC Price`[row] >= marketingYearMY$`NC70th`[row])
       marketingYearMY[row, "Percentile"] = 70
-    else if(marketingYearMY$`NC Price`[row] >= marketingYearMY$`NC60th`[row])
+    else if (marketingYearMY$`NC Price`[row] >= marketingYearMY$`NC60th`[row])
       marketingYearMY[row, "Percentile"] = 60
-    else if(marketingYearMY$`NC Price`[row] >= marketingYearMY$`NC Baseline`[row])
+    else if (marketingYearMY$`NC Price`[row] >= marketingYearMY$`NC Baseline`[row])
       marketingYearMY[row, "Percentile"] = 50
     else
       marketingYearMY[row, "Percentile"] = 0
@@ -268,22 +255,22 @@ createCropYear = function(cropYear, startDate, stopDate, type) {
 if (type == "soybean") {
   # Create the crop year objects
   Soybean_CropYearObjects = list()
-  for(i in 1:nrow(Soybean_CropYears)) {
+  for (i in 1:nrow(Soybean_CropYears)) {
     Soybean_CropYearObjects[[i]] = createCropYear(Soybean_CropYears[i,1], Soybean_CropYears[i,2], Soybean_CropYears[i,3], type)
   }
   
   # Create the features object
   Soybean_FeaturesObject = createFeatures(Soybean_FuturesMarket$Date, Soybean_FuturesMarket$NearbyOC, 
                                           Soybean_FuturesMarket$NovNC, nrow(Soybean_FuturesMarket))
-} else if (type == "corn"){
+} else if (type == "corn") {
   # Create the crop year objects
   Corn_CropYearObjects = list()
-  for(i in 1:nrow(Corn_CropYears)) {
+  for (i in 1:nrow(Corn_CropYears)) {
     Corn_CropYearObjects[[i]] = createCropYear(Corn_CropYears[i,1], Corn_CropYears[i,2], Corn_CropYears[i,3], type)
   }
   
   # Create the features object
   Corn_FeaturesObject = createFeatures(Corn_FuturesMarket$Date, Corn_FuturesMarket$NearbyOC, Corn_FuturesMarket$DecNC, nrow(Corn_FuturesMarket))
-} else if (type != "soybean" && type != "corn"){
+} else if (type != "soybean" && type != "corn") {
   stop("Quitting program now")
 }

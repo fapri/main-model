@@ -30,6 +30,12 @@ appObjectsCornV5
 * 20% PO and TS sales
 * July 20th dump date
 
+appObjectsCornV6
+* Functions off of base model
+* 50% of crop must be sold by the first day of the post-harvest
+* 10% PO and TS sales
+* No minimum on days
+
 ------------------------------------
 ### Models Using Trailing Stop Version 2 (our 1% drop model)
 
@@ -57,6 +63,12 @@ appObjectsCornV3V5
 * Adjustments made to Trailing Stop and Price Objective
 * 20% PO and TS sales
 * July 20th dump date
+
+appObjectsCornV3V6
+* Functions off of base model
+* 50% of crop must be sold by the first day of the post-harvest
+* 10% PO and TS sales
+* No minimum on days
 
 ------------------------------------
 ### Extra Models
@@ -99,6 +111,12 @@ appObjectsSoybeanV5
 * 20% PO and TS sales
 * July 20th dump date
 
+appObjectsSoybeanV6
+* Functions off of base model
+* 50% of crop must be sold by the first day of the post-harvest
+* 10% PO and TS sales
+* No minimum on days
+
 ------------------------------------
 ### Models Using Trailing Stop Version 2 (our 1% drop model)
 
@@ -126,6 +144,12 @@ appObjectsSoybeanV3V5
 * Adjustments made to Trailing Stop and Price Objective
 * 20% PO and TS sales
 * July 20th dump date
+
+appObjectsSoybeanV3V6
+* Functions off of base model
+* 50% of crop must be sold by the first day of the post-harvest
+* 10% PO and TS sales
+* No minimum on days
 
 ------------------------------------
 ### Extra Models

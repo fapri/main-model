@@ -98,7 +98,7 @@ plotMarketingYear = function(cropYear, startDate, stopDate, marketingYear, actua
 if (type == "corn"){
   for(i in 1:length(Corn_CropYearObjects)) {
     
-    if(nrow(Corn_CropYearObjects[[i]][['PO Actualization']]) > 0){
+    if(nrow(Corn_CropYearObjects[[i]][['PO Actualized']]) > 0){
       POTitle = "Price Objective w/o Multi-Year"
       Corn_CropYearObjects[[i]]$POPlot = plotMarketingYear(Corn_CropYearObjects[[i]]$`Crop Year`,
                                                            mdy(Corn_CropYearObjects[[i]]$`Start Date`),
@@ -119,7 +119,7 @@ if (type == "corn"){
       
     }
     
-    if(nrow(Corn_CropYearObjects[[i]][['TS Actualization']]) > 0){
+    if(nrow(Corn_CropYearObjects[[i]][['TS Actualized']]) > 0){
       TSTitle = "Trailing Stop w/o Multi-Year"
       Corn_CropYearObjects[[i]]$TSPlot = plotMarketingYear(Corn_CropYearObjects[[i]]$`Crop Year`,
                                                            mdy(Corn_CropYearObjects[[i]]$`Start Date`),
@@ -158,7 +158,7 @@ if (type == "corn"){
 if (type == "soybean"){
   for(i in 1:length(Soybean_CropYearObjects)) {
     
-    if(nrow(Soybean_CropYearObjects[[i]][['PO Actualization']]) > 0){
+    if(nrow(Soybean_CropYearObjects[[i]][['PO Actualized']]) > 0){
       POTitle = "Price Objective w/o Multi-Year"
       Soybean_CropYearObjects[[i]]$POPlot = plotMarketingYear(Soybean_CropYearObjects[[i]]$`Crop Year`,
                                                               mdy(Soybean_CropYearObjects[[i]]$`Start Date`),
@@ -179,7 +179,7 @@ if (type == "soybean"){
       
     }
     
-    if(nrow(Soybean_CropYearObjects[[i]][['TS Actualization']]) > 0){
+    if(nrow(Soybean_CropYearObjects[[i]][['TS Actualized']]) > 0){
       TSTitle = "Trailing Stop w/o Multi-Year"
       Soybean_CropYearObjects[[i]]$TSPlot = plotMarketingYear(Soybean_CropYearObjects[[i]]$`Crop Year`,
                                                               mdy(Soybean_CropYearObjects[[i]]$`Start Date`),
