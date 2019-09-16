@@ -43,9 +43,7 @@ isAllTimeHigh = function(date, price, percentile, preInterval, postInterval, TDH
     if (date %within% preInterval){
       # Checks if the price is in 95 percentile.
       # Checks if the price is > 95%TDH for NC
-      if (is.na(TDH[which(TDH$Date == date),]$NC)) {
-        return(F)
-      } else if ((price >= ATH[which(ATH$Date == date),]$NC) && (price < TDH[which(TDH$Date == date),]$NC)) {
+      if (percentile == 95 && (price >= ATH[which(ATH$Date == date),]$NC)) {
         return(T)
       } else 
         return(F)
@@ -55,16 +53,14 @@ isAllTimeHigh = function(date, price, percentile, preInterval, postInterval, TDH
     else if (date %within% postInterval) {
       # Checks if the price is in 95 percentile.
       # Checks if the price is > 95%TDH for OC
-      if ((price >= ATH[which(ATH$Date == date),]$OC) && (price < TDH[which(TDH$Date == date),]$OC)) {
+      if (percentile == 95 && (price >= ATH[which(ATH$Date == date),]$OC)) {
         return(T)
       } else 
         return(F)
     }
   }
   else{
-    if (is.na(TDH[which(TDH$Date == date),]$NC)) {
-      return(F)
-    } else if ((price >= ATH[which(ATH$Date == date),]$NC) && (price < TDH[which(TDH$Date == date),]$NC)) {
+    if (percentile == 95 && (price >= ATH[which(ATH$Date == date),]$NC)) {
       return(T)
     } else 
       return(F)
