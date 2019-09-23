@@ -27,8 +27,19 @@ trailingStopTrigger = function(cropYear, featuresObject) {
   EYTSInterval = interval(head(mdy(marketingYear$Date[june[juneOC]]), 1), mdy(marketingYear$Date[nrow(marketingYear)]))
   
   for(row in 2:nrow(marketingYear)) {
+    
+    if (isAllTimeHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row],
+                           cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
+                           featuresObject$`95% of Ten Day High`, featuresObject$`All Time High`, MY = FALSE)) {
+      trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
+                                                                    "Previous Percentile" = marketingYear$Percentile[row - 1],
+                                                                    "Percentile" = marketingYear$Percentile[row],
+                                                                    "Type" = "All Time High"))
+    }
+    
+    
     # Special case for Feb -> March
-    if (month(mdy(marketingYear$Date[row])) == 3 && month(mdy(marketingYear$Date[row - 1])) == 2){
+    else if (month(mdy(marketingYear$Date[row])) == 3 && month(mdy(marketingYear$Date[row - 1])) == 2){
       if(marketingYear$Percentile[row - 1] != 95 && marketingYear$Percentile[row - 1] >= 70) {
         
         if(marketingYear$Percentile[row - 1] == 70) previousPercentileBelow = "70th"
@@ -81,15 +92,6 @@ trailingStopTrigger = function(cropYear, featuresObject) {
                                                                     "Previous Percentile" = marketingYear$Percentile[row - 1],
                                                                     "Percentile" = marketingYear$Percentile[row],
                                                                     "Type" = "Ten Day High"))
-    }
-    
-    else if (isAllTimeHigh(mdy(marketingYear$Date[row]), marketingYear$Price[row], marketingYear$Percentile[row],
-                           cropYear$`Pre/Post Interval`$intervalPre, cropYear$`Pre/Post Interval`$intervalPost, 
-                           featuresObject$`95% of Ten Day High`, featuresObject$`All Time High`, MY = FALSE)) {
-      trailingStopTriggers = rbind(trailingStopTriggers, data.frame("Date" = marketingYear$Date[row], 
-                                                                    "Previous Percentile" = marketingYear$Percentile[row - 1],
-                                                                    "Percentile" = marketingYear$Percentile[row],
-                                                                    "Type" = "All Time High"))
     }
   }
   
