@@ -6,6 +6,15 @@ output:
 
 ```{r echo = F}
 
+#####################################################################################
+# HOW TO RUN THIS:
+
+# Run entire script (Ctrl + R)
+# Enter appropriate crop type into console when prompted
+# Once everything has been completed, click "Preview" at the top.
+# Once you click to preview, the file will be saved as a notebook in the file folder.
+# Be sure to rename the file with corn or soybeans based on the crop that was run.
+#####################################################################################
 
 
 library(DT)
@@ -14,21 +23,10 @@ library(formattable)
 library(lubridate)
 
 
-load(url("https://github.com/fapri/main-model/blob/soybean/triggers/Application/cornV1.RData?raw=true"))
-load(url("https://github.com/fapri/main-model/blob/soybean/triggers/Application/cornV3.RData?raw=true"))
-load(url("https://github.com/fapri/main-model/blob/soybean/triggers/Application/soybeanV1.RData?raw=true"))
-load(url("https://github.com/fapri/main-model/blob/soybean/triggers/Application/soybeanV3.RData?raw=true"))
-
-type = "Corn"
-
-
-```
-
-
-
-
-
-```{r}
+load(url("https://github.com/fapri/main-model/blob/feature/AddCropYears/Application/cornV1.RData?raw=true"))
+load(url("https://github.com/fapri/main-model/blob/feature/AddCropYears/Application/cornV3.RData?raw=true"))
+load(url("https://github.com/fapri/main-model/blob/feature/AddCropYears/Application/soybeanV1.RData?raw=true"))
+load(url("https://github.com/fapri/main-model/blob/feature/AddCropYears/Application/soybeanV3.RData?raw=true"))
 
 # Gets a results table for all crop years in a single strategy
 yearlyResultsByStrategy = function(finalizedPriceList, strategyName){
@@ -61,436 +59,178 @@ yearlyResultsByStrategy = function(finalizedPriceList, strategyName){
 
 
 # Formats a results table for all crop years in a single strategy
-getYearlyResultsTable = function(data) {
+getYearlyResultsTable = function(data, cropType, strategy) {
   data[,2:6] = lapply(data[2:6], function(x) as.numeric(as.character(x)))
   rownames(data) <- c()
   data = cbind("Crop Year" = data[,1], round(data[, 2:6], digits = 2))
-  table = formattable(data, 
-                      align = "c",
-                      list(~ formatter("span",
-                                       style = x ~ style(display = "block",
-                                                         "border-radius" = "0px",
-                                                         "padding" = "0px",
-                                                         "text-align" = "center")),
-                           `Strategy` = formatter("span", style = x ~ style(font.weight = "bold")),
-                           `Version` = formatter("span", style = x ~ style(font.weight = "bold"))))
+  if(cropType == "corn"){
+    cropCaption = tags$caption(paste(strategy, "USDA Average: $4.66", sep = " "), style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;")
+  }
+  if(cropType == "soybean"){
+    cropCaption = tags$caption(paste(strategy, "USDA Average: $11.26", sep = " "), style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;")
+  }
+  table = as.datatable(formattable(data, 
+                                   align = "c",
+                                   list(~ formatter("span",
+                                                    style = x ~ style(display = "block",
+                                                                      "border-radius" = "0px",
+                                                                      "padding" = "0px",
+                                                                      "text-align" = "center")),
+                                        `Strategy` = formatter("span", style = x ~ style(font.weight = "bold")),
+                                        `Version` = formatter("span", style = x ~ style(font.weight = "bold")))),
+                       rownames = FALSE, 
+                       caption = cropCaption, 
+                       options = list(dom = 't', pageLength = 30))
   return(table)
 }
 
 
-tables = list()
-if (type == "Corn"){
+```
+
+
+
+
+```{r echo = FALSE}
+
+getCropType = function() {
+  type = readline(prompt = "Enter crop type (soybean or corn. 'quit' to quit): ")
+  type = tolower(type)
   
+  if(type == "quit"){
+    cat("\nEnding session now")
+    exit()
+  }
+  while(type != "soybean" && type != "corn") {
+    type = readline(prompt = "Enter crop type (soybean or corn. 'quit' to quit): ")
+    type = tolower(type)
+    if(type == "quit"){
+      cat("\nEnding session now")
+      exit()
+    }
+  }
+  
+  return(type)
+}
+
+type = getCropType()
+
+```
+
+
+
+```{r}
+
+
+type
+
+
+if (type == "corn"){
+  
+  tables = list()
   #WITHOUT MY
   
-  tables[[1]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "POfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("PO Base  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[2]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "POfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("PO V2  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[3]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "POfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("PO V3  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[4]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "POfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("PO V4  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[5]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "POfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("PO V5  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[6]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "POfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("PO March  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[7]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "POfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("PO March Baselines  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  tables[[8]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "TSfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("TS Base  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[9]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "TSfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("TS V2  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[10]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "TSfinalizedPrices")), rownames = FALSE, 
-                              caption = tags$caption("TS V3  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[11]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "TSfinalizedPrices")), rownames = FALSE, 
-                              caption = tags$caption("TS V4  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[12]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "TSfinalizedPrices")), rownames = FALSE, 
-                              caption = tags$caption("TS V5  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  tables[[13]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3Base, "TSfinalizedPrices")), rownames = FALSE, 
-                              caption = tags$caption("TS V3Base  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[14]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V2, "TSfinalizedPrices")), rownames = FALSE, 
-                              caption = tags$caption("TS V3V2  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[15]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V3, "TSfinalizedPrices")), rownames = FALSE, 
-                              caption = tags$caption("TS V3V3  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[16]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V4, "TSfinalizedPrices")), rownames = FALSE, 
-                              caption = tags$caption("TS V3V4  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[17]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V5, "TSfinalizedPrices")), rownames = FALSE, 
-                              caption = tags$caption("TS V3V5  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  tables[[18]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "TSfinalizedPrices")), rownames = FALSE, 
-                              caption = tags$caption("TS March  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[19]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "TSfinalizedPrices")), rownames = FALSE, 
-                              caption = tags$caption("TS March Baselines USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  
-  
-  tables[[20]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "SSfinalizedPrices")), rownames = FALSE, 
-                              caption = tags$caption("SS Base  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[21]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "SSfinalizedPrices")), rownames = FALSE, 
-                              caption = tags$caption("SS March Baselines  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  
-  # WITH MY
-  
-  
-  
-  
-  tables[[22]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "POfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("PO Base MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[23]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "POfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("PO V2 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[24]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "POfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("PO V3 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[25]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "POfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("PO V4 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[26]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "POfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("PO V5 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[27]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "POfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("PO March MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[28]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "POfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("PO March Baselines MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  tables[[29]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "TSfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("TS Base MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[30]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "TSfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("TS V2 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[31]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "TSfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("TS V3 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[32]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "TSfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("TS V4 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[33]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "TSfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("TS V5 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  tables[[34]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3Base, "TSfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("TS V3Base MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[35]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V2, "TSfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("TS V3V2 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[36]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V3, "TSfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("TS V3V3 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[37]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V4, "TSfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("TS V3V4 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[38]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V5, "TSfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("TS V3V5 MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  tables[[39]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "TSfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("TS March MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[40]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "TSfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("TS March Baselines MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  
-  
-  tables[[41]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "SSfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("SS Base MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[42]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "SSfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("SS March MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  tables[[43]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "SSfinalizedPricesMY")), rownames = FALSE, 
-                              caption = tags$caption("SS March Baselines MY  USDA Average: $4.76", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                              options = list(dom = 't', pageLength = 30))
-  
-  
-  
-} else if (type == "Soybeans"){
-  
+  tables[[1]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "POfinalizedPrices"), "corn", "Price Objective Base")            
+  tables[[2]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "POfinalizedPrices"), "corn", "Price Objective V2")            
+  tables[[3]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "POfinalizedPrices"), "corn", "Price Objective V3")            
+  tables[[4]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "POfinalizedPrices"), "corn", "Price Objective V4")            
+  tables[[5]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "POfinalizedPrices"), "corn", "Price Objective V5")            
+  tables[[6]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "POfinalizedPrices"), "corn", "Price Objective March")            
+  tables[[7]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "POfinalizedPrices"), "corn", "Price Objective March Baselines")           
+  tables[[8]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "TSfinalizedPrices"), "corn", "Trailing Stop Base")            
+  tables[[9]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "TSfinalizedPrices"), "corn", "Trailing Stop V2")            
+  tables[[10]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "TSfinalizedPrices"), "corn", "Trailing Stop V3")           
+  tables[[11]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "TSfinalizedPrices"), "corn", "Trailing Stop V4")           
+  tables[[12]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "TSfinalizedPrices"), "corn", "Trailing Stop V5")           
+  tables[[13]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3Base, "TSfinalizedPrices"), "corn", "Trailing Stop V3Base")           
+  tables[[14]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V2, "TSfinalizedPrices"), "corn", "Trailing Stop V3V2")           
+  tables[[15]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V3, "TSfinalizedPrices"), "corn", "Trailing Stop V3V3")           
+  tables[[16]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V4, "TSfinalizedPrices"), "corn", "Trailing Stop V3V4")           
+  tables[[17]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V5, "TSfinalizedPrices"), "corn", "Trailing Stop V3V5")           
+  tables[[18]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "TSfinalizedPrices"), "corn", "Trailing Stop March")           
+  tables[[19]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "TSfinalizedPrices"), "corn", "Trailing Stop March Baselines")            
+  tables[[20]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "SSfinalizedPrices"), "corn", "Seasonal Sales Base") 
+  tables[[21]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "SSfinalizedPrices"), "corn", "Seasonal Sales March")
+  tables[[22]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "SSfinalizedPrices"), "corn", "Seasonal Sales March Baselines") 
+  
+  #WITH MY
+  
+  tables[[23]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "POfinalizedPricesMY") , "corn", "Price Objective Base MY")
+  tables[[24]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "POfinalizedPricesMY"), "corn", "Price Objective V2 MY")
+  tables[[25]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "POfinalizedPricesMY"), "corn", "Price Objective V3 MY")
+  tables[[26]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "POfinalizedPricesMY"), "corn", "Price Objective V4 MY")
+  tables[[27]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "POfinalizedPricesMY"), "corn", "Price Objective V5 MY")
+  tables[[28]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "POfinalizedPricesMY"), "corn", "Price Objective March MY")
+  tables[[29]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "POfinalizedPricesMY"), "corn", "Price Objective March Baselines MY")
+  tables[[30]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "TSfinalizedPricesMY"), "corn", "Trailing Stop Base MY")
+  tables[[31]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "TSfinalizedPricesMY"), "corn", "Trailing Stop V2 MY")
+  tables[[32]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "TSfinalizedPricesMY"), "corn", "Trailing Stop V3 MY")
+  tables[[33]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "TSfinalizedPricesMY"), "corn", "Trailing Stop V4 MY")
+  tables[[34]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "TSfinalizedPricesMY"), "corn", "Trailing Stop V5 MY")
+  tables[[35]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3Base, "TSfinalizedPricesMY"), "corn",  "Trailing Stop V3Base MY")
+  tables[[36]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V2, "TSfinalizedPricesMY"), "corn", "Trailing Stop V3V2 MY")
+  tables[[37]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V3, "TSfinalizedPricesMY"), "corn", "Trailing Stop V3V3 MY")
+  tables[[38]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V4, "TSfinalizedPricesMY"), "corn", "Trailing Stop V3V4 MY")
+  tables[[39]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V5, "TSfinalizedPricesMY"), "corn", "Trailing Stop V3V5 MY")
+  tables[[40]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "TSfinalizedPricesMY"), "corn", "Trailing Stop March MY")
+  tables[[41]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "TSfinalizedPricesMY"), "corn", "Trailing Stop March Baselines MY")
+  tables[[42]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "SSfinalizedPricesMY"), "corn", "Seasonal Sales Base MY")
+  tables[[43]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "SSfinalizedPricesMY"), "corn", "Seasonal Sales March MY")
+  tables[[44]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "SSfinalizedPricesMY"), "corn", "Seasonal Sales March Baselines MY")
+  
+  
+  
+} else if (type == "soybean"){
+  
+  tables = list()
   #WITHOUT MY
   
-  tables[[1]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "POfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("PO Base  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[2]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "POfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("PO V2  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[3]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "POfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("PO V3  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[4]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "POfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("PO V4  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[5]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "POfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("PO V5  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[6]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "POfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("PO March  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[7]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "POfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("PO March Baselines  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  tables[[8]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "TSfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("TS Base  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[9]] = as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "TSfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("TS V2  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[10]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "TSfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("TS V3  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[11]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "TSfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("TS V4  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[12]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "TSfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("TS V5  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  tables[[13]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3Base, "TSfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("TS V3Base  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[14]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V2, "TSfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("TS V3V2  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[15]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V3, "TSfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("TS V3V3  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[16]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V4, "TSfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("TS V3V4  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[17]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V5, "TSfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("TS V3V5  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  tables[[18]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "TSfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("TS March  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[19]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "TSfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("TS March Baselines USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  
-  
-  tables[[20]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "SSfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("SS Base  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[21]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "SSfinalizedPrices")), rownames = FALSE, 
-                             caption = tags$caption("SS March Baselines  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  
-  # WITH MY
-  
-  
-  
-  
-  tables[[22]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "POfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("PO Base MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[23]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "POfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("PO V2 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[24]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "POfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("PO V3 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[25]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "POfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("PO V4 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[26]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "POfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("PO V5 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[27]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "POfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("PO March MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[28]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "POfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("PO March Baselines MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  tables[[29]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "TSfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("TS Base MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[30]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "TSfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("TS V2 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[31]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "TSfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("TS V3 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[32]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "TSfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("TS V4 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[33]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "TSfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("TS V5 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  tables[[34]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3Base, "TSfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("TS V3Base MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[35]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V2, "TSfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("TS V3V2 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[36]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V3, "TSfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("TS V3V3 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[37]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V4, "TSfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("TS V3V4 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"),
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[38]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V5, "TSfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("TS V3V5 MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  tables[[39]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "TSfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("TS March MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[40]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "TSfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("TS March Baselines MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  
-  tables[[41]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "SSfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("SS Base MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[42]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "SSfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("SS March MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  tables[[43]] =as.datatable(getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "SSfinalizedPricesMY")), rownames = FALSE, 
-                             caption = tags$caption("SS March Baselines MY  USDA Average: $11.41", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), 
-                             options = list(dom = 't', pageLength = 30))
-  
-  
-  
-  
+  tables[[1]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "POfinalizedPrices"), "soybean", "Price Objective Base")            
+  tables[[2]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "POfinalizedPrices"), "soybean", "Price Objective V2")            
+  tables[[3]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "POfinalizedPrices"), "soybean", "Price Objective V3")            
+  tables[[4]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "POfinalizedPrices"), "soybean", "Price Objective V4")            
+  tables[[5]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "POfinalizedPrices"), "soybean", "Price Objective V5")            
+  tables[[6]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "POfinalizedPrices"), "soybean", "Price Objective March")            
+  tables[[7]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "POfinalizedPrices"), "soybean", "Price Objective March Baselines")           
+  tables[[8]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "TSfinalizedPrices"), "soybean", "Trailing Stop Base")            
+  tables[[9]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "TSfinalizedPrices"), "soybean", "Trailing Stop V2")            
+  tables[[10]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "TSfinalizedPrices"), "soybean", "Trailing Stop V3")           
+  tables[[11]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "TSfinalizedPrices"), "soybean", "Trailing Stop V4")           
+  tables[[12]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "TSfinalizedPrices"), "soybean", "Trailing Stop V5")           
+  tables[[13]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3Base, "TSfinalizedPrices"), "soybean", "Trailing Stop V3Base")           
+  tables[[14]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V2, "TSfinalizedPrices"), "soybean", "Trailing Stop V3V2")           
+  tables[[15]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V3, "TSfinalizedPrices"), "soybean", "Trailing Stop V3V3")           
+  tables[[16]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V4, "TSfinalizedPrices"), "soybean", "Trailing Stop V3V4")           
+  tables[[17]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V5, "TSfinalizedPrices"), "soybean", "Trailing Stop V3V5")           
+  tables[[18]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "TSfinalizedPrices"), "soybean", "Trailing Stop March")           
+  tables[[19]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "TSfinalizedPrices"), "soybean", "Trailing Stop March Baselines")            
+  tables[[20]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "SSfinalizedPrices"), "soybean", "Seasonal Sales Base") 
+  tables[[21]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "SSfinalizedPrices"), "soybean", "Seasonal Sales March")
+  tables[[22]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "SSfinalizedPrices"), "soybean", "Seasonal Sales March Baselines") 
+  
+  #WITH MY
+  
+  tables[[23]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "POfinalizedPricesMY") , "soybean", "Price Objective Base MY")
+  tables[[24]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "POfinalizedPricesMY"), "soybean", "Price Objective V2 MY")
+  tables[[25]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "POfinalizedPricesMY"), "soybean", "Price Objective V3 MY")
+  tables[[26]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "POfinalizedPricesMY"), "soybean", "Price Objective V4 MY")
+  tables[[27]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "POfinalizedPricesMY"), "soybean", "Price Objective V5 MY")
+  tables[[28]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "POfinalizedPricesMY"), "soybean", "Price Objective March MY")
+  tables[[29]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "POfinalizedPricesMY"), "soybean", "Price Objective March Baselines MY")
+  tables[[30]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "TSfinalizedPricesMY"), "soybean", "Trailing Stop Base MY")
+  tables[[31]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "TSfinalizedPricesMY"), "soybean", "Trailing Stop V2 MY")
+  tables[[32]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "TSfinalizedPricesMY"), "soybean", "Trailing Stop V3 MY")
+  tables[[33]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "TSfinalizedPricesMY"), "soybean", "Trailing Stop V4 MY")
+  tables[[34]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "TSfinalizedPricesMY"), "soybean", "Trailing Stop V5 MY")
+  tables[[35]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3Base, "TSfinalizedPricesMY"), "soybean",  "Trailing Stop V3Base MY")
+  tables[[36]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V2, "TSfinalizedPricesMY"), "soybean", "Trailing Stop V3V2 MY")
+  tables[[37]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V3, "TSfinalizedPricesMY"), "soybean", "Trailing Stop V3V3 MY")
+  tables[[38]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V4, "TSfinalizedPricesMY"), "soybean", "Trailing Stop V3V4 MY")
+  tables[[39]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V5, "TSfinalizedPricesMY"), "soybean", "Trailing Stop V3V5 MY")
+  tables[[40]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "TSfinalizedPricesMY"), "soybean", "Trailing Stop March MY")
+  tables[[41]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "TSfinalizedPricesMY"), "soybean", "Trailing Stop March Baselines MY")
+  tables[[42]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "SSfinalizedPricesMY"), "soybean", "Seasonal Sales Base MY")
+  tables[[43]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "SSfinalizedPricesMY"), "soybean", "Seasonal Sales March MY")
+  tables[[44]] = getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "SSfinalizedPricesMY"), "soybean", "Seasonal Sales March Baselines MY")
   
 }
 
