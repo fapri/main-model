@@ -33,11 +33,7 @@ if(type == "corn"){
 createFeatures = function(date, OC, NC, rowMax) {
   # All Time High
   ATH_OC = NA
-  
-  if(type == "corn") {
-    ATH_OC[1] = 5.50
-  } else ATH_OC[1] = 12.245
-  
+  ATH_OC[1] = OC[1]
   for (row in 2:rowMax) {
     if(OC[row] > ATH_OC[row - 1])
       ATH_OC[row] = OC[row]
@@ -46,11 +42,7 @@ createFeatures = function(date, OC, NC, rowMax) {
   }
   
   ATH_NC = NA
-  
-  if(type == "corn") {
-    ATH_NC[1] = 5.50
-  } else ATH_NC[1] = 12.245
-  
+  ATH_NC[1] = OC[1]
   for (row in 2:rowMax) {
     if(NC[row] > ATH_NC[row - 1])
       ATH_NC[row] = NC[row]
