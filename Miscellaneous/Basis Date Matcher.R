@@ -50,7 +50,8 @@ while (dlg_message(message = "Add more data?", type = "yesno")[["res"]] == "yes"
 
 # Export large basis set to CSV
 if (dlg_message(message = "Export data to a CSV?", type = "yesno")[["res"]] == "yes") {
-  write.csv(fullSet, file = "BasisData.csv", row.names = FALSE)
+  filename = dlgInput("Enter the filename (without .csv):", Sys.info()["user"])$res
+  write.csv(fullSet, paste("Miscellaneous/", filename, ".csv", sep = ""), row.names = FALSE)
 }
 
 
