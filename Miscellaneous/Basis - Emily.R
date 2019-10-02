@@ -20,9 +20,8 @@ library(tools)
 library(maps)
 library(stringi)
 require(RColorBrewer)
-
-
-
+library(readxl)
+library(readr)
 
 mo = map('county', region = 'Missouri')
 
@@ -77,8 +76,16 @@ counties$County = splitCountyState
 
 test2019 = test[,c(1, 7, 8, 14, 15, 16)]
 
-# Separate by year
-# grepl('2019', colnames(test))
+listOfYears = list()
+averageBasisCounty = list()
+requiredYears = c("2019", "2018", "2017", "2016", "2015", "2014")
+for (year in requiredYears) {
+  years = which(grepl('2019', colnames(test)))
+  listOfYears[[year]] = test[,c(c(1, 14, 15, 16), c(years))]
+  
+  averageBasisCounty[[year]] = aggregate(listOfYears[[year]][, 6], list(listOfYears[[year]]$County), mean, na.rm = TRUE)
+  colnames(averageBasisCounty[[year]])
+}
 
 averageBasisCounty = aggregate(test2019[, 3], list(test2019$County), mean, na.rm = TRUE)
 colnames(averageBasisCounty) = c("County", "Basis")
@@ -99,7 +106,3 @@ ggplot(data = world) +
   ggtitle("Missouri - Corn Basis") +
   labs(fill = "Basis (cents)") + 
   theme(plot.title = element_text(hjust = 0.5, size = 30))
-
-
-
-
