@@ -19,6 +19,8 @@ library(ggrepel)
 library(tools)
 library(maps)
 library(stringi)
+require(RColorBrewer)
+
 
 
 
@@ -43,7 +45,7 @@ ggplot(data = world) +
   coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE)
 
 test <- read_csv("Miscellaneous/test.csv")
-test = test[,c(1, 7, 8, 14, 15)]
+# test = test[,c(1, 7, 8, 14, 15)]
  
 basisCities = stri_extract_first(test$City, regex = "\\w+")
 test$City = basisCities
@@ -72,25 +74,31 @@ splitCountyState = splitCountyState[!splitCountyState %in% "missouri"]
 
 counties$County = splitCountyState
 
-averageBasisCounty = aggregate(test[, 3], list(test$County), mean, na.rm = TRUE)
+
+test2019 = test[,c(1, 7, 8, 14, 15, 16)]
+
+# Separate by year
+# grepl('2019', colnames(test))
+
+averageBasisCounty = aggregate(test2019[, 3], list(test2019$County), mean, na.rm = TRUE)
 colnames(averageBasisCounty) = c("County", "Basis")
 
 dfMerge <- merge(x = averageBasisCounty, y = counties, by = "County", all = TRUE)
 
-dfMerge$Basis[which(is.na(dfMerge$Basis))] = 0
+# dfMerge$Basis[which(is.na(dfMerge$Basis))] = 0
 
 ggplot(data = world) +
   geom_sf() +
   geom_sf(data = dfMerge, aes(fill = Basis, geometry = geometry)) +
-  coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE)
-
-
-
-
-
-
-
-
+  # geom_sf(data = dfMerge, aes(fill = Basis2019, geometry = geometry)) +
+  # geom_sf(data = dfMerge, aes(fill = Basis, geometry = geometry)) +
+  # geom_sf(data = dfMerge, aes(fill = Basis, geometry = geometry)) +
+  
+  coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
+  scale_fill_distiller(palette = "RdYlGn", na.value = "White") + 
+  ggtitle("Missouri - Corn Basis") +
+  labs(fill = "Basis (cents)") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 30))
 
 
 
