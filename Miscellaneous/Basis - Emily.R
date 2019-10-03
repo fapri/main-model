@@ -6,6 +6,7 @@ library(maps)
 library(stringi)
 library(readxl)
 library(readr)
+library(tm)
 
 # Load files
 test = read_csv("Miscellaneous/test.csv")
@@ -33,8 +34,10 @@ ggplot(data = world) +
   geom_text(data = states, aes(X, Y, label = ID), size = 5) +
   coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE)
 
-# Get cities from K State data frame
-test$City = stri_extract_first(test$City, regex = "\\w+")
+# Clean text and get cities from K State data frame
+test$City = gsub("MO", "", test$City, fixed = TRUE)
+test$City = trimws(test$City, "r")
+test$City = gsub(".", "", test$City, fixed = TRUE)
 test$City = tolower(test$City)
 
 # initialize column
@@ -85,7 +88,7 @@ for (year in requiredYears) {
 # Merge average basis to geographic coordinates for plotting
 dfMerge = merge(x = averageBasisCounty, y = counties, by = "County", all = TRUE)
 
-# Plot baisis
+# Plot basis 2019
 ggplot(data = world) +
   geom_sf() +
   geom_sf(data = dfMerge, aes(fill = avgBasis2019, geometry = geometry)) +
@@ -96,6 +99,33 @@ ggplot(data = world) +
   ggtitle("Missouri - Corn Basis") +
   labs(fill = "Basis (cents)") + 
   theme(plot.title = element_text(hjust = 0.5, size = 30))
+
+# Plot basis 2018
+ggplot(data = world) +
+  geom_sf() +
+  geom_sf(data = dfMerge, aes(fill = avgBasis2018, geometry = geometry)) +
+  coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
+  scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
+                       limits = c(-max(abs(min(dfMerge$avgBasis2018, na.rm = TRUE)), abs(max(dfMerge$avgBasis2018, na.rm = TRUE))) - 0.05,
+                                  max(abs(min(dfMerge$avgBasis2018, na.rm = TRUE)), abs(max(dfMerge$avgBasis2018, na.rm = TRUE))) + 0.05)) + 
+  ggtitle("Missouri - Corn Basis") +
+  labs(fill = "Basis (cents)") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 30))
+
+# Plot basis 2017
+ggplot(data = world) +
+  geom_sf() +
+  geom_sf(data = dfMerge, aes(fill = avgBasis2017, geometry = geometry)) +
+  coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
+  scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
+                       limits = c(-max(abs(min(dfMerge$avgBasis2017, na.rm = TRUE)), abs(max(dfMerge$avgBasis2017, na.rm = TRUE))) - 0.05,
+                                  max(abs(min(dfMerge$avgBasis2017, na.rm = TRUE)), abs(max(dfMerge$avgBasis2017, na.rm = TRUE))) + 0.05)) + 
+  ggtitle("Missouri - Corn Basis") +
+  labs(fill = "Basis (cents)") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 30))
+
+
+
 
 
 
