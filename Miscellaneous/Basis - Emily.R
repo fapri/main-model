@@ -1,40 +1,30 @@
 library(sf)
-library(raster)
-library(dplyr)
-library(spData)
-library(spDataLarge)
-library(tmap)    # for static and interactive maps
-library(leaflet) # for interactive maps
-library(mapview) # for interactive maps
-library(ggplot2) # tidyverse data visualization package
-library(shiny)   # for web applications
-library(maps)
-library(cowplot)
-library(googleway)
-library(ggspatial)
-library(libwgeom)
+library(ggplot2)
 library(rnaturalearth)
-library(rnaturalearthdata)
-library(ggrepel)
 library(tools)
 library(maps)
 library(stringi)
-require(RColorBrewer)
 library(readxl)
 library(readr)
 
-mo = map('county', region = 'Missouri')
+# Load files
+test = read_csv("Miscellaneous/test.csv")
+citiesCounties = read_excel("Miscellaneous/Cities and Counties.xlsx")
 
-world <- ne_countries(scale = "medium", returnclass = "sf")
-class(world)
+# mo = map('county', region = 'Missouri')
 
-(sites <- data.frame(longitude = c(-95.76416, -89.08348), latitude = c(35.99894, 40.61698)))
+# Gets world geographic data
+world = ne_countries(scale = "medium", returnclass = "sf")
 
-states <- st_as_sf(map("state", plot = FALSE, fill = TRUE))
-head(states)
-states <- cbind(states, st_coordinates(st_centroid(states)))
-states$ID <- toTitleCase(states$ID)
-head(states)
+# Plot point in a particular location
+sites = data.frame(longitude = c(-95.76416, -89.08348), latitude = c(35.99894, 40.61698))
+
+# Gets coordinates for all states
+states = st_as_sf(map("state", plot = FALSE, fill = TRUE))
+states = cbind(states, st_coordinates(st_centroid(states)))
+states$ID = toTitleCase(states$ID)
+
+# Plot Missouri with points
 ggplot(data = world) +
   geom_sf() +
   geom_sf(data = states, fill = NA) + 
@@ -43,66 +33,73 @@ ggplot(data = world) +
   geom_text(data = states, aes(X, Y, label = ID), size = 5) +
   coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE)
 
-test <- read_csv("Miscellaneous/test.csv")
-# test = test[,c(1, 7, 8, 14, 15)]
- 
-basisCities = stri_extract_first(test$City, regex = "\\w+")
-test$City = basisCities
+# Get cities from K State data frame
+test$City = stri_extract_first(test$City, regex = "\\w+")
+test$City = tolower(test$City)
 
-myCityNames <- tolower(test$City)
-
-test$City <- tolower(test$City)
-
+# initialize column
 test$County = NA
 
-citiesCounties <- read_excel("Miscellaneous/Cities and Counties.xlsx")
+# Standardize data
+citiesCounties$CITY = tolower(citiesCounties$CITY)
+citiesCounties$COUNTY = tolower(citiesCounties$COUNTY)
 
-citiesCounties$CITY <- tolower(citiesCounties$CITY)
-citiesCounties$COUNTY <- tolower(citiesCounties$COUNTY)
-
+# Matches counties to K State data
 for (i in 1:nrow(citiesCounties)) {
   tempRows = which(test$City == citiesCounties$CITY[i])
   test$County[tempRows] = as.character(citiesCounties$COUNTY[i])
 }
 
-counties <- st_as_sf(map("county", plot = FALSE, fill = TRUE))
-counties <- subset(counties, grepl("missouri", counties$ID))
+# Gets coordinates for Missouri counties
+counties = st_as_sf(map("county", plot = FALSE, fill = TRUE))
+counties = subset(counties, grepl("missouri", counties$ID))
 
+# Isolates county name
 splitCountyState = unlist(strsplit(counties$ID, ","))
 splitCountyState = splitCountyState[!splitCountyState %in% "missouri"]
 
+# Atttach county to coordinate data
 counties$County = splitCountyState
 
-
-test2019 = test[,c(1, 7, 8, 14, 15, 16)]
-
+# initialize variables
 listOfYears = list()
-averageBasisCounty = list()
+averageBasisCounty = data.frame()
 requiredYears = c("2019", "2018", "2017", "2016", "2015", "2014")
+
+# Gets average basis for each county fo revery year
 for (year in requiredYears) {
-  years = which(grepl('2019', colnames(test)))
+  years = which(grepl(year, colnames(test)))
   listOfYears[[year]] = test[,c(c(1, 14, 15, 16), c(years))]
   
-  averageBasisCounty[[year]] = aggregate(listOfYears[[year]][, 6], list(listOfYears[[year]]$County), mean, na.rm = TRUE)
-  colnames(averageBasisCounty[[year]])
+  if (nrow(averageBasisCounty) == 0) {
+    averageBasisCounty = setNames(aggregate(listOfYears[[year]][, 6], list(listOfYears[[year]]$County), mean, na.rm = TRUE), 
+                                  c("County", paste("avgBasis", year, sep = "")))
+  } else {
+    
+    temp = setNames(aggregate(listOfYears[[year]][, 6], list(listOfYears[[year]]$County), mean, na.rm = TRUE), 
+                    c("County", paste("avgBasis", year, sep = "")))
+    averageBasisCounty = merge(x = averageBasisCounty, y = temp, by = "County", all = TRUE)
+  }
 }
 
-averageBasisCounty = aggregate(test2019[, 3], list(test2019$County), mean, na.rm = TRUE)
-colnames(averageBasisCounty) = c("County", "Basis")
+# Merge average basis to geographic coordinates for plotting
+dfMerge = merge(x = averageBasisCounty, y = counties, by = "County", all = TRUE)
 
-dfMerge <- merge(x = averageBasisCounty, y = counties, by = "County", all = TRUE)
-
-# dfMerge$Basis[which(is.na(dfMerge$Basis))] = 0
-
+# Plot baisis
 ggplot(data = world) +
   geom_sf() +
-  geom_sf(data = dfMerge, aes(fill = Basis, geometry = geometry)) +
-  # geom_sf(data = dfMerge, aes(fill = Basis2019, geometry = geometry)) +
-  # geom_sf(data = dfMerge, aes(fill = Basis, geometry = geometry)) +
-  # geom_sf(data = dfMerge, aes(fill = Basis, geometry = geometry)) +
-  
+  geom_sf(data = dfMerge, aes(fill = avgBasis2019, geometry = geometry)) +
   coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
-  scale_fill_distiller(palette = "RdYlGn", na.value = "White") + 
+  scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
+                       limits = c(-max(abs(min(dfMerge$avgBasis2019, na.rm = TRUE)), abs(max(dfMerge$avgBasis2019, na.rm = TRUE))) - 0.05,
+                       max(abs(min(dfMerge$avgBasis2019, na.rm = TRUE)), abs(max(dfMerge$avgBasis2019, na.rm = TRUE))) + 0.05)) + 
   ggtitle("Missouri - Corn Basis") +
   labs(fill = "Basis (cents)") + 
   theme(plot.title = element_text(hjust = 0.5, size = 30))
+
+
+
+
+
+
+
