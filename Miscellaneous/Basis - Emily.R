@@ -69,7 +69,7 @@ listOfYears = list()
 averageBasisCounty = data.frame()
 requiredYears = c("2019", "2018", "2017", "2016", "2015", "2014")
 
-# Gets average basis for each county fo revery year
+# Gets average basis for each county for every year
 for (year in requiredYears) {
   years = which(grepl(year, colnames(test)))
   listOfYears[[year]] = test[,c(c(1, 14, 15, 16), c(years))]
@@ -85,45 +85,83 @@ for (year in requiredYears) {
   }
 }
 
+# Gets average basis by county by week
+weeklyAverages = data.frame()
+weeklyAverages = setNames(aggregate(x = test[, 8:13],
+                                    by = list(test$Week, test$County),
+                                    FUN = mean,
+                                    na.rm = TRUE),
+                          c("Week", "County", "weeklyBasis2019", "weeklyBasis2018", "weeklyBasis2017", 
+                            "weeklyBasis2016", "weeklyBasis2015", "weeklyBasis2014"))
+
 # Merge average basis to geographic coordinates for plotting
-dfMerge = merge(x = averageBasisCounty, y = counties, by = "County", all = TRUE)
+yearlyMerge = merge(x = averageBasisCounty, y = counties, by = "County", all = TRUE)
+
+split_tibble <- function(tibble, col = 'col') tibble %>% split(., .[,col])
+weeklyAverageList = split_tibble(weeklyAverages, 'Week')
+weeklyAverageList = lapply(names(weeklyAverageList), function(x) merge(x = weeklyAverageList[[x]], y = counties, by = "County", all = TRUE))
 
 # Plot basis 2019
 ggplot(data = world) +
   geom_sf() +
-  geom_sf(data = dfMerge, aes(fill = avgBasis2019, geometry = geometry)) +
+  geom_sf(data = yearlyMerge, aes(fill = avgBasis2019, geometry = geometry)) +
   coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
   scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
-                       limits = c(-max(abs(min(dfMerge$avgBasis2019, na.rm = TRUE)), abs(max(dfMerge$avgBasis2019, na.rm = TRUE))) - 0.05,
-                       max(abs(min(dfMerge$avgBasis2019, na.rm = TRUE)), abs(max(dfMerge$avgBasis2019, na.rm = TRUE))) + 0.05)) + 
-  ggtitle("Missouri - Corn Basis") +
+                       limits = c(-max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) - 0.05,
+                                  max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") + 
+  ggtitle("Missouri - Corn Basis 2019") +
   labs(fill = "Basis (cents)") + 
   theme(plot.title = element_text(hjust = 0.5, size = 30))
 
 # Plot basis 2018
 ggplot(data = world) +
   geom_sf() +
-  geom_sf(data = dfMerge, aes(fill = avgBasis2018, geometry = geometry)) +
+  geom_sf(data = yearlyMerge, aes(fill = avgBasis2018, geometry = geometry)) +
   coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
   scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
-                       limits = c(-max(abs(min(dfMerge$avgBasis2018, na.rm = TRUE)), abs(max(dfMerge$avgBasis2018, na.rm = TRUE))) - 0.05,
-                                  max(abs(min(dfMerge$avgBasis2018, na.rm = TRUE)), abs(max(dfMerge$avgBasis2018, na.rm = TRUE))) + 0.05)) + 
-  ggtitle("Missouri - Corn Basis") +
+                       limits = c(-max(abs(min(yearlyMerge$avgBasis2018, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2018, na.rm = TRUE))) - 0.05,
+                                  max(abs(min(yearlyMerge$avgBasis2018, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2018, na.rm = TRUE))) + 0.05), direction = "reverse") + 
+  ggtitle("Missouri - Corn Basis 2018") +
   labs(fill = "Basis (cents)") + 
   theme(plot.title = element_text(hjust = 0.5, size = 30))
 
 # Plot basis 2017
 ggplot(data = world) +
   geom_sf() +
-  geom_sf(data = dfMerge, aes(fill = avgBasis2017, geometry = geometry)) +
+  geom_sf(data = yearlyMerge, aes(fill = avgBasis2017, geometry = geometry)) +
   coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
   scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
-                       limits = c(-max(abs(min(dfMerge$avgBasis2017, na.rm = TRUE)), abs(max(dfMerge$avgBasis2017, na.rm = TRUE))) - 0.05,
-                                  max(abs(min(dfMerge$avgBasis2017, na.rm = TRUE)), abs(max(dfMerge$avgBasis2017, na.rm = TRUE))) + 0.05)) + 
-  ggtitle("Missouri - Corn Basis") +
+                       limits = c(-max(abs(min(yearlyMerge$avgBasis2017, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2017, na.rm = TRUE))) - 0.05,
+                                  max(abs(min(yearlyMerge$avgBasis2017, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2017, na.rm = TRUE))) + 0.05), direction = "reverse") + 
+  ggtitle("Missouri - Corn Basis 2017") +
   labs(fill = "Basis (cents)") + 
   theme(plot.title = element_text(hjust = 0.5, size = 30))
 
+# Plot first week of 2019
+ggplot(data = world) +
+  geom_sf() +
+  geom_sf(data = weeklyAverageList[[1]], aes(fill = weeklyBasis2019, geometry = geometry)) +
+  coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
+  scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
+                       limits = c(-max(abs(min(weeklyAverageList[[1]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[1]]$weeklyBasis2019, na.rm = TRUE))) - 0.05,
+                                  max(abs(min(weeklyAverageList[[1]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[1]]$weeklyBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") + 
+  ggtitle("Missouri - Weekly Corn Basis 2019") +
+  labs(fill = "Basis (cents)") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 30))
+
+# Save all weekly plots for 2019
+for (week in 1:length(weeklyAverageList)) {
+  plots[[week]] = ggplot(data = world) +
+    geom_sf() +
+    geom_sf(data = weeklyAverageList[[week]], aes(fill = weeklyBasis2019, geometry = geometry)) +
+    coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
+    scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
+                         limits = c(-max(abs(min(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE))) - 0.05,
+                                    max(abs(min(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") + 
+    ggtitle("Missouri - Weekly Corn Basis 2019") +
+    labs(fill = "Basis (cents)") + 
+    theme(plot.title = element_text(hjust = 0.5, size = 30))
+}
 
 
 
