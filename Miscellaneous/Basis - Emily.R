@@ -171,3 +171,88 @@ for (week in 1:length(weeklyAverageList)) {
 
 
 
+
+
+
+# library(leaflet)
+# 
+# # initiate the leaflet instance and store it to a variable
+# m = leaflet()
+# 
+# # we want to add map tiles so we use the addTiles() function - the default is openstreetmap
+# m = addTiles(m)
+# 
+# # we can add markers by using the addMarkers() function
+# m = addMarkers(m, lng = -92.3341, lat = 38.9517, popup = "T")
+# 
+# # we can "run"/compile the map, by running the printing it
+# m
+
+
+
+lastYear = yearlyMerge[, c(1, 2, 8, 9)]
+
+
+
+
+countyCenters = read_excel("Miscellaneous/County Centers.xlsx")
+countyCenters$County = tolower(countyCenters$County)
+
+lastYear = merge(x = lastYear, y = countyCenters, by = "County", all = TRUE)
+
+lastYearLatLong = lastYear[,5:6]
+
+
+
+#2. Determine number of clusters
+wss <- (nrow(lastYearLatLong) - 1) * sum(apply(lastYearLatLong, 2, var))
+for (i in 2:100) wss[i] <- sum(kmeans(lastYearLatLong, centers = i)$withinss)
+plot(1:100, wss, type = "b", xlab = "Number of Clusters",
+     ylab = "Within groups sum of squares")
+
+
+#3. K-Means Cluster Analysis
+set.seed(20)
+fit <- kmeans(lastYearLatLong, 11) # 11 cluster solution
+# get cluster means
+aggregate(lastYearLatLong, by = list(fit$cluster), FUN = mean)
+# append cluster assignment
+lastYearLatLong <- data.frame(lastYearLatLong, fit$cluster)
+lastYearLatLong
+lastYearLatLong$fit.cluster <- as.factor(lastYearLatLong$fit.cluster)
+library(ggplot2)
+ggplot(lastYearLatLong, aes(x = Longitude, y = Latitude, color = lastYearLatLong$fit.cluster)) + geom_point(size = 10)
+
+
+ggplot(data = world) +
+  geom_sf() +
+  geom_sf(data = weeklyAverageList[[week]], aes(fill = weeklyBasis2019, geometry = geometry)) +
+  coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
+  scale_fill_distiller(palette = "white", na.value = "White",
+                       limits = c(-max(abs(min(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE))) - 0.05,
+                                  max(abs(min(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") +
+  ggtitle("Missouri - Weekly Corn Basis 2019") +
+  labs(fill = "Basis (cents)") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 30)) + 
+  
+  geom_point(data = lastYearLatLong, aes(x = Longitude, y = Latitude, size = 20, colour = lastYearLatLong$fit.cluster),
+              alpha = 1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
