@@ -228,7 +228,7 @@ ggplot(data = world) +
   geom_sf() +
   geom_sf(data = weeklyAverageList[[week]], aes(fill = weeklyBasis2019, geometry = geometry)) +
   coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
-  scale_fill_distiller(palette = "white", na.value = "White",
+  scale_fill_distiller(palette = "RdYlGn", na.value = "White",
                        limits = c(-max(abs(min(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE))) - 0.05,
                                   max(abs(min(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") +
   ggtitle("Missouri - Weekly Corn Basis 2019") +
@@ -240,6 +240,78 @@ ggplot(data = world) +
 
 
 
+
+
+ggplot() +
+  geom_point(aes(x = as.numeric(rownames(lastYear)), y = as.numeric(lastYear$avgBasis2019)))
+
+
+
+
+k2 <- kmeans(df, centers = 2, nstart = 25)
+
+
+
+
+
+justBasis = data.frame(avgBasis = lastYear$avgBasis2019, index = rownames(lastYear))
+justBasis = na.omit(justBasis)
+
+
+
+
+
+
+
+require(Ckmeans.1d.dp)
+# Divide x into 3 clusters
+k <- 3
+result <- Ckmeans.1d.dp(justBasis$avgBasis, k)
+plot(result)
+
+x = justBasis$avgBasis
+
+
+plot(x, col = result$cluster, pch = result$cluster, cex = 1.5,
+     main = "Optimal univariate clustering given k",
+     sub = paste("Number of clusters given:", k))
+abline(h = result$centers, col = 1:k, lty = "dashed", lwd = 2)
+legend("bottomright", paste("Cluster", 1:k), col = 1:k, pch = 1:k, cex = 1.5, bty = "n")
+
+
+
+length(result$cluster)
+result$cluster
+
+
+justBasis = data.frame(justBasis, result$cluster)
+lastYear$index = as.numeric(rownames(lastYear))
+
+
+
+clusterMerge = merge(x = lastYear, y = justBasis[, c(2,3)], by = "index", all = TRUE)
+
+
+
+
+
+
+
+
+
+ggplot(data = world) +
+  geom_sf() +
+  geom_sf(data = yearlyMerge, aes(fill = avgBasis2019, geometry = geometry)) +
+  coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
+  scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
+                       limits = c(-max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) - 0.05,
+                                  max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") + 
+  ggtitle("Missouri - Corn Basis 2019") +
+  labs(fill = "Basis (cents)") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 30)) + 
+  
+  geom_point(data = clusterMerge, aes(x = Longitude, y = Latitude, size = 20, colour = as.factor(result.cluster)),
+             alpha = 1)
 
 
 
