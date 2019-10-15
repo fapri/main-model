@@ -7,10 +7,12 @@ library(stringi)
 library(readxl)
 library(readr)
 library(tm)
+library(Ckmeans.1d.dp)
 
 # Load files
 test = read_csv("Miscellaneous/test.csv")
 citiesCounties = read_excel("Miscellaneous/Cities and Counties.xlsx")
+countyCenters = read_excel("Miscellaneous/County Centers.xlsx")
 
 # mo = map('county', region = 'Missouri')
 
@@ -97,7 +99,7 @@ weeklyAverages = setNames(aggregate(x = test[, 8:13],
 # Merge average basis to geographic coordinates for plotting
 yearlyMerge = merge(x = averageBasisCounty, y = counties, by = "County", all = TRUE)
 
-split_tibble <- function(tibble, col = 'col') tibble %>% split(., .[,col])
+split_tibble = function(tibble, col = 'col') tibble %>% split(., .[,col])
 weeklyAverageList = split_tibble(weeklyAverages, 'Week')
 weeklyAverageList = lapply(names(weeklyAverageList), function(x) merge(x = weeklyAverageList[[x]], y = counties, by = "County", all = TRUE))
 
@@ -164,66 +166,39 @@ for (week in 1:length(weeklyAverageList)) {
 }
 
 
+#################################################################################
+# Clustering
 
 
-
-
-
-
-
-
-
-
-# library(leaflet)
-# 
-# # initiate the leaflet instance and store it to a variable
-# m = leaflet()
-# 
-# # we want to add map tiles so we use the addTiles() function - the default is openstreetmap
-# m = addTiles(m)
-# 
-# # we can add markers by using the addMarkers() function
-# m = addMarkers(m, lng = -92.3341, lat = 38.9517, popup = "T")
-# 
-# # we can "run"/compile the map, by running the printing it
-# m
-
-
-
+# Get data for only 2019 - yearly
 lastYear = yearlyMerge[, c(1, 2, 8, 9)]
 
-
-
-
-countyCenters = read_excel("Miscellaneous/County Centers.xlsx")
+# Format data
 countyCenters$County = tolower(countyCenters$County)
 
+# Attach geographical information to basis
 lastYear = merge(x = lastYear, y = countyCenters, by = "County", all = TRUE)
 
+# Get only latitude and longitude
 lastYearLatLong = lastYear[,5:6]
 
-
-
-#2. Determine number of clusters
-wss <- (nrow(lastYearLatLong) - 1) * sum(apply(lastYearLatLong, 2, var))
-for (i in 2:100) wss[i] <- sum(kmeans(lastYearLatLong, centers = i)$withinss)
+# Determine number of strictly geographical clusters
+wss = (nrow(lastYearLatLong) - 1) * sum(apply(lastYearLatLong, 2, var))
+for (i in 2:100) wss[i] = sum(kmeans(lastYearLatLong, centers = i)$withinss)
 plot(1:100, wss, type = "b", xlab = "Number of Clusters",
      ylab = "Within groups sum of squares")
 
-
-#3. K-Means Cluster Analysis
+# K-Means Cluster Analysis
 set.seed(20)
-fit <- kmeans(lastYearLatLong, 11) # 11 cluster solution
+fit = kmeans(lastYearLatLong, 6) # 6 clusters
 # get cluster means
 aggregate(lastYearLatLong, by = list(fit$cluster), FUN = mean)
 # append cluster assignment
-lastYearLatLong <- data.frame(lastYearLatLong, fit$cluster)
-lastYearLatLong
-lastYearLatLong$fit.cluster <- as.factor(lastYearLatLong$fit.cluster)
-library(ggplot2)
+lastYearLatLong = data.frame(lastYearLatLong, fit$cluster)
+lastYearLatLong$fit.cluster = as.factor(lastYearLatLong$fit.cluster)
 ggplot(lastYearLatLong, aes(x = Longitude, y = Latitude, color = lastYearLatLong$fit.cluster)) + geom_point(size = 10)
 
-
+# Plot geographical clusters over basis data for Missouri
 ggplot(data = world) +
   geom_sf() +
   geom_sf(data = weeklyAverageList[[week]], aes(fill = weeklyBasis2019, geometry = geometry)) +
@@ -234,71 +209,24 @@ ggplot(data = world) +
   ggtitle("Missouri - Weekly Corn Basis 2019") +
   labs(fill = "Basis (cents)") + 
   theme(plot.title = element_text(hjust = 0.5, size = 30)) + 
-  
   geom_point(data = lastYearLatLong, aes(x = Longitude, y = Latitude, size = 20, colour = lastYearLatLong$fit.cluster),
-              alpha = 1)
+             alpha = 1)
 
 
+################################################################################
+# This seems to be the solution???
+################################################################################
 
+# K means clusters based on latitude, longitude, and basis
+kMeansLocBasis = kmeans(na.omit(lastYear[,c(2,5,6)]), centers = 6, nstart = 25) # 6 clusters
+locBasisClusters = data.frame(cluster = kMeansLocBasis$cluster)
+locBasisClusters$index = as.numeric(rownames(locBasisClusters))
 
-
-ggplot() +
-  geom_point(aes(x = as.numeric(rownames(lastYear)), y = as.numeric(lastYear$avgBasis2019)))
-
-
-
-
-k2 <- kmeans(df, centers = 2, nstart = 25)
-
-
-
-
-
-justBasis = data.frame(avgBasis = lastYear$avgBasis2019, index = rownames(lastYear))
-justBasis = na.omit(justBasis)
-
-
-
-
-
-
-
-require(Ckmeans.1d.dp)
-# Divide x into 3 clusters
-k <- 3
-result <- Ckmeans.1d.dp(justBasis$avgBasis, k)
-plot(result)
-
-x = justBasis$avgBasis
-
-
-plot(x, col = result$cluster, pch = result$cluster, cex = 1.5,
-     main = "Optimal univariate clustering given k",
-     sub = paste("Number of clusters given:", k))
-abline(h = result$centers, col = 1:k, lty = "dashed", lwd = 2)
-legend("bottomright", paste("Cluster", 1:k), col = 1:k, pch = 1:k, cex = 1.5, bty = "n")
-
-
-
-length(result$cluster)
-result$cluster
-
-
-justBasis = data.frame(justBasis, result$cluster)
+# Merge location and basis data to the clusters
 lastYear$index = as.numeric(rownames(lastYear))
+kLocBasisMerge = merge(x = lastYear, y = locBasisClusters, by = "index", all = TRUE)
 
-
-
-clusterMerge = merge(x = lastYear, y = justBasis[, c(2,3)], by = "index", all = TRUE)
-
-
-
-
-
-
-
-
-
+# Plot
 ggplot(data = world) +
   geom_sf() +
   geom_sf(data = yearlyMerge, aes(fill = avgBasis2019, geometry = geometry)) +
@@ -309,22 +237,43 @@ ggplot(data = world) +
   ggtitle("Missouri - Corn Basis 2019") +
   labs(fill = "Basis (cents)") + 
   theme(plot.title = element_text(hjust = 0.5, size = 30)) + 
-  
+  geom_point(data = kLocBasisMerge, aes(x = Longitude, y = Latitude, size = 20, colour = as.factor(cluster)),
+             alpha = 1)
+#################################################################################
+
+
+# Get just basis values
+justBasisDf = data.frame(avgBasis = lastYear$avgBasis2019, index = rownames(lastYear))
+justBasisDf = na.omit(justBasisDf)
+
+# Divide basis values into 3 clusters
+k = 3
+result = Ckmeans.1d.dp(justBasisDf$avgBasis, k)
+plot(result)
+justBasis = justBasisDf$avgBasis
+
+# Plot one dimensional clusters
+plot(justBasis, col = result$cluster, pch = result$cluster, cex = 1.5,
+     main = "Optimal univariate clustering given k",
+     sub = paste("Number of clusters given:", k))
+abline(h = result$centers, col = 1:k, lty = "dashed", lwd = 2)
+legend("bottomright", paste("Cluster", 1:k), col = 1:k, pch = 1:k, cex = 1.5, bty = "n")
+
+# Merge one dimensional clusters to basis data
+justBasisDf = data.frame(justBasisDf, result$cluster)
+lastYear$index = as.numeric(rownames(lastYear))
+clusterMerge = merge(x = lastYear, y = justBasisDf[, c(2,3)], by = "index", all = TRUE)
+
+# Plot one dimensional cluster results
+ggplot(data = world) +
+  geom_sf() +
+  geom_sf(data = yearlyMerge, aes(fill = avgBasis2019, geometry = geometry)) +
+  coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
+  scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
+                       limits = c(-max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) - 0.05,
+                                  max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") + 
+  ggtitle("Missouri - Corn Basis 2019") +
+  labs(fill = "Basis (cents)") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 30)) + 
   geom_point(data = clusterMerge, aes(x = Longitude, y = Latitude, size = 20, colour = as.factor(result.cluster)),
              alpha = 1)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
