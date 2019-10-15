@@ -277,3 +277,155 @@ ggplot(data = world) +
   theme(plot.title = element_text(hjust = 0.5, size = 30)) + 
   geom_point(data = clusterMerge, aes(x = Longitude, y = Latitude, size = 20, colour = as.factor(result.cluster)),
              alpha = 1)
+
+
+
+
+
+
+
+#############################################################################################################################################
+#############################################################################################################################################
+
+
+# Tree-based clustering methods
+library(tidyverse)  # data manipulation
+library(cluster)    # clustering algorithms
+library(factoextra) # clustering visualization
+library(dendextend) # for comparing two dendrograms
+
+# Get data for only 2019 - yearly
+lastYear = yearlyMerge[, c(1, 2, 8, 9)]
+
+# Format data
+countyCenters$County = tolower(countyCenters$County)
+
+# Attach geographical information to basis
+lastYear = merge(x = lastYear, y = countyCenters, by = "County", all = TRUE)
+
+# Dissimilarity matrix
+d <- dist(na.omit(lastYear[, c(2,5,6)]), method = "euclidean")
+
+# Hierarchical clustering using Complete Linkage
+hc1 <- hclust(d, method = "complete" )
+
+# Plot the obtained dendrogram
+plot(hc1, cex = 0.6, hang = -1)
+
+# Compute with agnes
+hc2 <- agnes(na.omit(lastYear[, c(2,5,6)]), method = "complete")
+
+# Agglomerative coefficient
+hc2$ac
+
+df = na.omit(lastYear[, c(2,5,6)])
+
+# methods to assess
+m <- c( "average", "single", "complete", "ward")
+names(m) <- c( "average", "single", "complete", "ward")
+
+# function to compute coefficient
+ac <- function(x) {
+  agnes(df, method = x)$ac
+}
+
+map_dbl(m, ac)
+
+hc3 <- agnes(df, method = "ward")
+pltree(hc3, cex = 0.6, hang = -1, main = "Dendrogram of agnes") 
+
+# compute divisive hierarchical clustering
+hc4 <- diana(df)
+
+# Divise coefficient; amount of clustering structure found
+hc4$dc
+
+# plot dendrogram
+pltree(hc4, cex = 0.6, hang = -1, main = "Dendrogram of diana")
+
+# Ward's method
+hc5 <- hclust(d, method = "ward.D2")
+
+# Cut tree into 4 groups
+sub_grp <- cutree(hc5, k = 5)
+
+# Number of members in each cluster
+table(sub_grp)
+
+df$index = rownames(df)
+newDF = df %>%
+  mutate(cluster = sub_grp)
+
+plot(hc5, cex = 0.6)
+rect.hclust(hc5, k = 6, border = 2:5)
+
+fviz_cluster(list(data = df, cluster = sub_grp))
+
+# Cut agnes() tree into 4 groups
+hc_a <- agnes(df, method = "ward")
+cutree(as.hclust(hc_a), k = 4)
+
+# Cut diana() tree into 4 groups
+hc_d <- diana(df)
+cutree(as.hclust(hc_d), k = 4)
+
+# Compute distance matrix
+res.dist <- dist(df, method = "euclidean")
+
+# Compute 2 hierarchical clusterings
+hc1 <- hclust(res.dist, method = "complete")
+hc2 <- hclust(res.dist, method = "ward.D2")
+
+# Create two dendrograms
+dend1 <- as.dendrogram(hc1)
+dend2 <- as.dendrogram(hc2)
+
+tanglegram(dend1, dend2)
+
+dend_list <- dendlist(dend1, dend2)
+
+tanglegram(dend1, dend2,
+           highlight_distinct_edges = FALSE, # Turn-off dashed lines
+           common_subtrees_color_lines = FALSE, # Turn-off line colors
+           common_subtrees_color_branches = TRUE, # Color common branches 
+           main = paste("entanglement =", round(entanglement(dend_list), 2))
+)
+
+fviz_nbclust(df, FUN = hcut, method = "wss")
+
+fviz_nbclust(df, FUN = hcut, method = "silhouette")
+
+gap_stat <- clusGap(df, FUN = hcut, nstart = 25, K.max = 10, B = 50)
+fviz_gap_stat(gap_stat)
+
+lastYear$index = as.numeric(rownames(lastYear))
+treeMerge = merge(x = lastYear, y = newDF[, c(4,5)], by = "index", all = TRUE)
+
+# Plot one dimensional cluster results
+ggplot(data = world) +
+  geom_sf() +
+  geom_sf(data = yearlyMerge, aes(fill = avgBasis2019, geometry = geometry)) +
+  coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
+  scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
+                       limits = c(-max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) - 0.05,
+                                  max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") + 
+  ggtitle("Missouri - Corn Basis 2019") +
+  labs(fill = "Basis (cents)") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 30)) + 
+  geom_point(data = treeMerge, aes(x = Longitude, y = Latitude, size = 20, colour = as.factor(cluster)),
+             alpha = 1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
