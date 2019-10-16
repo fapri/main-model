@@ -50,7 +50,7 @@ citiesCounties$CITY = tolower(citiesCounties$CITY)
 citiesCounties$COUNTY = tolower(citiesCounties$COUNTY)
 
 # Matches counties to K State data
-for (i in 1:nrow(citiesCounties)) {
+for (i in seq_len(nrow(citiesCounties))) {
   tempRows = which(test$City == citiesCounties$CITY[i])
   test$County[tempRows] = as.character(citiesCounties$COUNTY[i])
 }
@@ -74,10 +74,12 @@ requiredYears = c("2019", "2018", "2017", "2016", "2015", "2014")
 # Gets average basis for each county for every year
 for (year in requiredYears) {
   years = which(grepl(year, colnames(test)))
-  listOfYears[[year]] = test[,c(c(1, 14, 15, 16), c(years))]
+  listOfYears[[year]] = test[, c(c(1, 14, 15, 16), c(years))]
   
   if (nrow(averageBasisCounty) == 0) {
-    averageBasisCounty = setNames(aggregate(listOfYears[[year]][, 6], list(listOfYears[[year]]$County), mean, na.rm = TRUE), 
+    averageBasisCounty = setNames(aggregate(listOfYears[[year]][, 6],
+                                            list(listOfYears[[year]]$County), 
+                                            mean, na.rm = TRUE), 
                                   c("County", paste("avgBasis", year, sep = "")))
   } else {
     
@@ -152,7 +154,7 @@ ggplot(data = world) +
   theme(plot.title = element_text(hjust = 0.5, size = 30))
 
 # Save all weekly plots for 2019
-for (week in 1:length(weeklyAverageList)) {
+for (week in 1:seq_len(nrow(weeklyAverageList))) {
   plots[[week]] = ggplot(data = world) +
     geom_sf() +
     geom_sf(data = weeklyAverageList[[week]], aes(fill = weeklyBasis2019, geometry = geometry)) +
@@ -304,16 +306,16 @@ countyCenters$County = tolower(countyCenters$County)
 lastYear = merge(x = lastYear, y = countyCenters, by = "County", all = TRUE)
 
 # Dissimilarity matrix
-d <- dist(na.omit(lastYear[, c(2,5,6)]), method = "euclidean")
+d = dist(na.omit(lastYear[, c(2,5,6)]), method = "euclidean")
 
 # Hierarchical clustering using Complete Linkage
-hc1 <- hclust(d, method = "complete" )
+hc1 = hclust(d, method = "complete")
 
 # Plot the obtained dendrogram
 plot(hc1, cex = 0.6, hang = -1)
 
 # Compute with agnes
-hc2 <- agnes(na.omit(lastYear[, c(2,5,6)]), method = "complete")
+hc2 = agnes(na.omit(lastYear[, c(2,5,6)]), method = "complete")
 
 # Agglomerative coefficient
 hc2$ac
@@ -321,21 +323,21 @@ hc2$ac
 df = na.omit(lastYear[, c(2,5,6)])
 
 # methods to assess
-m <- c( "average", "single", "complete", "ward")
-names(m) <- c( "average", "single", "complete", "ward")
+m = c( "average", "single", "complete", "ward")
+names(m) = c( "average", "single", "complete", "ward")
 
 # function to compute coefficient
-ac <- function(x) {
+ac = function(x) {
   agnes(df, method = x)$ac
 }
 
 map_dbl(m, ac)
 
-hc3 <- agnes(df, method = "ward")
+hc3 = agnes(df, method = "ward")
 pltree(hc3, cex = 0.6, hang = -1, main = "Dendrogram of agnes") 
 
 # compute divisive hierarchical clustering
-hc4 <- diana(df)
+hc4 = diana(df)
 
 # Divise coefficient; amount of clustering structure found
 hc4$dc
@@ -344,10 +346,10 @@ hc4$dc
 pltree(hc4, cex = 0.6, hang = -1, main = "Dendrogram of diana")
 
 # Ward's method
-hc5 <- hclust(d, method = "ward.D2")
+hc5 = hclust(d, method = "ward.D2")
 
 # Cut tree into 4 groups
-sub_grp <- cutree(hc5, k = 5)
+sub_grp = cutree(hc5, k = 5)
 
 # Number of members in each cluster
 table(sub_grp)
@@ -362,27 +364,27 @@ rect.hclust(hc5, k = 6, border = 2:5)
 fviz_cluster(list(data = df, cluster = sub_grp))
 
 # Cut agnes() tree into 4 groups
-hc_a <- agnes(df, method = "ward")
+hc_a = agnes(df, method = "ward")
 cutree(as.hclust(hc_a), k = 4)
 
 # Cut diana() tree into 4 groups
-hc_d <- diana(df)
+hc_d = diana(df)
 cutree(as.hclust(hc_d), k = 4)
 
 # Compute distance matrix
-res.dist <- dist(df, method = "euclidean")
+res.dist = dist(df, method = "euclidean")
 
 # Compute 2 hierarchical clusterings
-hc1 <- hclust(res.dist, method = "complete")
-hc2 <- hclust(res.dist, method = "ward.D2")
+hc1 = hclust(res.dist, method = "complete")
+hc2 = hclust(res.dist, method = "ward.D2")
 
 # Create two dendrograms
-dend1 <- as.dendrogram(hc1)
-dend2 <- as.dendrogram(hc2)
+dend1 = as.dendrogram(hc1)
+dend2 = as.dendrogram(hc2)
 
 tanglegram(dend1, dend2)
 
-dend_list <- dendlist(dend1, dend2)
+dend_list = dendlist(dend1, dend2)
 
 tanglegram(dend1, dend2,
            highlight_distinct_edges = FALSE, # Turn-off dashed lines
@@ -395,7 +397,7 @@ fviz_nbclust(df, FUN = hcut, method = "wss")
 
 fviz_nbclust(df, FUN = hcut, method = "silhouette")
 
-gap_stat <- clusGap(df, FUN = hcut, nstart = 25, K.max = 10, B = 50)
+gap_stat = clusGap(df, FUN = hcut, nstart = 25, K.max = 10, B = 50)
 fviz_gap_stat(gap_stat)
 
 lastYear$index = as.numeric(rownames(lastYear))
@@ -419,13 +421,50 @@ ggplot(data = world) +
 
 
 
+#############################################################################################################################################
+#############################################################################################################################################
+
+
+# mo = tigris::counties(state = "Missouri", cb = T, class = "sf")
+# ggplot(mo) +
+#   geom_sf(fill = "gray95", color = "gray50", size = 0.5) +
+#   # these 2 lines just clean up appearance
+#   theme_void() +
+#   coord_sf(ndiscr = F)
+# mo %>% 
+#   group_by(COUNTYFP) %>% 
+#   summarise()
 
 
 
+# Convert data frame to sf
+# CRITICAL FOR PLOTTING
+kLocBasisMerge = kLocBasisMerge %>%
+  mutate(geometry = map(kLocBasisMerge$geometry,
+                        ~ map(.,
+                              ~ do.call(rbind, .) # make each list a matrix
+                        ) %>% 
+                          st_polygon()
+  )
+  ) %>% 
+  st_as_sf()
+kLocBasisMerge = kLocBasisMerge %>% st_buffer(0)
 
-
-
-
-
-
+# Plot shaded basis and outline of county clusters
+# BASED ON THE K MEANS CLUSTERING METHOD OF LATITUDE, LONGITUDE, AND BASIS
+ggplot(kLocBasisMerge) +
+  geom_sf(fill = "white", color = "black", size = 0.5) +
+  theme_void() +
+  coord_sf(ndiscr = F) + 
+  geom_sf(data = yearlyMerge, aes(fill = avgBasis2019, geometry = geometry)) +
+  scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
+                       limits = c(-max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), 
+                                       abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) - 0.05,
+                                  max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), 
+                                      abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") + 
+  geom_sf(fill = "transparent", size = 3, aes(color = as.factor(cluster)),
+          data = . %>% group_by(cluster) %>% summarise() %>% na.omit()) +
+  ggtitle("Missouri - Corn Basis 2019") +
+  labs(fill = "Basis (cents)") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 30))
 
