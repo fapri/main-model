@@ -220,7 +220,7 @@ ggplot(data = world) +
 ################################################################################
 
 # K means clusters based on latitude, longitude, and basis
-kMeansLocBasis = kmeans(na.omit(lastYear[,c(2,5,6)]), centers = 6, nstart = 25) # 6 clusters
+kMeansLocBasis = kmeans(na.omit(lastYear[,c(2,5,6)]), centers = 4, nstart = 25) # 6 clusters
 locBasisClusters = data.frame(cluster = kMeansLocBasis$cluster)
 locBasisClusters$index = as.numeric(rownames(locBasisClusters))
 
@@ -467,4 +467,19 @@ ggplot(kLocBasisMerge) +
   ggtitle("Missouri - Corn Basis 2019") +
   labs(fill = "Basis (cents)") + 
   theme(plot.title = element_text(hjust = 0.5, size = 30))
+
+
+
+
+mean(kLocBasisMerge$avgBasis2019[which(kLocBasisMerge$cluster == 2)])
+mean(kLocBasisMerge$avgBasis2019[which(kLocBasisMerge$cluster == 1)])
+mean(kLocBasisMerge$avgBasis2019[which(kLocBasisMerge$cluster == 3)])
+mean(kLocBasisMerge$avgBasis2019[which(kLocBasisMerge$cluster == 4)])
+
+
+
+
+
+
+
 
