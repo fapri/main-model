@@ -8,6 +8,8 @@ library(readxl)
 library(readr)
 library(tm)
 library(Ckmeans.1d.dp)
+library(tidyverse)
+
 
 # Load files
 test = read_csv("Miscellaneous/test.csv")
@@ -154,7 +156,8 @@ ggplot(data = world) +
   theme(plot.title = element_text(hjust = 0.5, size = 30))
 
 # Save all weekly plots for 2019
-for (week in 1:seq_len(nrow(weeklyAverageList))) {
+plots = list()
+for (week in seq_len(length(weeklyAverageList))) {
   plots[[week]] = ggplot(data = world) +
     geom_sf() +
     geom_sf(data = weeklyAverageList[[week]], aes(fill = weeklyBasis2019, geometry = geometry)) +
@@ -174,6 +177,7 @@ for (week in 1:seq_len(nrow(weeklyAverageList))) {
 
 # Get data for only 2019 - yearly
 lastYear = yearlyMerge[, c(1, 2, 8, 9)]
+lastYear = yearlyMerge
 
 # Format data
 countyCenters$County = tolower(countyCenters$County)
@@ -182,7 +186,7 @@ countyCenters$County = tolower(countyCenters$County)
 lastYear = merge(x = lastYear, y = countyCenters, by = "County", all = TRUE)
 
 # Get only latitude and longitude
-lastYearLatLong = lastYear[,5:6]
+lastYearLatLong = lastYear[,c("Latitude", "Longitude")]
 
 # Determine number of strictly geographical clusters
 wss = (nrow(lastYearLatLong) - 1) * sum(apply(lastYearLatLong, 2, var))
@@ -216,19 +220,32 @@ ggplot(data = world) +
 
 
 ################################################################################
-# This seems to be the solution???
+# This seems to be the solution
 ################################################################################
 
 # K means clusters based on latitude, longitude, and basis
-kMeansLocBasis = kmeans(na.omit(lastYear[,c(2,5,6)]), centers = 4, nstart = 25) # 6 clusters
-locBasisClusters = data.frame(cluster = kMeansLocBasis$cluster)
-locBasisClusters$index = as.numeric(rownames(locBasisClusters))
-
-# Merge location and basis data to the clusters
+kLocBasisMerge = data.frame()
 lastYear$index = as.numeric(rownames(lastYear))
-kLocBasisMerge = merge(x = lastYear, y = locBasisClusters, by = "index", all = TRUE)
+for (year in names(listOfYears)) {
+  colYear = paste("avgBasis", year, sep = "")
+  
+  kMeansLocBasis = list()
+  locBasisClusters = data.frame()
+  kMeansLocBasis = kmeans(na.omit(lastYear[,c(colYear, "Latitude", "Longitude")]), centers = 4, nstart = 25) # 4 clusters
+  locBasisClusters = data.frame(cluster = kMeansLocBasis$cluster)
+  colnames(locBasisClusters) = paste("cluster", year, sep = "")
+  locBasisClusters$index = as.numeric(rownames(locBasisClusters))
+  
+  # Merge location and basis data to the clusters
+  if (nrow(kLocBasisMerge) == 0) {
+    kLocBasisMerge = merge(x = lastYear, y = locBasisClusters, by = "index", all = TRUE)
+  }
+  else {
+    kLocBasisMerge = merge(x = kLocBasisMerge, y = locBasisClusters, by = "index", all = TRUE)
+  }
+}
 
-# Plot
+# Plot 2019 Basis Only
 ggplot(data = world) +
   geom_sf() +
   geom_sf(data = yearlyMerge, aes(fill = avgBasis2019, geometry = geometry)) +
@@ -239,10 +256,138 @@ ggplot(data = world) +
   ggtitle("Missouri - Corn Basis 2019") +
   labs(fill = "Basis (cents)") + 
   theme(plot.title = element_text(hjust = 0.5, size = 30)) + 
-  geom_point(data = kLocBasisMerge, aes(x = Longitude, y = Latitude, size = 20, colour = as.factor(cluster)),
+  geom_point(data = kLocBasisMerge, aes(x = Longitude, y = Latitude, size = 20, colour = as.factor(cluster2019)),
              alpha = 1)
+
 #################################################################################
 
+# Convert data frame to sf
+# CRITICAL FOR PLOTTING
+kLocBasisMerge = kLocBasisMerge %>%
+  mutate(geometry = map(kLocBasisMerge$geometry,
+                        ~ map(.,
+                              ~ do.call(rbind, .) # make each list a matrix
+                        ) %>% 
+                          st_polygon()
+  )
+  ) %>% 
+  st_as_sf()
+kLocBasisMerge = kLocBasisMerge %>% st_buffer(0)
+
+# Plot shaded basis and outline of county clusters 2019
+# BASED ON THE K MEANS CLUSTERING METHOD OF LATITUDE, LONGITUDE, AND BASIS
+
+outline = list()
+outline[["2019"]] = geom_sf(fill = "transparent", size = 3, aes(color = as.factor(cluster2019)),
+                        data = . %>% group_by(cluster2019) %>% summarise() %>% na.omit())
+outline[["2018"]] = geom_sf(fill = "transparent", size = 3, aes(color = as.factor(cluster2018)),
+                        data = . %>% group_by(cluster2018) %>% summarise() %>% na.omit())
+outline[["2017"]] = geom_sf(fill = "transparent", size = 3, aes(color = as.factor(cluster2017)),
+                        data = . %>% group_by(cluster2017) %>% summarise() %>% na.omit())
+outline[["2016"]] = geom_sf(fill = "transparent", size = 3, aes(color = as.factor(cluster2016)),
+                        data = . %>% group_by(cluster2016) %>% summarise() %>% na.omit())
+outline[["2015"]] = geom_sf(fill = "transparent", size = 3, aes(color = as.factor(cluster2015)),
+                        data = . %>% group_by(cluster2015) %>% summarise() %>% na.omit())
+outline[["2014"]] = geom_sf(fill = "transparent", size = 3, aes(color = as.factor(cluster2014)),
+                        data = . %>% group_by(cluster2014) %>% summarise() %>% na.omit())
+
+clusterPlot = list()
+for (i in names(listOfYears)) {
+  basisVar = paste("avgBasis", i, sep = "")
+  clusterVar = paste("cluster", i, sep = "")
+  
+  basisCol = as.numeric(yearlyMerge[, which(colnames(yearlyMerge) == basisVar)])
+  
+  
+  
+  clusterPlot[[i]] = ggplot(kLocBasisMerge) +
+    geom_sf(fill = "white", color = "black", size = 0.5) +
+    theme_void() +
+    coord_sf(ndiscr = F) + 
+    geom_sf(data = yearlyMerge, aes(fill = basisCol, geometry = geometry)) +
+    scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
+                         limits = c(-max(abs(min(basisCol, na.rm = TRUE)), 
+                                         abs(max(basisCol, na.rm = TRUE))) - 0.05,
+                                    max(abs(min(basisCol, na.rm = TRUE)), 
+                                        abs(max(basisCol, na.rm = TRUE))) + 0.05), direction = "reverse") + 
+    
+    
+    
+    ggtitle(paste("Missouri - Corn Basis", i, sep = " ")) +
+    labs(fill = "Basis (cents)") + 
+    theme(plot.title = element_text(hjust = 0.5, size = 30)) +
+    outline[[i]]
+  
+
+}
+
+grid.arrange(clusterPlot[["2014":"2019"]], nrow = 3)
+
+
+
+
+
+
+ggplot(kLocBasisMerge) +
+  geom_sf(fill = "white", color = "black", size = 0.5) +
+  theme_void() +
+  coord_sf(ndiscr = F) + 
+  geom_sf(data = yearlyMerge, aes(fill = avgBasis2019, geometry = geometry)) +
+  scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
+                       limits = c(-max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), 
+                                       abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) - 0.05,
+                                  max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), 
+                                      abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") + 
+  geom_sf(fill = "transparent", size = 3, aes(color = as.factor(cluster2019)),
+          data = . %>% group_by(cluster2019) %>% summarise() %>% na.omit()) +
+  ggtitle(paste("Missouri - Corn Basis", "2019", sep = " ")) +
+  labs(fill = "Basis (cents)") + 
+  theme(plot.title = element_text(hjust = 0.5, size = 30))
+
+
+
+
+
+
+
+
+
+
+
+
+mean(kLocBasisMerge$avgBasis2019[which(kLocBasisMerge$cluster == 2)])
+mean(kLocBasisMerge$avgBasis2019[which(kLocBasisMerge$cluster == 1)])
+mean(kLocBasisMerge$avgBasis2019[which(kLocBasisMerge$cluster == 3)])
+mean(kLocBasisMerge$avgBasis2019[which(kLocBasisMerge$cluster == 4)])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#############################################################################################################################################
+#############################################################################################################################################
+# Additional methods with single years
 
 # Get just basis values
 justBasisDf = data.frame(avgBasis = lastYear$avgBasis2019, index = rownames(lastYear))
@@ -280,18 +425,10 @@ ggplot(data = world) +
   geom_point(data = clusterMerge, aes(x = Longitude, y = Latitude, size = 20, colour = as.factor(result.cluster)),
              alpha = 1)
 
-
-
-
-
-
-
-#############################################################################################################################################
-#############################################################################################################################################
+#################################################################################
 
 
 # Tree-based clustering methods
-library(tidyverse)  # data manipulation
 library(cluster)    # clustering algorithms
 library(factoextra) # clustering visualization
 library(dendextend) # for comparing two dendrograms
@@ -418,63 +555,23 @@ ggplot(data = world) +
              alpha = 1)
 
 
-
-
-
 #############################################################################################################################################
 #############################################################################################################################################
 
 
-# mo = tigris::counties(state = "Missouri", cb = T, class = "sf")
-# ggplot(mo) +
-#   geom_sf(fill = "gray95", color = "gray50", size = 0.5) +
-#   # these 2 lines just clean up appearance
-#   theme_void() +
-#   coord_sf(ndiscr = F)
-# mo %>% 
-#   group_by(COUNTYFP) %>% 
-#   summarise()
-
-
-
-# Convert data frame to sf
-# CRITICAL FOR PLOTTING
-kLocBasisMerge = kLocBasisMerge %>%
-  mutate(geometry = map(kLocBasisMerge$geometry,
-                        ~ map(.,
-                              ~ do.call(rbind, .) # make each list a matrix
-                        ) %>% 
-                          st_polygon()
-  )
-  ) %>% 
-  st_as_sf()
-kLocBasisMerge = kLocBasisMerge %>% st_buffer(0)
-
-# Plot shaded basis and outline of county clusters
-# BASED ON THE K MEANS CLUSTERING METHOD OF LATITUDE, LONGITUDE, AND BASIS
-ggplot(kLocBasisMerge) +
-  geom_sf(fill = "white", color = "black", size = 0.5) +
+mo = tigris::counties(state = "Missouri", cb = T, class = "sf")
+ggplot(mo) +
+  geom_sf(fill = "gray95", color = "gray50", size = 0.5) +
+  # these 2 lines just clean up appearance
   theme_void() +
-  coord_sf(ndiscr = F) + 
-  geom_sf(data = yearlyMerge, aes(fill = avgBasis2019, geometry = geometry)) +
-  scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
-                       limits = c(-max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), 
-                                       abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) - 0.05,
-                                  max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), 
-                                      abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") + 
-  geom_sf(fill = "transparent", size = 3, aes(color = as.factor(cluster)),
-          data = . %>% group_by(cluster) %>% summarise() %>% na.omit()) +
-  ggtitle("Missouri - Corn Basis 2019") +
-  labs(fill = "Basis (cents)") + 
-  theme(plot.title = element_text(hjust = 0.5, size = 30))
+  coord_sf(ndiscr = F)
+mo %>%
+  group_by(COUNTYFP) %>%
+  summarise()
 
 
 
 
-mean(kLocBasisMerge$avgBasis2019[which(kLocBasisMerge$cluster == 2)])
-mean(kLocBasisMerge$avgBasis2019[which(kLocBasisMerge$cluster == 1)])
-mean(kLocBasisMerge$avgBasis2019[which(kLocBasisMerge$cluster == 3)])
-mean(kLocBasisMerge$avgBasis2019[which(kLocBasisMerge$cluster == 4)])
 
 
 
