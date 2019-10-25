@@ -73,7 +73,7 @@ counties$County = splitCountyState
 listOfYears = list()
 averageBasisCounty = data.frame()
 requiredYears = c("2019", "2018", "2017", "2016", "2015", "2014")
-k
+
 # Gets average basis for each county for every year
 for (year in requiredYears) {
   years = which(grepl(year, colnames(test)))
@@ -126,74 +126,46 @@ ggplot(data = world) +
   labs(fill = "Basis (cents)") + 
   theme(plot.title = element_text(hjust = 0.5, size = 30))
 
-# Plot basis 2018
-ggplot(data = world) +
-  geom_sf() +
-  geom_sf(data = yearlyMerge, aes(fill = avgBasis2018, geometry = geometry)) +
-  coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
-  scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
-                       limits = c(-max(abs(min(yearlyMerge$avgBasis2018, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2018, na.rm = TRUE))) - 0.05,
-                                  max(abs(min(yearlyMerge$avgBasis2018, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2018, na.rm = TRUE))) + 0.05), direction = "reverse") + 
-  ggtitle("Missouri - Corn Basis 2018") +
-  labs(fill = "Basis (cents)") + 
-  theme(plot.title = element_text(hjust = 0.5, size = 30))
-
-# Plot basis 2017
-ggplot(data = world) +
-  geom_sf() +
-  geom_sf(data = yearlyMerge, aes(fill = avgBasis2017, geometry = geometry)) +
-  coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
-  scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
-                       limits = c(-max(abs(min(yearlyMerge$avgBasis2017, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2017, na.rm = TRUE))) - 0.05,
-                                  max(abs(min(yearlyMerge$avgBasis2017, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2017, na.rm = TRUE))) + 0.05), direction = "reverse") + 
-  ggtitle("Missouri - Corn Basis 2017") +
-  labs(fill = "Basis (cents)") + 
-  theme(plot.title = element_text(hjust = 0.5, size = 30))
-
-# Plot first week of 2019
-ggplot(data = world) +
-  geom_sf() +
-  geom_sf(data = weeklyAverageList[[1]], aes(fill = weeklyBasis2019, geometry = geometry)) +
-  coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
-  scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
-                       limits = c(-max(abs(min(weeklyAverageList[[1]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[1]]$weeklyBasis2019, na.rm = TRUE))) - 0.05,
-                                  max(abs(min(weeklyAverageList[[1]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[1]]$weeklyBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") + 
-  ggtitle("Missouri - Weekly Corn Basis 2019") +
-  labs(fill = "Basis (cents)") + 
-  theme(plot.title = element_text(hjust = 0.5, size = 30))
-
-# Save all weekly plots for 2019
-plots = list()
-for (week in seq_len(length(weeklyAverageList))) {
-  plots[[week]] = ggplot(data = world) +
-    geom_sf() +
-    geom_sf(data = weeklyAverageList[[week]], aes(fill = weeklyBasis2019, geometry = geometry)) +
-    coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
-    scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
-                         limits = c(-max(abs(min(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE))) - 0.05,
-                                    max(abs(min(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") + 
-    ggtitle("Missouri - Weekly Corn Basis 2019") +
-    labs(fill = "Basis (cents)") + 
-    theme(plot.title = element_text(hjust = 0.5, size = 30))
-}
+# # Plot first week of 2019
+# ggplot(data = world) +
+#   geom_sf() +
+#   geom_sf(data = weeklyAverageList[[1]], aes(fill = weeklyBasis2019, geometry = geometry)) +
+#   coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
+#   scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
+#                        limits = c(-max(abs(min(weeklyAverageList[[1]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[1]]$weeklyBasis2019, na.rm = TRUE))) - 0.05,
+#                                   max(abs(min(weeklyAverageList[[1]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[1]]$weeklyBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") + 
+#   ggtitle("Missouri - Weekly Corn Basis 2019") +
+#   labs(fill = "Basis (cents)") + 
+#   theme(plot.title = element_text(hjust = 0.5, size = 30))
+# 
+# # Save all weekly plots for 2019
+# plots = list()
+# for (week in seq_len(length(weeklyAverageList))) {
+#   plots[[week]] = ggplot(data = world) +
+#     geom_sf() +
+#     geom_sf(data = weeklyAverageList[[week]], aes(fill = weeklyBasis2019, geometry = geometry)) +
+#     coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
+#     scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
+#                          limits = c(-max(abs(min(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE))) - 0.05,
+#                                     max(abs(min(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") + 
+#     ggtitle("Missouri - Weekly Corn Basis 2019") +
+#     labs(fill = "Basis (cents)") + 
+#     theme(plot.title = element_text(hjust = 0.5, size = 30))
+# }
 
 
 #################################################################################
 # Clustering - Strictly Geographical
 #################################################################################
 
-# Get data for only 2019 - yearly
-lastYear = yearlyMerge[, c(1, 2, 8, 9)]
-lastYear = yearlyMerge
-
 # Format data
 countyCenters$County = tolower(countyCenters$County)
 
 # Attach geographical information to basis
-lastYear = merge(x = lastYear, y = countyCenters, by = "County", all = TRUE)
+yearlyMerge = merge(x = yearlyMerge, y = countyCenters, by = "County", all = TRUE)
 
 # Get only latitude and longitude
-lastYearLatLong = lastYear[,c("Latitude", "Longitude")]
+lastYearLatLong = yearlyMerge[,c("Latitude", "Longitude")]
 
 # Determine number of strictly geographical clusters
 wss = (nrow(lastYearLatLong) - 1) * sum(apply(lastYearLatLong, 2, var))
@@ -211,19 +183,19 @@ lastYearLatLong = data.frame(lastYearLatLong, fit$cluster)
 lastYearLatLong$fit.cluster = as.factor(lastYearLatLong$fit.cluster)
 ggplot(lastYearLatLong, aes(x = Longitude, y = Latitude, color = lastYearLatLong$fit.cluster)) + geom_point(size = 10)
 
-# Plot geographical clusters over basis data for Missouri
-ggplot(data = world) +
-  geom_sf() +
-  geom_sf(data = weeklyAverageList[[week]], aes(fill = weeklyBasis2019, geometry = geometry)) +
-  coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
-  scale_fill_distiller(palette = "RdYlGn", na.value = "White",
-                       limits = c(-max(abs(min(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE))) - 0.05,
-                                  max(abs(min(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") +
-  ggtitle("Missouri - Weekly Corn Basis 2019") +
-  labs(fill = "Basis (cents)") + 
-  theme(plot.title = element_text(hjust = 0.5, size = 30)) + 
-  geom_point(data = lastYearLatLong, aes(x = Longitude, y = Latitude, size = 20, colour = lastYearLatLong$fit.cluster),
-             alpha = 1)
+# # Plot geographical clusters over basis data for Missouri
+# ggplot(data = world) +
+#   geom_sf() +
+#   geom_sf(data = weeklyAverageList[[week]], aes(fill = weeklyBasis2019, geometry = geometry)) +
+#   coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
+#   scale_fill_distiller(palette = "RdYlGn", na.value = "White",
+#                        limits = c(-max(abs(min(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE))) - 0.05,
+#                                   max(abs(min(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE)), abs(max(weeklyAverageList[[week]]$weeklyBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") +
+#   ggtitle("Missouri - Weekly Corn Basis 2019") +
+#   labs(fill = "Basis (cents)") + 
+#   theme(plot.title = element_text(hjust = 0.5, size = 30)) + 
+#   geom_point(data = lastYearLatLong, aes(x = Longitude, y = Latitude, size = 20, colour = lastYearLatLong$fit.cluster),
+#              alpha = 1)
 
 
 ################################################################################
@@ -232,20 +204,20 @@ ggplot(data = world) +
 
 # K means clusters based on latitude, longitude, and basis
 kLocBasisMerge = data.frame()
-lastYear$index = as.numeric(rownames(lastYear))
+yearlyMerge$index = as.numeric(rownames(yearlyMerge))
 for (year in names(listOfYears)) {
   colYear = paste("avgBasis", year, sep = "")
   
   kMeansLocBasis = list()
   locBasisClusters = data.frame()
-  kMeansLocBasis = kmeans(na.omit(lastYear[,c(colYear, "Latitude", "Longitude")]), centers = 4, nstart = 25) # 4 clusters
+  kMeansLocBasis = kmeans(na.omit(yearlyMerge[,c(colYear, "Latitude", "Longitude")]), centers = 4, nstart = 25) # 4 clusters
   locBasisClusters = data.frame(cluster = kMeansLocBasis$cluster)
   colnames(locBasisClusters) = paste("cluster", year, sep = "")
   locBasisClusters$index = as.numeric(rownames(locBasisClusters))
   
   # Merge location and basis data to the clusters
   if (nrow(kLocBasisMerge) == 0) {
-    kLocBasisMerge = merge(x = lastYear, y = locBasisClusters, by = "index", all = TRUE)
+    kLocBasisMerge = merge(x = yearlyMerge, y = locBasisClusters, by = "index", all = TRUE)
   }
   else {
     kLocBasisMerge = merge(x = kLocBasisMerge, y = locBasisClusters, by = "index", all = TRUE)
@@ -564,193 +536,6 @@ grid.arrange(clusterPlotThreeYearAvg,
 
 
 
-
-
-
-
-#############################################################################################################################################
-#############################################################################################################################################
-# Additional methods with single years
-
-# Get just basis values
-justBasisDf = data.frame(avgBasis = lastYear$avgBasis2019, index = rownames(lastYear))
-justBasisDf = na.omit(justBasisDf)
-
-# Divide basis values into 3 clusters
-k = 3
-result = Ckmeans.1d.dp(justBasisDf$avgBasis, k)
-plot(result)
-justBasis = justBasisDf$avgBasis
-
-# Plot one dimensional clusters
-plot(justBasis, col = result$cluster, pch = result$cluster, cex = 1.5,
-     main = "Optimal univariate clustering given k",
-     sub = paste("Number of clusters given:", k))
-abline(h = result$centers, col = 1:k, lty = "dashed", lwd = 2)
-legend("bottomright", paste("Cluster", 1:k), col = 1:k, pch = 1:k, cex = 1.5, bty = "n")
-
-# Merge one dimensional clusters to basis data
-justBasisDf = data.frame(justBasisDf, result$cluster)
-lastYear$index = as.numeric(rownames(lastYear))
-clusterMerge = merge(x = lastYear, y = justBasisDf[, c(2,3)], by = "index", all = TRUE)
-
-# Plot one dimensional cluster results
-ggplot(data = world) +
-  geom_sf() +
-  geom_sf(data = yearlyMerge, aes(fill = avgBasis2019, geometry = geometry)) +
-  coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
-  scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
-                       limits = c(-max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) - 0.05,
-                                  max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") + 
-  ggtitle("Missouri - Corn Basis 2019") +
-  labs(fill = "Basis (cents)") + 
-  theme(plot.title = element_text(hjust = 0.5, size = 30)) + 
-  geom_point(data = clusterMerge, aes(x = Longitude, y = Latitude, size = 20, colour = as.factor(result.cluster)),
-             alpha = 1)
-
-#################################################################################
-
-
-# Tree-based clustering methods
-library(cluster)    # clustering algorithms
-library(factoextra) # clustering visualization
-library(dendextend) # for comparing two dendrograms
-
-# Get data for only 2019 - yearly
-lastYear = yearlyMerge[, c(1, 2, 8, 9)]
-
-# Format data
-countyCenters$County = tolower(countyCenters$County)
-
-# Attach geographical information to basis
-lastYear = merge(x = lastYear, y = countyCenters, by = "County", all = TRUE)
-
-# Dissimilarity matrix
-d = dist(na.omit(lastYear[, c(2,5,6)]), method = "euclidean")
-
-# Hierarchical clustering using Complete Linkage
-hc1 = hclust(d, method = "complete")
-
-# Plot the obtained dendrogram
-plot(hc1, cex = 0.6, hang = -1)
-
-# Compute with agnes
-hc2 = agnes(na.omit(lastYear[, c(2,5,6)]), method = "complete")
-
-# Agglomerative coefficient
-hc2$ac
-
-df = na.omit(lastYear[, c(2,5,6)])
-
-# methods to assess
-m = c( "average", "single", "complete", "ward")
-names(m) = c( "average", "single", "complete", "ward")
-
-# function to compute coefficient
-ac = function(x) {
-  agnes(df, method = x)$ac
-}
-
-map_dbl(m, ac)
-
-hc3 = agnes(df, method = "ward")
-pltree(hc3, cex = 0.6, hang = -1, main = "Dendrogram of agnes") 
-
-# compute divisive hierarchical clustering
-hc4 = diana(df)
-
-# Divise coefficient; amount of clustering structure found
-hc4$dc
-
-# plot dendrogram
-pltree(hc4, cex = 0.6, hang = -1, main = "Dendrogram of diana")
-
-# Ward's method
-hc5 = hclust(d, method = "ward.D2")
-
-# Cut tree into 4 groups
-sub_grp = cutree(hc5, k = 5)
-
-# Number of members in each cluster
-table(sub_grp)
-
-df$index = rownames(df)
-newDF = df %>%
-  mutate(cluster = sub_grp)
-
-plot(hc5, cex = 0.6)
-rect.hclust(hc5, k = 6, border = 2:5)
-
-fviz_cluster(list(data = df, cluster = sub_grp))
-
-# Cut agnes() tree into 4 groups
-hc_a = agnes(df, method = "ward")
-cutree(as.hclust(hc_a), k = 4)
-
-# Cut diana() tree into 4 groups
-hc_d = diana(df)
-cutree(as.hclust(hc_d), k = 4)
-
-# Compute distance matrix
-res.dist = dist(df, method = "euclidean")
-
-# Compute 2 hierarchical clusterings
-hc1 = hclust(res.dist, method = "complete")
-hc2 = hclust(res.dist, method = "ward.D2")
-
-# Create two dendrograms
-dend1 = as.dendrogram(hc1)
-dend2 = as.dendrogram(hc2)
-
-tanglegram(dend1, dend2)
-
-dend_list = dendlist(dend1, dend2)
-
-tanglegram(dend1, dend2,
-           highlight_distinct_edges = FALSE, # Turn-off dashed lines
-           common_subtrees_color_lines = FALSE, # Turn-off line colors
-           common_subtrees_color_branches = TRUE, # Color common branches 
-           main = paste("entanglement =", round(entanglement(dend_list), 2))
-)
-
-fviz_nbclust(df, FUN = hcut, method = "wss")
-
-fviz_nbclust(df, FUN = hcut, method = "silhouette")
-
-gap_stat = clusGap(df, FUN = hcut, nstart = 25, K.max = 10, B = 50)
-fviz_gap_stat(gap_stat)
-
-lastYear$index = as.numeric(rownames(lastYear))
-treeMerge = merge(x = lastYear, y = newDF[, c(4,5)], by = "index", all = TRUE)
-
-# Plot one dimensional cluster results
-ggplot(data = world) +
-  geom_sf() +
-  geom_sf(data = yearlyMerge, aes(fill = avgBasis2019, geometry = geometry)) +
-  coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) + 
-  scale_fill_distiller(palette = "RdYlGn", na.value = "White", 
-                       limits = c(-max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) - 0.05,
-                                  max(abs(min(yearlyMerge$avgBasis2019, na.rm = TRUE)), abs(max(yearlyMerge$avgBasis2019, na.rm = TRUE))) + 0.05), direction = "reverse") + 
-  ggtitle("Missouri - Corn Basis 2019") +
-  labs(fill = "Basis (cents)") + 
-  theme(plot.title = element_text(hjust = 0.5, size = 30)) + 
-  geom_point(data = treeMerge, aes(x = Longitude, y = Latitude, size = 20, colour = as.factor(cluster)),
-             alpha = 1)
-
-
-#############################################################################################################################################
-#############################################################################################################################################
-
-
-mo = tigris::counties(state = "Missouri", cb = T, class = "sf")
-ggplot(mo) +
-  geom_sf(fill = "gray95", color = "gray50", size = 0.5) +
-  # these 2 lines just clean up appearance
-  theme_void() +
-  coord_sf(ndiscr = F)
-mo %>%
-  group_by(COUNTYFP) %>%
-  summarise()
 
 
 
