@@ -10,8 +10,10 @@ library(readxl)
 library(readr)
 library(tm)
 library(Ckmeans.1d.dp)
+library(grid)
 library(gridExtra)
 library(rhandsontable)
+library(cowplot)
 
 # Load files
 test = read_csv("Miscellaneous/test.csv")
@@ -318,7 +320,7 @@ for (clusterName in clusterNames) {
 }
 
 ################################################################################
-# Plotting
+# Plotting WITH Clusters
 ################################################################################
 
 # Convert data frame to sf
@@ -553,3 +555,143 @@ avgLong = merge(avgLong, mergeThreeFiveAvg)
 # Create table
 rhandsontable(avgLong[, c(1, 8:9)], rowHeaders = NULL)
 
+
+
+
+
+
+
+
+
+
+
+################################################################################
+# Plotting WITHOUT Clusters
+################################################################################
+
+# Get minimum and maximum limits
+kLocBasisMerge = data.frame(kLocBasisMerge)
+minLimit = round(min(na.omit(kLocBasisMerge[, 3:8])) - 0.05, digits = 2)
+maxLimit = round(max(na.omit(kLocBasisMerge[, 3:8])) + 0.05, digits = 2)
+
+# Convert data frame to sf
+# CRITICAL FOR PLOTTING
+kLocBasisMerge = kLocBasisMerge %>% as_tibble() %>% st_as_sf()
+kLocBasisMerge = kLocBasisMerge %>% st_buffer(0)
+
+# Plot maps for all years
+heatPlot = list()
+for (i in 1) {
+  heatPlot2019 = ggplot(kLocBasisMerge) +
+    geom_sf(fill = "white", color = "black", size = 0.5) +
+    theme_void() +
+    coord_sf(ndiscr = F) + 
+    geom_sf(data = kLocBasisMerge, aes(fill = avgBasis2019, geometry = geometry)) +
+    scale_fill_distiller(palette = "Spectral", na.value = "White",
+                         limits = c(minLimit, maxLimit), direction = "reverse", breaks = seq(minLimit, maxLimit, 0.25)) +
+    ggtitle(paste("2019", sep = " ")) +
+    labs(fill = "Basis (cents)") +
+    theme(plot.title = element_text(hjust = 0.5, size = 30), legend.key.size = unit(2, "cm"),)
+  
+  heatPlot2018 = ggplot(kLocBasisMerge) +
+    geom_sf(fill = "white", color = "black", size = 0.5) +
+    theme_void() +
+    coord_sf(ndiscr = F) + 
+    geom_sf(data = kLocBasisMerge, aes(fill = avgBasis2018, geometry = geometry)) +
+    scale_fill_distiller(palette = "Spectral", na.value = "White",
+                         limits = c(minLimit, maxLimit), direction = "reverse") +
+    ggtitle(paste("2018", sep = " ")) +
+    labs(fill = "Basis (cents)") +
+    theme(plot.title = element_text(hjust = 0.5, size = 30), legend.position = "none")
+  
+  heatPlot2017 = ggplot(kLocBasisMerge) +
+    geom_sf(fill = "white", color = "black", size = 0.5) +
+    theme_void() +
+    coord_sf(ndiscr = F) + 
+    geom_sf(data = kLocBasisMerge, aes(fill = avgBasis2017, geometry = geometry)) +
+    scale_fill_distiller(palette = "Spectral", na.value = "White",
+                         limits = c(minLimit, maxLimit), direction = "reverse") +
+    ggtitle(paste("2017", sep = " ")) +
+    labs(fill = "Basis (cents)") +
+    theme(plot.title = element_text(hjust = 0.5, size = 30), legend.position = "none")
+  
+  heatPlot2016 = ggplot(kLocBasisMerge) +
+    geom_sf(fill = "white", color = "black", size = 0.5) +
+    theme_void() +
+    coord_sf(ndiscr = F) + 
+    geom_sf(data = kLocBasisMerge, aes(fill = avgBasis2016, geometry = geometry)) +
+    scale_fill_distiller(palette = "Spectral", na.value = "White",
+                         limits = c(minLimit, maxLimit), direction = "reverse") +
+    ggtitle(paste("2016", sep = " ")) +
+    labs(fill = "Basis (cents)") +
+    theme(plot.title = element_text(hjust = 0.5, size = 30), legend.position = "none")
+  
+  heatPlot2015 = ggplot(kLocBasisMerge) +
+    geom_sf(fill = "white", color = "black", size = 0.5) +
+    theme_void() +
+    coord_sf(ndiscr = F) + 
+    geom_sf(data = kLocBasisMerge, aes(fill = avgBasis2015, geometry = geometry)) +
+    scale_fill_distiller(palette = "Spectral", na.value = "White",
+                         limits = c(minLimit, maxLimit), direction = "reverse") +
+    ggtitle(paste("2015", sep = " ")) +
+    labs(fill = "Basis (cents)") +
+    theme(plot.title = element_text(hjust = 0.5, size = 30), legend.position = "none")
+  
+  heatPlot2014 = ggplot(kLocBasisMerge) +
+    geom_sf(fill = "white", color = "black", size = 0.5) +
+    theme_void() +
+    coord_sf(ndiscr = F) + 
+    geom_sf(data = kLocBasisMerge, aes(fill = avgBasis2014, geometry = geometry)) +
+    scale_fill_distiller(palette = "Spectral", na.value = "White",
+                         limits = c(minLimit, maxLimit), direction = "reverse") +
+    ggtitle(paste("2014", sep = " ")) +
+    labs(fill = "Basis (cents)") +
+    theme(plot.title = element_text(hjust = 0.5, size = 30), legend.position = "none")
+  
+  # Plot 3 Year Average
+  heatPlotThreeYearAvg = ggplot(kLocBasisMerge) +
+    geom_sf(fill = "white", color = "black", size = 0.5) +
+    theme_void() +
+    coord_sf(ndiscr = F) + 
+    geom_sf(data = kLocBasisMerge, aes(fill = threeYearAvg, geometry = geometry)) +
+    scale_fill_distiller(palette = "Spectral", na.value = "White",
+                         limits = c(minLimit, maxLimit), direction = "reverse") +
+    ggtitle(paste("2017 - 2019", sep = " ")) +
+    labs(fill = "Basis (cents)") +
+    theme(plot.title = element_text(hjust = 0.5, size = 30), legend.position = "none")
+  
+  # Plot 5 Year Average
+  heatPlotFiveYearAvg = ggplot(kLocBasisMerge) +
+    geom_sf(fill = "white", color = "black", size = 0.5) +
+    theme_void() +
+    coord_sf(ndiscr = F) + 
+    geom_sf(data = kLocBasisMerge, aes(fill = fiveYearAvg, geometry = geometry)) +
+    scale_fill_distiller(palette = "Spectral", na.value = "White",
+                         limits = c(minLimit, maxLimit), direction = "reverse") +
+    ggtitle(paste("2015 - 2019", sep = " ")) +
+    labs(fill = "Basis (cents)") +
+    theme(plot.title = element_text(hjust = 0.5, size = 30), legend.position = "none")
+}
+
+thelegend <- get_legend(heatPlot2019)
+heatPlot2019 <- heatPlot2019 + theme(legend.position = "none")
+
+# Plot all years
+grid.arrange(heatPlot2019,
+             heatPlot2018,
+             ggplot() + theme_void(),
+             heatPlot2017,
+             heatPlot2016,
+             thelegend, 
+             heatPlot2015,
+             heatPlot2014, 
+             ncol = 3,
+             top = textGrob("Missouri Corn Basis", gp = gpar(fontsize = 40, font = 1)))
+
+# plot 3 and 5 year clusters
+grid.arrange(heatPlotThreeYearAvg,
+             heatPlotFiveYearAvg,
+             thelegend,
+             ncol = 2,
+             layout_matrix = cbind(c(1, 2), c(3, 3)),
+             top = textGrob("Missouri Corn Basis", gp = gpar(fontsize = 40, font = 1)))
