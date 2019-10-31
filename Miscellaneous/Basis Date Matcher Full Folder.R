@@ -7,7 +7,14 @@ library(svDialogs)
 fullSet = data.frame()
 dates = read_excel("Miscellaneous/Dates.xlsx")
 
-files = list.files("Miscellaneous/Data")
+cropType = dlg_message(message = "Yes for Corn, No for Soybeans", type = "yesno")[["res"]]
+
+if (cropType == "yes") {
+  files = list.files("Miscellaneous/Data")
+} else {
+  files = list.files("Miscellaneous/SoybeanData")
+}
+
 for (filename in files) {
   print(paste("FILENAME:", filename))
   split = unlist(strsplit(filename, " - "))
@@ -15,7 +22,11 @@ for (filename in files) {
   print(paste("COMPANY:", split[2]))
   print("----------------------------------------------------------------------")
   
-  basis = read_csv(paste("Miscellaneous/Data/", filename, sep = ""), skip = 1)
+  if (cropType == "yes") {
+    basis = read_csv(paste("Miscellaneous/Data/", filename, sep = ""), skip = 1)
+  } else {
+    basis = read_csv(paste("Miscellaneous/SoybeanData/", filename, sep = ""), skip = 1)
+  }
   
   # Remove any escape characters
   colnames(basis) = gsub("[\r\n]", "", colnames(basis))
