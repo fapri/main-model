@@ -10,7 +10,7 @@ countyCenters = countyCenters[which(countyCenters$County != "Montgomery"),]
 
 results = list()
 errors = list()
-set.api.key("AIzaSyB537MHNRG_GIXDkln-n4oTF7aMxPaiTWM")
+set.api.key("")
 for (row in 1:nrow(countyCenters)) {
   county = countyCenters[row,]
   county_name = county$County
