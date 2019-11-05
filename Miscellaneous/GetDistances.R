@@ -27,20 +27,28 @@ for (row in 1:nrow(countyCenters)) {
   }
 }
 
-
 Montgomery_Distances = results
 saveRDS(Montgomery_Distances, "Miscellaneous/Montgomery_Distances.rds")
 Montgomery_Distances = readRDS("Miscellaneous/Montgomery_Distances.rds")
 
-
-
+# Convert to miles
 meters_to_miles = function(x) {
-  return (x / 1609.344)
+  return(x / 1609.344)
 }
-
 Montgomery_Distances = lapply(Montgomery_Distances,meters_to_miles)
+
 
 
 # results = gmapsdistance(origin = montgomeryCounty_origin,
 #                         destination = "38.989657+-92.310779",
 #                         mode = "driving")
+
+
+
+# Convert list to Data Frame
+Montgomery_Distances_DF = data.frame(County = names(Montgomery_Distances), 
+                                     Distance = as.numeric(sapply(Montgomery_Distances, paste,collapse = " ")), 
+                                     row.names = seq_along(Montgomery_Distances))
+
+# Save RDS for later
+saveRDS(Montgomery_Distances_DF, "Miscellaneous/Montgomery_Distances_DF.rds")
