@@ -43,7 +43,7 @@ ggplot(data = world) +
   coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE)
 
 # Clean text and get cities from K State data frame
-test$City = gsub("MO", "", test$City, fixed = TRUE)
+test$City = gsub(" MO", "", test$City, fixed = TRUE)
 test$City = trimws(test$City, "r")
 test$City = gsub(".", "", test$City, fixed = TRUE)
 test$City = tolower(test$City)
@@ -54,6 +54,7 @@ test$County = NA
 # Standardize data
 citiesCounties$CITY = tolower(citiesCounties$CITY)
 citiesCounties$COUNTY = tolower(citiesCounties$COUNTY)
+citiesCounties$CITY[which(citiesCounties$CITY == "e. prairie")] = "east prairie"
 
 # Matches counties to K State data
 for (i in seq_len(nrow(citiesCounties))) {
