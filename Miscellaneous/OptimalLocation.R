@@ -49,19 +49,40 @@ for (Year in years) {
   names(Montgomery_List[[Year]]) = c("County", "Week", "City", "Company", "Distance", "Date", "Basis")
 }
 
-match_Futures_Prices = function(basis_list) {
-  initial_merge = merge.data.frame(x = basis_List, y = Corn_FuturesMarket, by = "Date", all.x = TRUE)
+match_Futures_Prices = function(basis_List_Element) {
+  initial_Merge = merge.data.frame(x = basis_List_Element, y = Corn_FuturesMarket, by = "Date", all.x = TRUE)
   
   # TODO Checking which dates need to be added which did not match
+  if (length(which(!is.na(initial_Merge$Date) & is.na(initial_Merge$NearbyOC))) > 0) {
+    dates_To_Find = unique(initial_Merge$Date[which(!is.na(initial_Merge$Date) & is.na(initial_Merge$NearbyOC))])
+    
+    replacement_Date = Corn_FuturesMarket$Date[which(abs(Corn_FuturesMarket$Date - dates_To_Find) == 
+                                                       min(abs(Corn_FuturesMarket$Date - dates_To_Find)))[1]]
+    
+    rows_To_Replace = which(!is.na(initial_Merge$Date) & is.na(initial_Merge$NearbyOC))
+    
+    row_To_Copy = Corn_FuturesMarket[which(Corn_FuturesMarket$Date == replacement_Date), c("NearbyOC", "DecNC", "DecNC1yr", "DecNC2yr", "MarNC")]
+    
+    rows_Replaced = row_To_Copy %>% slice(rep(1:n(), each = length(rows_To_Replace)))
+    
+    initial_Merge[rows_To_Replace, c("NearbyOC", "DecNC", "DecNC1yr", "DecNC2yr", "MarNC")] = rows_Replaced
+  }
   
-  which(!is.na(initial_merge$Date) & is.na(initial_merge$NearbyOC))
-  return()
+  return(initial_Merge)
 }
 
 Montgomery_List = lapply(Montgomery_List, match_Futures_Prices)
 
 
+basis_List_Element = Montgomery_List[[1]]
 
+
+# "2014"
+# "2015"
+# "2016"
+# "2017"
+"2018"
+"2019"
 
 
 
