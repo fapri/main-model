@@ -109,15 +109,93 @@ Montgomery_List = lapply(Montgomery_List, get_Net)
 
 
 
+# Montgomery county .10-.20 cent local hauling charge
+# use .15
 
 
 
+# Gets coordinates for Missouri counties
+counties = st_as_sf(map("county", plot = FALSE, fill = TRUE))
+counties = subset(counties, grepl("missouri", counties$ID))
+
+# Isolates county name
+splitCountyState = unlist(strsplit(counties$ID, ","))
+splitCountyState = splitCountyState[!splitCountyState %in% "missouri"]
+
+# Atttach county to coordinate data
+counties$County = splitCountyState
+
+# Aggregate weekly averages
+weeklyAverageList = lapply(names(Montgomery_List), function(x) merge(x = Montgomery_List[[x]], y = counties, by = "County", all = TRUE))
+split_tibble = function(tibble, col = 'col') tibble %>% split(., .[,col])
+weeklyAverageList = lapply(seq_len(length(weeklyAverageList)), function(x) split_tibble(weeklyAverageList[[x]], 'Week'))
 
 
-
-# stLouis = Montgomery_List[["2014"]][which(Montgomery_List[["2014"]]$County == "st louis"),]
 # 
-# ggplot(data = stLouis) + 
+# tibble = weeklyAverageList[[1]]
+# col = "Week"
+# 
+# 
+# cleave_by <- function(df, ...) {
+#   stopifnot(inherits(df, "data.frame"))
+#   
+#   # use tidyeval to get the names ready for dplyr
+#   grouping <- quos(...)
+#   
+#   # Calculate a single number to represent each group
+#   group_index <- df %>%
+#     group_by(!!!grouping) %>%
+#     group_indices()
+#   
+#   # do the split by this single group_index variable and return it
+#   split(df, group_index)
+# }
+# 
+# function(tibble, col = 'col') {
+#   
+#   x = tibble %>% cleave_by(., .[,col])
+#   
+# }
+
+
+
+
+
+
+# Gets world geographic data
+world = ne_countries(scale = "medium", returnclass = "sf")
+
+
+
+
+# Plot first week of 2019
+ggplot(data = world) +
+  geom_sf() +
+  geom_sf(data = weeklyAverageList[[1]][[1]], aes(fill = net, geometry = geometry)) +
+  coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) +
+  scale_fill_distiller(palette = "RdYlGn", na.value = "White",
+                       limits = c(-max(abs(min(weeklyAverageList[[1]][[1]]$net, na.rm = TRUE)), abs(max(weeklyAverageList[[1]][[1]]$net, na.rm = TRUE))) - 0.05,
+                                  max(abs(min(weeklyAverageList[[1]][[1]]$net, na.rm = TRUE)), abs(max(weeklyAverageList[[1]][[1]]$net, na.rm = TRUE))) + 0.05), direction = "reverse") +
+  ggtitle("Missouri - Weekly Corn Basis 2019") +
+  labs(fill = "Basis (cents)") +
+  theme(plot.title = element_text(hjust = 0.5, size = 30))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# stLouis = Montgomery_List[["2019"]][which(Montgomery_List[["2019"]]$County == "st louis"),]
+# 
+# ggplot(data = stLouis) +
 #   geom_line(aes(x = Week, y = net, group = 1))
 
 
