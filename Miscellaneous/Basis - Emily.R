@@ -711,5 +711,5 @@ if (dlg_message(message = "Export data to a RDS?", type = "yesno")[["res"]] == "
   filename2 = dlgInput("Enter the filename for minLimit (without .rds):", Sys.info()["user"])$res
   saveRDS(minLimit, paste("Miscellaneous/", filename2, ".rds", sep = ""))
   filename3 = dlgInput("Enter the filename for maxLimit (without .rds):", Sys.info()["user"])$res
-  saveRDS(maxLimit, paste("Miscellaneous/", maxLimit, ".rds", sep = ""))
+  saveRDS(maxLimit, paste("Miscellaneous/", filename3, ".rds", sep = ""))
 }
