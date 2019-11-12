@@ -18,8 +18,10 @@ library(cowplot)
 library(svDialogs)
 
 # Load files
-print("Select Crop File:")
-test = read_csv(file.choose())
+test = read.csv(choose.files(default = "", caption = "Select Crop File:",
+             multi = FALSE, filters = Filters,
+             index = nrow(Filters)))
+
 
 
 citiesCounties = read_excel("Miscellaneous/Cities and Counties.xlsx")
@@ -708,6 +710,6 @@ if (dlg_message(message = "Export data to a RDS?", type = "yesno")[["res"]] == "
   saveRDS(kLocBasisMerge, paste("Miscellaneous/", filename1, ".rds", sep = ""))
   filename2 = dlgInput("Enter the filename for minLimit (without .rds):", Sys.info()["user"])$res
   saveRDS(minLimit, paste("Miscellaneous/", filename2, ".rds", sep = ""))
-  filename3 = dlgInput("Enter the filename for kLocBasisMerge (without .rds):", Sys.info()["user"])$res
+  filename3 = dlgInput("Enter the filename for maxLimit (without .rds):", Sys.info()["user"])$res
   saveRDS(maxLimit, paste("Miscellaneous/", maxLimit, ".rds", sep = ""))
 }
