@@ -19,7 +19,7 @@ library(cowplot)
 library(svDialogs)
 
 # Load files
-test = read.csv(choose.files(default = "", caption = "Select Crop File:",
+KStateFile = read.csv(choose.files(default = "", caption = "Select Crop File:",
              multi = FALSE, filters = Filters,
              index = nrow(Filters)))
 
@@ -49,13 +49,13 @@ states$ID = toTitleCase(states$ID)
 #   coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE)
 
 # Clean text and get cities from K State data frame
-test$City = gsub(" MO", "", test$City, fixed = TRUE)
-test$City = trimws(test$City, "r")
-test$City = gsub(".", "", test$City, fixed = TRUE)
-test$City = tolower(test$City)
+KStateFile$City = gsub(" MO", "", KStateFile$City, fixed = TRUE)
+KStateFile$City = trimws(KStateFile$City, "r")
+KStateFile$City = gsub(".", "", KStateFile$City, fixed = TRUE)
+KStateFile$City = tolower(KStateFile$City)
 
 # initialize column
-test$County = NA
+KStateFile$County = NA
 
 # Standardize data
 citiesCounties$CITY = tolower(citiesCounties$CITY)
@@ -64,8 +64,8 @@ citiesCounties$CITY[which(citiesCounties$CITY == "e. prairie")] = "east prairie"
 
 # Matches counties to K State data
 for (i in seq_len(nrow(citiesCounties))) {
-  tempRows = which(test$City == citiesCounties$CITY[i])
-  test$County[tempRows] = as.character(citiesCounties$COUNTY[i])
+  tempRows = which(KStateFile$City == citiesCounties$CITY[i])
+  KStateFile$County[tempRows] = as.character(citiesCounties$COUNTY[i])
 }
 
 # Gets coordinates for Missouri counties
@@ -86,8 +86,8 @@ requiredYears = c("2019", "2018", "2017", "2016", "2015", "2014")
 
 # Gets average basis for each county for every year
 for (year in requiredYears) {
-  years = which(grepl(year, colnames(test)))
-  listOfYears[[year]] = test[, c(c(1, 14, 15, 16), c(years))]
+  years = which(grepl(year, colnames(KStateFile)))
+  listOfYears[[year]] = KStateFile[, c(c(1, 14, 15, 16), c(years))]
   
   if (nrow(averageBasisCounty) == 0) {
     averageBasisCounty = setNames(aggregate(listOfYears[[year]][, 6],
@@ -105,8 +105,8 @@ for (year in requiredYears) {
 
 # Gets average basis by county by week
 weeklyAverages = data.frame()
-weeklyAverages = setNames(aggregate(x = test[, 8:13],
-                                    by = list(test$Week, test$County),
+weeklyAverages = setNames(aggregate(x = KStateFile[, 8:13],
+                                    by = list(KStateFile$Week, KStateFile$County),
                                     FUN = mean,
                                     na.rm = TRUE),
                           c("Week", "County", "weeklyBasis2019", "weeklyBasis2018", "weeklyBasis2017", 
