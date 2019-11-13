@@ -3,6 +3,7 @@ library(readr)
 library(readxl)
 library(lubridate)
 library(tidyverse)
+library(rnaturalearth)
 
 # Load files
 Corn_FuturesMarket <- read_csv("Data/Corn_FuturesMarket.csv")
@@ -74,6 +75,7 @@ world = ne_countries(scale = "medium", returnclass = "sf")
 ggplot(data = world) +
   geom_sf() +
   geom_sf(data = Montgomery_List[["threeYearAvg"]], aes(fill = net, geometry = geometry)) +
+  geom_sf(data = Montgomery_List[["threeYearAvg"]]$geometry[which(Montgomery_List[["threeYearAvg"]]$County == "montgomery")], fill = "blue") +
   coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) +
   scale_fill_distiller(palette = "RdYlGn", na.value = "White",
                        limits = c(-max(abs(min(Montgomery_List[["threeYearAvg"]]$net, na.rm = TRUE)), abs(max(Montgomery_List[["threeYearAvg"]]$net, na.rm = TRUE))) - 0.05,
@@ -81,3 +83,4 @@ ggplot(data = world) +
   ggtitle("Missouri") +
   labs(fill = "Net Gain/Loss (dollars)") +
   theme(plot.title = element_text(hjust = 0.5, size = 30))
+
