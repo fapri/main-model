@@ -1,54 +1,53 @@
 library(readxl)
 library(gmapsdistance)
-
-countyCenters = read_excel("Miscellaneous/County Centers.xlsx")
-
-montgomeryCounty = countyCenters[which(countyCenters$County == "Montgomery"),]
-montgomeryCounty_origin = paste(montgomeryCounty$Latitude, montgomeryCounty$Longitude, sep = "+")
-
-countyCenters = countyCenters[which(countyCenters$County != "Montgomery"),]
-
-results = list()
-errors = list()
-set.api.key("")
-for (row in 1:nrow(countyCenters)) {
-  county = countyCenters[row,]
-  county_name = county$County
-  county_dest = paste(county$Latitude, county$Longitude, sep = "+")
-  
-  result = gmapsdistance(origin = montgomeryCounty_origin,
-                          destination = county_dest,
-                          mode = "driving")
-  
-  if (result$Status == "OK") {
-    results[[county_name]] = result$Distance
-  } else {
-    errors[[county_name]] = result$Status
-  }
-}
-
-Montgomery_Distances = results
-saveRDS(Montgomery_Distances, "Miscellaneous/Montgomery_Distances.rds")
-Montgomery_Distances = readRDS("Miscellaneous/Montgomery_Distances.rds")
+library(svDialogs)
 
 # Convert to miles
 meters_to_miles = function(x) {
   return(x / 1609.344)
 }
-Montgomery_Distances = lapply(Montgomery_Distances,meters_to_miles)
 
+countyCenters = read_excel("Miscellaneous/County Centers.xlsx")
 
+check = FALSE
+while(check == FALSE) {
+  countyName = dlgInput("What county do you want to pull distances for? ex. Montgomery", Sys.info()["user"])$res
+  check = countyName %in% countyCenters$County
+}
 
-# results = gmapsdistance(origin = montgomeryCounty_origin,
-#                         destination = "38.989657+-92.310779",
-#                         mode = "driving")
+county = countyCenters[which(countyCenters$County == countyName),]
+county_origin = paste(county$Latitude, county$Longitude, sep = "+")
+countyCenters = countyCenters[which(countyCenters$County != countyName),]
 
+results = list()
+errors = list()
+set.api.key("ASK DANIEL")
+for (row in 1:nrow(countyCenters)) {
+  c = countyCenters[row,]
+  c_name = c$County
+  c_dest = paste(c$Latitude, c$Longitude, sep = "+")
+  
+  result = gmapsdistance(origin = county_origin,
+                         destination = c_dest,
+                         mode = "driving")
+  
+  if (result$Status == "OK") {
+    results[[c_name]] = result$Distance
+  } else {
+    errors[[c_name]] = result$Status
+  }
+}
 
+results = lapply(results, meters_to_miles)
 
 # Convert list to Data Frame
-Montgomery_Distances_DF = data.frame(County = names(Montgomery_Distances), 
-                                     Distance = as.numeric(sapply(Montgomery_Distances, paste,collapse = " ")), 
-                                     row.names = seq_along(Montgomery_Distances))
+results = data.frame(County = names(results), 
+                                     Distance = as.numeric(sapply(results, paste,collapse = " ")), 
+                                     row.names = seq_along(results))
 
 # Save RDS for later
-saveRDS(Montgomery_Distances_DF, "Miscellaneous/Montgomery_Distances_DF.rds")
+saveRDS(results, paste("Miscellaneous/Distances/", countyName, ".rds", sep = ""))
+
+
+# Test Read
+# test = readRDS("Miscellaneous/Distances/Carroll.rds")
