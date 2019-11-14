@@ -8,6 +8,7 @@ library(rnaturalearth)
 library(svDialogs)
 library(ggrepel)
 library(tools)
+library(scales)
 
 # Load files
 Corn_FuturesMarket <- read_csv("Data/Corn_FuturesMarket.csv")
@@ -117,7 +118,23 @@ ggplot(data = world) +
   coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) +
   scale_fill_distiller(palette = "RdYlGn", na.value = "White",
                        limits = c(-max(abs(min(County_List[["threeYearAvg"]]$net, na.rm = TRUE)), abs(max(County_List[["threeYearAvg"]]$net, na.rm = TRUE))) - 0.05,
-                                  max(abs(min(County_List[["threeYearAvg"]]$net, na.rm = TRUE)), abs(max(County_List[["threeYearAvg"]]$net, na.rm = TRUE))) + 0.05), direction = "reverse") +
-  ggtitle("Missouri") +
+                                  max(abs(min(County_List[["threeYearAvg"]]$net, na.rm = TRUE)), abs(max(County_List[["threeYearAvg"]]$net, na.rm = TRUE))) + 0.05), 
+                       direction = "reverse", breaks = pretty_breaks(10)) +
+  ggtitle("Missouri Basis and Trucking Optimization") +
   labs(fill = "Net Gain/Loss (dollars)") +
-  theme(plot.title = element_text(hjust = 0.5, size = 30))
+  theme(plot.title = element_text(hjust = 0.5, size = 30), legend.key.size = unit(2, "cm"))
+
+# Plot
+ggplot(data = world) +
+  geom_sf() +
+  geom_sf(data = County_List[["threeYearAvg"]], aes(fill = net, geometry = geometry)) +
+  geom_sf(data = County_List[["threeYearAvg"]]$geometry[which(County_List[["threeYearAvg"]]$County == tolower(county_Name))], fill = "blue") +
+  geom_sf(fill = "transparent", color = "yellow", size = 2, data = County_List[["threeYearAvg"]]$geometry[which(County_List[["threeYearAvg"]]$net == max(County_List[["threeYearAvg"]]$net, na.rm = TRUE))]) +
+  geom_text_repel(data = best_County, aes(x = Longitude, y = Latitude, label = Label), 
+                  fontface = "bold", nudge_x = -1, nudge_y = -0.5, size = 5) +
+  coord_sf(xlim = c(-96, -89), ylim = c(35.5, 41), expand = FALSE) +
+  scale_fill_distiller(palette = "RdYlGn", na.value = "White", limits = c(-1, 0.3),
+                       direction = "reverse", breaks = pretty_breaks(10)) +
+  ggtitle(paste(county_Name, " County Basis\n and Trucking Optimization", sep = "")) +
+  labs(fill = "Net Gain/Loss \n(dollars)") +
+  theme(plot.title = element_text(hjust = 0.5, size = 30), legend.key.size = unit(2, "cm"))
