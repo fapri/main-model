@@ -9,14 +9,14 @@ library(lubridate)
 ####################################################################################
 
 # Load GitHub links for remote access to appObjects and HTML files
-load(url("https://github.com/fapri/main-model/blob/feature/AddCropYears/Application/cornV1.RData?raw=true"))
-load(url("https://github.com/fapri/main-model/blob/feature/AddCropYears/Application/cornV3.RData?raw=true"))
-load(url("https://github.com/fapri/main-model/blob/feature/AddCropYears/Application/soybeanV1.RData?raw=true"))
-load(url("https://github.com/fapri/main-model/blob/feature/AddCropYears/Application/soybeanV3.RData?raw=true"))
+load(url("https://github.com//fapri/main-model/blob/master/Application/cornV1.RData?raw=true"))
+load(url("https://github.com/fapri/main-model//blob/master/Application/cornV3.RData?raw=true"))
+load(url("https://github.com/fapri/main-model/blob/master/Application/soybeanV1.RData?raw=true"))
+load(url("https://github.com/fapri/main-model/blob/master/Application/soybeanV3.RData?raw=true"))
 
-versionsHTML = url("https://raw.githubusercontent.com/fapri/main-model/feature/AddCropYears/Application/versions.html")
-indexHTML = url("https://raw.githubusercontent.com/fapri/main-model/feature/AddCropYears/Application/index.html")
-homePageHTML = url("https://raw.githubusercontent.com/fapri/main-model/feature/AddCropYears/Application/homePage.html")
+versionsHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/versions.html")
+indexHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/index.html")
+homePageHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/homePage.html")
 
 # load("cornV1.RData")
 # load("cornV3.RData")
