@@ -2,7 +2,7 @@ library(httr)
 library(jsonlite)
 
 url = "http://quickstats.nass.usda.gov/api/api_GET/?key="
-key = ""
+key = "7BCDD118-BF8E-3640-951C-9A2748047903"
 commodity = "&commodity_desc=CORN"
 stateName = "&state_name=MISSOURI"
 statistcCat = "&statisticcat_desc=PRODUCTION"
@@ -17,3 +17,10 @@ to_Text = content(get_Data, "text")
 from_JSON = fromJSON(to_Text, flatten = TRUE)
 
 productionFinal = as.data.frame(from_JSON)
+
+keeps <- c("data.county_name", "data.location_desc", "data.commodity_desc", "data.Value", "data.year")
+productionFinal = productionFinal[keeps]
+
+
+productionFinal = productionFinal[which(productionFinal$data.county_name != ""), ]
+productionFinal = productionFinal[which(productionFinal$data.county_name != "OTHER (COMBINED) COUNTIES"), ]
