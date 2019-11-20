@@ -2,7 +2,7 @@ library(httr)
 library(jsonlite)
 
 url = "http://quickstats.nass.usda.gov/api/api_GET/?key="
-key = "7BCDD118-BF8E-3640-951C-9A2748047903"
+key = ""
 commodity = "&commodity_desc=CORN"
 stateName = "&state_name=MISSOURI"
 statistcCat = "&statisticcat_desc=PRODUCTION"
