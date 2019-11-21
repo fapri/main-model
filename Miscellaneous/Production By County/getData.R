@@ -42,12 +42,14 @@ productionFinal = productionFinal[ , -which(names(productionFinal) %in% c("data.
 
 colnames(productionFinal) = c("County", "Location", "Commodity", "Production", "Year")
 
+productionFinal$Production = as.numeric(gsub(pattern = ",", replacement = "", x = productionFinal[, "Production"]))
+
 # Create list segementing data by year
 production_List = split(productionFinal, f = list(productionFinal$Year))
 
 # Save final lists
 if (type == "corn") {
-  saveRDS(production_List, "Miscellaneous/Production By County/Production_List_Corn.rds")
+  saveRDS(production_List, "Miscellaneous/Production By County/Data/Production_List_Corn.rds")
 } else if (type == "soybeans") {
-  saveRDS(production_List, "Miscellaneous/Production By County/Production_List_Soybeans.rds")
+  saveRDS(production_List, "Miscellaneous/Production By County/Data/Production_List_Soybeans.rds")
 }
