@@ -50,15 +50,89 @@ corn = data.frame(corn)
 
 
 
+# # K means clusters based on latitude, longitude, and basis
+# kLocBasisMerge = data.frame()
+# yearlyMerge$index = as.numeric(rownames(yearlyMerge))
+# for (year in names(listOfYears)) {
+#   colYear = paste("avgBasis", year, sep = "")
+#   
+#   kMeansLocBasis = list()
+#   locBasisClusters = data.frame()
+#   
+#   
+#   
+#   kMeansLocBasis = kmeans(na.omit(corn[,c("Production", "Latitude", "Longitude")]), centers = 4, nstart = 25)
+#   
+#   
+#   
+#   locBasisClusters = data.frame(cluster = kMeansLocBasis$cluster)
+#   colnames(locBasisClusters) = paste("cluster", year, sep = "")
+#   locBasisClusters$index = as.numeric(rownames(locBasisClusters))
+#   
+#   # Merge location and basis data to the clusters
+#   if (nrow(kLocBasisMerge) == 0) {
+#     kLocBasisMerge = merge(x = yearlyMerge, y = locBasisClusters, by = "index", all = TRUE)
+#   }
+#   else {
+#     kLocBasisMerge = merge(x = kLocBasisMerge, y = locBasisClusters, by = "index", all = TRUE)
+#   }
+# }
+
+
+
+
+
+
+library(factoextra)
+
+
+corn = data.frame(corn)
+
+
 
 set.seed(1029)
-clusters = kmeans(na.omit(corn[,c(3,4,7)]), 20)
+# clusters = kmeans(na.omit(corn[,c(3,4,7)]), 20)
+clusters = kmeans(na.omit(corn[, c("Latitude", "Longitude", "Production")]), centers = 6, nstart = 10)
+# clusters = kmeans(na.omit(corn[, c("Production")]), centers = 4, nstart = 25)
+
+
+
+fviz_cluster(clusters, data = corn[, c("Production", "Latitude", "Longitude")])
+
+test = data.frame(na.omit(corn[, c("Production", "Latitude", "Longitude")]))
+
+# Dissimilarity matrix
+d <- dist(na.omit(corn[, c("Production", "Latitude", "Longitude")]), method = "euclidean")
+
+
+# Ward's method
+hc5 <- hclust(d = d, method = "ward.D2")
+
+# Cut tree into 4 groups
+sub_grp <- cutree(hc5, k = 6)
+
+
+corn$Cluster = sub_grp
+
+
+# Number of members in each cluster
+table(sub_grp)
+
+
+plot(hc5, cex = 0.6)
+rect.hclust(hc5, k = 6, border = 2:5)
+
+
+
+fviz_cluster(list(data = d, cluster = sub_grp))
+
+
 
 corn$Cluster = clusters$cluster
 
 
 
-corn = merge(x = corn, y = counties, by = "County", all = TRUE)
+# corn = merge(x = corn, y = counties, by = "County", all = TRUE)
 
 
 # Convert data frame to sf
@@ -67,7 +141,7 @@ corn = corn %>% as_tibble() %>% st_as_sf()
 corn = corn %>% st_buffer(0)
 
 
-corn$County[which(corn$Cluster == 7)]
+# corn$County[which(corn$Cluster == 7)]
 
 
 
@@ -83,7 +157,6 @@ ggplot(counties) +
                                       abs(max(corn$Production, na.rm = TRUE))) + 0.05), direction = "reverse") +
   geom_sf(fill = "transparent", size = 3, aes(color = levels(as.factor(corn$Cluster))),
           data = corn %>% group_by(Cluster) %>% summarise() %>% na.omit())
-
 
 
 
