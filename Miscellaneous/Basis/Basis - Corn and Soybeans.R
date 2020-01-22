@@ -1,4 +1,5 @@
 # Corn and Soybeans
+# Plotting and working with clean data
 
 library(tidyverse)
 library(sf)
@@ -21,7 +22,7 @@ library(cowplot)
 
 # Load data saved from the other basis script
 Load_Data = function() {
-  filePath = choose.files(default = "", caption = "Select RDs Files:",
+  filePath = choose.files(default = paste0(getwd(), "/Miscellaneous/Basis/*.rds"), caption = "Select RDS Files:",
                           multi = FALSE, filters = Filters,
                           index = nrow(Filters))
   
@@ -33,7 +34,7 @@ Load_Data = function() {
     }
     filePath = NA
     extenstion = NA
-    filePath = choose.files(default = "", caption = "Select Corn RDS File:",
+    filePath = choose.files(default = paste0(getwd(), "/Miscellaneous/Basis/*.rds"), caption = "Select RDS Files:",
                             multi = FALSE, filters = Filters,
                             index = nrow(Filters))
     extenstion = file_ext(filePath)

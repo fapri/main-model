@@ -3,6 +3,6 @@
 
 Developers: Emily Scully and Daniel Jaegers 
 
-Team: Matthew Green, Emily Scully, David Reynolds, and Daniel Jaegers
+Team: Emily Scully, Daniel Jaegers, Mekinsey Marchbanks, Gaven Frizzell
 
 [Production App](https://123tree.shinyapps.io/main-model/)
