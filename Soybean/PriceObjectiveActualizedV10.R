@@ -441,21 +441,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
         }
       }
       
-      # # Dump Date
-      # else if (isDumpDate(type, month(marketingYear$Date[row]), day(marketingYear$Date[row]), 
-      #                     year(marketingYear$Date[row]), year(mdy(cropYear$`Stop Date`)))) {
-      #   if (totalSold < 100) {
-      #     percentSold = 100 - totalSold
-      #     totalSold = totalSold + percentSold
-      #     priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = marketingYear$Date[row],
-      #                                                                           "Percentile" = marketingYear$Percentile[row],
-      #                                                                           "Type" = "Seasonal",
-      #                                                                           "Percent Sold" = percentSold,
-      #                                                                           "Total Sold" = totalSold,
-      #                                                                           "Price" = marketingYear$`Price`[row]))
-      #     priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
-      #   }
-      # }
+      
       
       # SEASONAL SALES
       else if (totalSold >= 0 && !(marketingYear$Date[row] %in% priceObjectiveActualized$Date)) {
@@ -568,20 +554,34 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                     priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                   }
                 }
+                
+                
+                
+                
+                
                 else if (day == 20 || day == 21 || day == 22 || day == 23) {
-                  if (totalSold <= 90) {
-                    # seasonal sales must be at least 10%
-                    percentSold = ((100 - totalSold) / 1)
+                  if (totalSold < 100) {
+                    percentSold = 100 - totalSold
                     totalSold = totalSold + percentSold
-                    priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = marketingYear$Date[row],
+                    
+                    # dumpedDate = Soybean_FuturesMarket$Date[last(which(year(mdy(Soybean_FuturesMarket$Date)) == year(mdy(cropYear$`Stop Date`))))]
+                    
+                    
+                    
+                    priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = dumpedDate,
                                                                                           "Percentile" = marketingYear$Percentile[row],
-                                                                                          "Type" = "Seasonal",
+                                                                                          "Type" = "Dumped",
                                                                                           "Percent Sold" = percentSold,
                                                                                           "Total Sold" = totalSold,
                                                                                           "Price" = marketingYear$`Price`[row]))
                     priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                   }
                 }
+                
+                
+                
+                
+                
               }
             }
           }
