@@ -3,7 +3,7 @@
 # Multi Year
 # Actualized
 
-# December Liquidation
+# Harvest time sales: Sell out by October 31
 
 isActualizedPresent = function(cropYear){
   if ("PO Actualized MY" %in% names(cropYear)) {
@@ -31,27 +31,18 @@ getPercentSold = function(actualizedSales){
   }
 }
 
-
-# cropYear = Soybean_CropYearObjects[[1]]
-# stopYear = year(mdy(cropYear$`Stop Date`))
-# 
-# # Returns True for dump day: last day of December
-# isDumpDate = function(type, month, day, year, stopYear){
-#   
-#   
-#   Soybean_FuturesMarket$Date[last(which(year(mdy(Soybean_FuturesMarket$Date)) == stopYear))]
-#   
-#   
-#   if (month == 6 && year == stopYear) {
-#     if (day == 20 || day == 21 || day == 22 || day == 23) {
-#       return(TRUE)
-#     } else{
-#       return(FALSE)
-#     }
-#   } else {
-#     return(FALSE)
-#   }
-# }
+# Returns True for dump days, 5/20 or 7/20
+isDumpDate = function(type, month, day, year, startYear){
+  if (month == 10 && year == startYear) {
+    if (day == 25 || day == 26 || day == 27 || day == 28) {
+      return(TRUE)
+    } else{
+      return(FALSE)
+    }
+  } else {
+    return(FALSE)
+  }
+}
 
 # Finds actualized Price Objective sales
 isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
@@ -441,7 +432,21 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
         }
       }
       
-      
+      # Dump Date
+      else if (isDumpDate(type, month(marketingYear$Date[row]), day(marketingYear$Date[row]), 
+                          year(marketingYear$Date[row]), year(mdy(cropYear$`Start Date`)))) {
+        if (totalSold < 100) {
+          percentSold = 100 - totalSold
+          totalSold = totalSold + percentSold
+          priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = marketingYear$Date[row],
+                                                                                "Percentile" = marketingYear$Percentile[row],
+                                                                                "Type" = "Seasonal",
+                                                                                "Percent Sold" = percentSold,
+                                                                                "Total Sold" = totalSold,
+                                                                                "Price" = marketingYear$`Price`[row]))
+          priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
+        }
+      }
       
       # SEASONAL SALES
       else if (totalSold >= 0 && !(marketingYear$Date[row] %in% priceObjectiveActualized$Date)) {
@@ -449,12 +454,12 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
         if (marketingYear$Percentile[row] < 70) {
           # if day not within 7 days of last sale
           if (difftime(marketingYear$Date[row], priceObjectiveActualized$Date[nrow(priceObjectiveActualized)]) >= 7 || nrow(priceObjectiveActualized) == 0) {
-            if (type == "corn") {  
+            if (type == "corn" || type == "soybean") {  
               # if month is march seasonal sale month
-              if (month(marketingYear$Date[row]) == 3 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
+              if (month(marketingYear$Date[row]) == 10 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Start Date`))) {
                 # if the day is within a seasonal sale date
                 day = day(marketingYear$Date[row])
-                if (day == 10 || day == 11 || day == 12 || day == 13) { 
+                if (day == 4 || day == 5 || day == 6 || day == 7) { 
                   if (totalSold <= 60) {
                     # seasonal sales must be at least 10%
                     percentSold = ((100 - totalSold) / 4)
@@ -468,7 +473,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                     priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                   }
                 }
-                else if (day == 20 || day == 21 || day == 22 || day == 23) {
+                else if (day == 11 || day == 12 || day == 13 || day == 14) {
                   if (totalSold <= 70) {
                     # seasonal sales must be at least 10%
                     percentSold = ((100 - totalSold) / 3)
@@ -482,13 +487,9 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                     priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                   }
                 }
-              }
-              else if (month(marketingYear$Date[row]) == 6 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
-                # if the day is within a seasonal sale date
-                day = day(marketingYear$Date[row])
-                if (day == 10 || day == 11 || day == 12 || day == 13) {
+                if (day == 18 || day == 19 || day == 20 || day == 21) { 
                   if (totalSold <= 80) {
-                    #seasonal sales must be at least 10%
+                    # seasonal sales must be at least 10%
                     percentSold = ((100 - totalSold) / 2)
                     totalSold = totalSold + percentSold
                     priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = marketingYear$Date[row],
@@ -500,18 +501,10 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                     priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                   }
                 }
-              }
-            }
-            
-            if (type == "soybean") {  
-              # if month is march seasonal sale month
-              if (month(marketingYear$Date[row]) == 5 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
-                # if the day is within a seasonal sale date
-                day = day(marketingYear$Date[row])
-                if (day == 10 || day == 11 || day == 12 || day == 13) { 
-                  if (totalSold <= 60) {
+                else if (day == 25 || day == 26 || day == 27 || day == 28) {
+                  if (totalSold <= 90) {
                     # seasonal sales must be at least 10%
-                    percentSold = ((100 - totalSold) / 4)
+                    percentSold = ((100 - totalSold) / 1)
                     totalSold = totalSold + percentSold
                     priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = marketingYear$Date[row],
                                                                                           "Percentile" = marketingYear$Percentile[row],
@@ -522,66 +515,6 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                     priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                   }
                 }
-                else if (day == 20 || day == 21 || day == 22 || day == 23) {
-                  if (totalSold <= 70) {
-                    # seasonal sales must be at least 10%
-                    percentSold = ((100 - totalSold) / 3)
-                    totalSold = totalSold + percentSold
-                    priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = marketingYear$Date[row],
-                                                                                          "Percentile" = marketingYear$Percentile[row],
-                                                                                          "Type" = "Seasonal",
-                                                                                          "Percent Sold" = percentSold,
-                                                                                          "Total Sold" = totalSold,
-                                                                                          "Price" = marketingYear$`Price`[row]))
-                    priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
-                  }
-                }
-              }
-              else if (month(marketingYear$Date[row]) == 7 && year(marketingYear$Date[row]) == year(mdy(cropYear$`Stop Date`))) {
-                # if the day is within a seasonal sale date
-                day = day(marketingYear$Date[row])
-                if (day == 10 || day == 11 || day == 12 || day == 13) {
-                  if (totalSold <= 80) {
-                    #seasonal sales must be at least 10%
-                    percentSold = ((100 - totalSold) / 2)
-                    totalSold = totalSold + percentSold
-                    priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = marketingYear$Date[row],
-                                                                                          "Percentile" = marketingYear$Percentile[row],
-                                                                                          "Type" = "Seasonal",
-                                                                                          "Percent Sold" = percentSold,
-                                                                                          "Total Sold" = totalSold,
-                                                                                          "Price" = marketingYear$`Price`[row]))
-                    priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
-                  }
-                }
-                
-                
-                
-                
-                
-                else if (day == 20 || day == 21 || day == 22 || day == 23) {
-                  if (totalSold < 100) {
-                    percentSold = 100 - totalSold
-                    totalSold = totalSold + percentSold
-                    
-                    # dumpedDate = Soybean_FuturesMarket$Date[last(which(year(mdy(Soybean_FuturesMarket$Date)) == year(mdy(cropYear$`Stop Date`))))]
-                    
-                    
-                    
-                    priceObjectiveActualized = rbind(priceObjectiveActualized, data.frame("Date" = dumpedDate,
-                                                                                          "Percentile" = marketingYear$Percentile[row],
-                                                                                          "Type" = "Dumped",
-                                                                                          "Percent Sold" = percentSold,
-                                                                                          "Total Sold" = totalSold,
-                                                                                          "Price" = marketingYear$`Price`[row]))
-                    priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
-                  }
-                }
-                
-                
-                
-                
-                
               }
             }
           }
