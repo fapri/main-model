@@ -38,7 +38,7 @@ isDumpDate = function(type, month, day, year, startYear){
       return(FALSE)
     }
   } else {
-    return(FALSE)∟
+    return(FALSE)
   }
 }
 

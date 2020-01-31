@@ -85,9 +85,15 @@ source("Model/Storage.R")
 source("Model/Graphing.R")
 saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), file = "appObjectsSoybeanV6.rds")
 
+rm(list = ls())
+load("Environments/Soybean/SS.RData")
 
-
-
+#V7
+source("Soybean/PriceObjectiveActualizedV10.R")
+source("Soybean/TrailingStopActualizedV10.R")
+source("Model/Storage.R")
+source("Model/Graphing.R")
+saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), file = "appObjectsSoybeanV7.rds")
 
 
 
@@ -151,6 +157,16 @@ source("Soybean/TrailingStopActualizedV9.R")
 source("Model/Storage.R")
 source("Model/Graphing.R")
 saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), file = "appObjectsSoybeanV3V6.rds")
+
+rm(list = ls())
+load("Environments/Soybean/SSV3.RData")
+
+#V7
+source("Soybean/PriceObjectiveActualizedV10.R")
+source("Soybean/TrailingStopActualizedV10.R")
+source("Model/Storage.R")
+source("Model/Graphing.R")
+saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), file = "appObjectsSoybeanV3V7.rds")
 
 rm(list = ls())
 
@@ -221,6 +237,16 @@ source("Model/Storage.R")
 source("Model/Graphing.R")
 saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file = "appObjectsCornV6.rds")
 
+rm(list = ls())
+load("Environments/Corn/SS.RData")
+
+#V7
+source("Soybean/PriceObjectiveActualizedV10.R")
+source("Soybean/TrailingStopActualizedV10.R")
+source("Model/Storage.R")
+source("Model/Graphing.R")
+saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file = "appObjectsCornV7.rds")
+
 
 
 
@@ -287,6 +313,13 @@ source("Soybean/TrailingStopActualizedV9.R")
 source("Model/Storage.R")
 source("Model/Graphing.R")
 saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file = "appObjectsCornV3V6.rds")
+
+#V7
+source("Soybean/PriceObjectiveActualizedV10.R")
+source("Soybean/TrailingStopActualizedV10.R")
+source("Model/Storage.R")
+source("Model/Graphing.R")
+saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file = "appObjectsCornV3V7.rds")
 
 rm(list = ls())
 
