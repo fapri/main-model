@@ -31,7 +31,7 @@ getPercentSold = function(actualizedSales){
   }
 }
 
-# Returns True for dump days, 5/20 or 7/20
+# Returns True for dump days, end of October
 isDumpDate = function(type, month, day, year, startYear){
   if (month == 10 && year == startYear) {
     if (day == 25 || day == 26 || day == 27 || day == 28) {
@@ -487,7 +487,7 @@ isActualizedPO = function(cropYear, cropYear1, cropYear2, futuresMarket, MY){
                     priceObjectiveActualized = arrange(priceObjectiveActualized, Date)
                   }
                 }
-                if (day == 18 || day == 19 || day == 20 || day == 21) { 
+                else if (day == 18 || day == 19 || day == 20 || day == 21) { 
                   if (totalSold <= 80) {
                     # seasonal sales must be at least 10%
                     percentSold = ((100 - totalSold) / 2)
