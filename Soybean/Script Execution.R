@@ -20,7 +20,7 @@ source("Model/TrailingStop.R")
 
 source("Model/TrailingStopV3.R")
 
-source("Soybean/SeasonalSaleActualized.R")
+# source("Soybean/SeasonalSaleActualized.R")
 
 ##################################################################################################
 # Soybean
@@ -89,8 +89,9 @@ rm(list = ls())
 load("Environments/Soybean/SS.RData")
 
 #V7
-source("Soybean/PriceObjectiveActualizedV10.R")
-source("Soybean/TrailingStopActualizedV10.R")
+source("Soybean/HarvestTimeSalesActualized.R")
+source("Soybean/PriceObjectiveActualized.R")
+source("Soybean/TrailingStopActualized.R")
 source("Model/Storage.R")
 source("Model/Graphing.R")
 saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), file = "appObjectsSoybeanV7.rds")
@@ -162,8 +163,9 @@ rm(list = ls())
 load("Environments/Soybean/SSV3.RData")
 
 #V7
-source("Soybean/PriceObjectiveActualizedV10.R")
-source("Soybean/TrailingStopActualizedV10.R")
+source("Soybean/HarvestTimeSalesActualized.R")
+source("Soybean/PriceObjectiveActualized.R")
+source("Soybean/TrailingStopActualized.R")
 source("Model/Storage.R")
 source("Model/Graphing.R")
 saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), file = "appObjectsSoybeanV3V7.rds")
@@ -241,8 +243,9 @@ rm(list = ls())
 load("Environments/Corn/SS.RData")
 
 #V7
-source("Soybean/PriceObjectiveActualizedV10.R")
-source("Soybean/TrailingStopActualizedV10.R")
+source("Soybean/HarvestTimeSalesActualized.R")
+source("Soybean/PriceObjectiveActualized.R")
+source("Soybean/TrailingStopActualized.R")
 source("Model/Storage.R")
 source("Model/Graphing.R")
 saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file = "appObjectsCornV7.rds")
@@ -315,8 +318,9 @@ source("Model/Graphing.R")
 saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file = "appObjectsCornV3V6.rds")
 
 #V7
-source("Soybean/PriceObjectiveActualizedV10.R")
-source("Soybean/TrailingStopActualizedV10.R")
+source("Soybean/HarvestTimeSalesActualized.R")
+source("Soybean/PriceObjectiveActualized.R")
+source("Soybean/TrailingStopActualized.R")
 source("Model/Storage.R")
 source("Model/Graphing.R")
 saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file = "appObjectsCornV3V7.rds")
