@@ -14,9 +14,13 @@ library(lubridate)
 # load(url("https://github.com/fapri/main-model/blob/master/Application/soybeanV1.RData?raw=true"))
 # load(url("https://github.com/fapri/main-model/blob/master/Application/soybeanV3.RData?raw=true"))
 
-versionsHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/versions.html")
-indexHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/index.html")
-homePageHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/homePage.html")
+# versionsHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/versions.html")
+# indexHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/index.html")
+# homePageHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/homePage.html")
+
+versionsHTML = "versions.html"
+indexHTML = "index.html"
+homePageHTML = "homePage.html"
 
 # load("cornV1.RData")
 # load("cornV3.RData")
@@ -194,7 +198,6 @@ priceObjectListCorn = list(finalizedPriceObjectCornBase,
                            finalizedPriceObjectCornV4,
                            finalizedPriceObjectCornV5,
                            finalizedPriceObjectCornV6,
-                           finalizedPriceObjectCornHarvestTime,
                            finalizedPriceObjectCornV3Base,
                            finalizedPriceObjectCornV3V2,
                            finalizedPriceObjectCornV3V3,
@@ -202,7 +205,8 @@ priceObjectListCorn = list(finalizedPriceObjectCornBase,
                            finalizedPriceObjectCornV3V5,
                            finalizedPriceObjectCornV3V6,
                            finalizedPriceObjectCornMarch,
-                           finalizedPriceObjectCornMarchBaselines)
+                           finalizedPriceObjectCornMarchBaselines,
+                           finalizedPriceObjectCornHarvestTime)
 
 priceObjectListSoybean = list(finalizedPriceObjectSoybeanBase,
                               finalizedPriceObjectSoybeanV2,
@@ -210,7 +214,6 @@ priceObjectListSoybean = list(finalizedPriceObjectSoybeanBase,
                               finalizedPriceObjectSoybeanV4,
                               finalizedPriceObjectSoybeanV5,
                               finalizedPriceObjectSoybeanV6,
-                              finalizedPriceObjectSoybeanHarvestTime,
                               finalizedPriceObjectSoybeanV3Base,
                               finalizedPriceObjectSoybeanV3V2,
                               finalizedPriceObjectSoybeanV3V3,
@@ -218,7 +221,8 @@ priceObjectListSoybean = list(finalizedPriceObjectSoybeanBase,
                               finalizedPriceObjectSoybeanV3V5,
                               finalizedPriceObjectSoybeanV3V6,
                               finalizedPriceObjectSoybeanMarch,
-                              finalizedPriceObjectSoybeanMarchBaselines)
+                              finalizedPriceObjectSoybeanMarchBaselines,
+                              finalizedPriceObjectSoybeanHarvestTime)
 
 
 # These could be different for corn and soybean if we have different strategies
@@ -228,7 +232,6 @@ versions = c("Base",
              "V4",
              "V5",
              "V6",
-             "HarvestTime",
              "V3Base",
              "V3V2",
              "V3V3",
@@ -236,7 +239,8 @@ versions = c("Base",
              "V3V5",
              "V3V6",
              "March",
-             "MarchBaselines")
+             "MarchBaselines",
+             "HarvestTime")
 
 MYversions = c("Multiyear",
                "MYV2",
@@ -244,7 +248,6 @@ MYversions = c("Multiyear",
                "MYV4",
                "MYV5",
                "MYV6",
-               "MYHarvestTime",
                "MYV3Base",
                "MYV3V2",
                "MYV3V3",
@@ -252,9 +255,27 @@ MYversions = c("Multiyear",
                "MYV3V5",
                "MYV3V6",
                "MYMarch",
-               "MYMarchBaselines")
+               "MYMarchBaselines",
+               "MYHarvestTime")
 
 POversions = c("Base",
+               "Multiyear",
+               "V2",
+               "MYV2",
+               "V3",
+               "MYV3",
+               "V4",
+               "MYV4",
+               "V5",
+               "MYV5",
+               "V6",
+               "MYV6",
+               "March",
+               "MYMarch",
+               "MarchBaselines",
+               "MYMarchBaselines")
+
+TSversions = c("Base",
                "Multiyear",
                "V2",
                "MYV2",
@@ -277,7 +298,8 @@ SSversions = c("Base",
                "MYMarch",
                "MarchBaselines",
                "MYMarchBaselines",
-               "HarvestTime")
+               "HarvestTime",
+               "MYHarvestTime")
 
 # Initialize objects
 nonMultiYearCorn = data.frame()
@@ -294,6 +316,7 @@ getResults = function(strategy, resultsTable, resultsTableMY, strategyName, MY){
                                  "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
     }
     
+    if(strategyName %in% TSversions){
     TS = which(names(strategy) == "TSResultsTable")
     TSRow = cbind("Trailing Stop", 
                   strategyName,
@@ -306,6 +329,9 @@ getResults = function(strategy, resultsTable, resultsTableMY, strategyName, MY){
     
     colnames(TSRow) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
                         "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
+    } else{
+      TSRow = NULL
+    }
     
     if(strategyName %in% POversions){
       PO = which(names(strategy) == "POResultsTable")
@@ -352,8 +378,8 @@ getResults = function(strategy, resultsTable, resultsTableMY, strategyName, MY){
                                    "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
     }
     
+    if(strategyName %in% TSversions){
     TSMY = which(names(strategy) == "TSResultsTableMY")
-    
     TSMYRow = cbind("Trailing Stop", 
                     strategyName,
                     strategy[[TSMY]][1, 2],
@@ -364,6 +390,9 @@ getResults = function(strategy, resultsTable, resultsTableMY, strategyName, MY){
     
     colnames(TSMYRow) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
                           "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
+    } else{
+      TSMYRow = NULL
+    }
     
     if(strategyName %in% POversions){
       POMY = which(names(strategy) == "POResultsTableMY")
