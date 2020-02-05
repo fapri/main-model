@@ -308,15 +308,15 @@ nonMultiYearSoybean = data.frame()
 multiYearSoybean = data.frame()
 
 # Function to create the "Strategy Results" tab tables
-getResults = function(strategy, resultsTable, resultsTableMY, strategyName, MY){
-  if(MY == FALSE){
-    if (nrow(resultsTable) == 0){
+getResults = function(strategy, resultsTable, resultsTableMY, strategyName, MY) {
+  if (MY == FALSE) {
+    if (nrow(resultsTable) == 0) {
       resultsTable = data.frame(matrix(nrow = 0, ncol = 7))
       colnames(resultsTable) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
                                  "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
     }
     
-    if(strategyName %in% TSversions){
+    if (strategyName %in% TSversions) {
     TS = which(names(strategy) == "TSResultsTable")
     TSRow = cbind("Trailing Stop", 
                   strategyName,

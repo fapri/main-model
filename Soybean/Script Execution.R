@@ -88,13 +88,13 @@ saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), 
 rm(list = ls())
 load("Environments/Soybean/SS.RData")
 
-#V7
+#HarvestTime
 source("Soybean/HarvestTimeSalesActualized.R")
 source("Soybean/PriceObjectiveActualized.R")
 source("Soybean/TrailingStopActualized.R")
 source("Model/Storage.R")
 source("Model/Graphing.R")
-saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), file = "appObjectsSoybeanV7.rds")
+saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), file = "appObjectsSoybeanHarvestTime.rds")
 
 
 
@@ -161,16 +161,6 @@ saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), 
 
 rm(list = ls())
 load("Environments/Soybean/SSV3.RData")
-
-#V7
-source("Soybean/HarvestTimeSalesActualized.R")
-source("Soybean/PriceObjectiveActualized.R")
-source("Soybean/TrailingStopActualized.R")
-source("Model/Storage.R")
-source("Model/Graphing.R")
-saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), file = "appObjectsSoybeanV3V7.rds")
-
-rm(list = ls())
 
 
 
@@ -242,13 +232,13 @@ saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file =
 rm(list = ls())
 load("Environments/Corn/SS.RData")
 
-#V7
+#HarvestTime
 source("Soybean/HarvestTimeSalesActualized.R")
 source("Soybean/PriceObjectiveActualized.R")
 source("Soybean/TrailingStopActualized.R")
 source("Model/Storage.R")
 source("Model/Graphing.R")
-saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file = "appObjectsCornV7.rds")
+saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file = "appObjectsCornHarvestTime.rds")
 
 
 
@@ -317,13 +307,4 @@ source("Model/Storage.R")
 source("Model/Graphing.R")
 saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file = "appObjectsCornV3V6.rds")
 
-#V7
-source("Soybean/HarvestTimeSalesActualized.R")
-source("Soybean/PriceObjectiveActualized.R")
-source("Soybean/TrailingStopActualized.R")
-source("Model/Storage.R")
-source("Model/Graphing.R")
-saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file = "appObjectsCornV3V7.rds")
-
 rm(list = ls())
-
