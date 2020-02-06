@@ -240,7 +240,8 @@ versions = c("Base",
              "V3V6",
              "March",
              "MarchBaselines",
-             "HarvestTime")
+             "HarvestTime",
+             "404020")
 
 MYversions = c("Multiyear",
                "MYV2",
@@ -256,7 +257,8 @@ MYversions = c("Multiyear",
                "MYV3V6",
                "MYMarch",
                "MYMarchBaselines",
-               "MYHarvestTime")
+               "MYHarvestTime",
+               "MY404020")
 
 POversions = c("Base",
                "Multiyear",
@@ -299,7 +301,9 @@ SSversions = c("Base",
                "MarchBaselines",
                "MYMarchBaselines",
                "HarvestTime",
-               "MYHarvestTime")
+               "MYHarvestTime",
+               "404020",
+               "MY404020")
 
 # Initialize objects
 nonMultiYearCorn = data.frame()
@@ -601,7 +605,9 @@ SSCorn = c("Base" = "base",
            "March Baselines" = "MarchBaselines",
            "Multi-Year March Baselines" = "MYMarchBaselines",
            "Harvest Time Sales" = "HarvestTime",
-           "Multi-Year Harvest Time Sales" = "MYHarvestTime")
+           "Multi-Year Harvest Time Sales" = "MYHarvestTime",
+           "Oct/Jan/Aug Sales" = "404020",
+           "Multi-Year Oct/Jan/Aug Sales" = "MY404020")
 
 SSSoybean = c("Base" = "base",
               "Multi-Year" = "multiyear",
@@ -610,7 +616,9 @@ SSSoybean = c("Base" = "base",
               "March Baselines" = "MarchBaselines",
               "Multi-Year March Baselines" = "MYMarchBaselines",
               "Harvest Time Sales" = "HarvestTime",
-              "Multi-Year Harvest Time Sales" = "MYHarvestTime")
+              "Multi-Year Harvest Time Sales" = "MYHarvestTime",
+              "Oct/Jan/Aug Sales" = "404020",
+              "Multi-Year Oct/Jan/Aug Sales" = "MY404020")
 
 POVersions = list("Corn" = POCorn, "Soybeans" = POSoybean)
 TSVersions = list("Corn" = TSCorn, "Soybeans" = TSSoybean)
@@ -661,7 +669,7 @@ getTables = function(data) {
 
 # Sales Summary Table creation and formatting
 getSalesTable = function(data) {
-  if(!is.null(data)){
+  if (!is.null(data)) {
     table = as.datatable(formattable(data, 
                                      align = "c",
                                      list(~ formatter("span",

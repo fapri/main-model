@@ -96,7 +96,16 @@ source("Model/Storage.R")
 source("Model/Graphing.R")
 saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), file = "appObjectsSoybeanHarvestTime.rds")
 
+rm(list = ls())
+load("Environments/Soybean/SS.RData")
 
+#404020
+source("Soybean/_404020.R")
+source("Soybean/PriceObjectiveActualized.R")
+source("Soybean/TrailingStopActualized.R")
+source("Model/Storage.R")
+source("Model/Graphing.R")
+saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), file = "appObjectsSoybean404020.rds")
 
 rm(list = ls())
 load("Environments/Soybean/SSV3.RData")
@@ -240,14 +249,16 @@ source("Model/Storage.R")
 source("Model/Graphing.R")
 saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file = "appObjectsCornHarvestTime.rds")
 
-
-
-
-
-
-
 rm(list = ls())
 load("Environments/Corn/SSV3.RData")
+
+#404020
+source("Soybean/_404020.R")
+source("Soybean/PriceObjectiveActualized.R")
+source("Soybean/TrailingStopActualized.R")
+source("Model/Storage.R")
+source("Model/Graphing.R")
+saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file = "appObjectsCorn404020.rds")
 
 # Base
 source("Soybean/PriceObjectiveActualized.R")
