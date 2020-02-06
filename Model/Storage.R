@@ -1,12 +1,12 @@
 # Storage
 # Corn and Soybean
 
-if(type == "corn"){
+if (type == "corn") {
   cropYearObjects = Corn_CropYearObjects
   cropYearsList = Corn_CropYears
 }
 
-if(type == "soybean"){
+if (type == "soybean") {
   cropYearObjects = Soybean_CropYearObjects
   cropYearsList = Soybean_CropYears
 }
@@ -26,7 +26,7 @@ binStorageAfter = 0.0032009009009009
 
 getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
   # Initialize variables
-  storageInterval = interval(mdy(paste("11-01", toString(year(int_start(intervalPost))), sep="-")), int_end(intervalPost))
+  storageInterval = interval(mdy(paste("11-01", toString(year(int_start(intervalPost))), sep = "-")), int_end(intervalPost))
   salePrice = actualizedSales$Price
   actualizedSales$monthsSinceOct = 0
   commercialStorage = rep(0, nrow(actualizedSales))
@@ -35,16 +35,16 @@ getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
   onFarmPrice = rep(0, nrow(actualizedSales))
   
   # Calculate months since October for post harvest dates only
-  for(i in 1:nrow(actualizedSales)) {
+  for (i in 1:nrow(actualizedSales)) {
     # Check if date is in storage interval
-    if(actualizedSales$Date[i] %within% storageInterval) {
-      if(month(actualizedSales$Date[i]) == 9) {
+    if (actualizedSales$Date[i] %within% storageInterval) {
+      if (month(actualizedSales$Date[i]) == 9) {
         # Special case for September
         actualizedSales$monthsSinceOct[i] = 0
       }
       else {
         # Create interval from the date to post harvest October
-        tempInt = interval(actualizedSales$Date[i], mdy(paste("10-01", toString(year(int_start(intervalPost))), sep="-")))
+        tempInt = interval(actualizedSales$Date[i], mdy(paste("10-01", toString(year(int_start(intervalPost))), sep = "-")))
         # Calculate months since October
         actualizedSales$monthsSinceOct[i] = abs(tempInt %/% months(1))
       }
@@ -54,13 +54,13 @@ getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
   monthsSinceOct = actualizedSales$monthsSinceOct
   
   # Commercial Storage
-  for(i in 1:nrow(actualizedSales)) {
+  for (i in 1:nrow(actualizedSales)) {
     # Check that date is in storage interval
-    if(actualizedSales$Date[i] %within% storageInterval) {
+    if (actualizedSales$Date[i] %within% storageInterval) {
       # Calculate first part of storage function
       A = salePrice[i] * (1 + (interestRate/12)) ^ (monthsSinceOct[i])
       # Check if cost is less than three month minimum storage cost
-      if((monthlyCommCost * monthsSinceOct[i]) < TMMStorageCharge) {
+      if ((monthlyCommCost * monthsSinceOct[i]) < TMMStorageCharge) {
         B = TMMStorageCharge
       }
       else {
@@ -74,9 +74,9 @@ getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
   }
   
   # On farm storage formula
-  for (i in 1:nrow(actualizedSales)){
+  for (i in 1:nrow(actualizedSales)) {
     # Check that date is in post harvest
-    if (actualizedSales$Date[i] %within% storageInterval){
+    if (actualizedSales$Date[i] %within% storageInterval) {
       # Formula for on farm storage
       A = salePrice[i] * ((1 + (interestRate/12)) ^ (monthsSinceOct[i])) + binStorage1 + (binStorageAfter*(monthsSinceOct[i] - 1))
       # Comute on farm storage cost
@@ -86,7 +86,7 @@ getStorageCost = function(actualizedSales, marketingYear, intervalPost) {
   }
   
   # Get new prices that factor storage
-  for (i in 1:nrow(actualizedSales)){
+  for (i in 1:nrow(actualizedSales)) {
     commercialPrice[i] = salePrice[i] - commercialStorage[i]
     onFarmPrice[i] = salePrice[i] - onFarmStorage[i]
   }
@@ -110,10 +110,10 @@ fillStorage = function(actualizedSales, marketingYear, intervalPost){
 }
 
 
-for(i in 1:length(cropYearObjects)){
+for (i in 1:length(cropYearObjects)) {
   
   # Price Objective
-  if(nrow(cropYearObjects[[i]][['PO Actualized']]) > 0){
+  if (nrow(cropYearObjects[[i]][['PO Actualized']]) > 0) {
     cropYearObjects[[i]]$`PO Actualized` = fillStorage(cropYearObjects[[i]][["PO Actualized"]],
                                                        cropYearObjects[[i]][["Marketing Year"]],
                                                        cropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
@@ -124,7 +124,7 @@ for(i in 1:length(cropYearObjects)){
   }
   
   # Trailing Stop
-  if(nrow(cropYearObjects[[i]][['TS Actualized']]) > 0){
+  if (nrow(cropYearObjects[[i]][['TS Actualized']]) > 0) {
     cropYearObjects[[i]]$`TS Actualized` = fillStorage(cropYearObjects[[i]][["TS Actualized"]],
                                                        cropYearObjects[[i]][["Marketing Year"]],
                                                        cropYearObjects[[i]][["Pre/Post Interval"]][["intervalPost"]])
@@ -155,16 +155,16 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   firstDateRow = NULL
   
   # Creates storage interval
-  storageInterval = interval(mdy(paste("11-01", toString(year(int_start(intervalPost))), sep="-")), int_end(intervalPost))
+  storageInterval = interval(mdy(paste("11-01", toString(year(int_start(intervalPost))), sep = "-")), int_end(intervalPost))
   # Finds rows corresponding to pre (or post) harvest. This will be used to caluclate the respective storages
   preRows = which(actualizedSales$Date %within% intervalPre)
   postRows = which(actualizedSales$Date %within% intervalPost)
   
   # Finds the row for the first date that storage is utilized
   # This will be used to find how much crop needs to be stored
-  for (i in 1:nrow(actualizedSales)){
+  for (i in 1:nrow(actualizedSales)) {
     # Check that date is in post harvest
-    if (actualizedSales$Date[i] %within% storageInterval){
+    if (actualizedSales$Date[i] %within% storageInterval) {
       # Store the first date which storage needs to be utilized
       firstDateRow = i
       break
@@ -172,7 +172,7 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   }
   
   # When no storage is needed
-  if(is.null(firstDateRow[1])){
+  if (is.null(firstDateRow[1])) {
     storageAdjAvg = weighted.mean(actualizedSales$onFarmPrice, actualizedSales$Percent.Sold)
     storagePostharvestAvg = weighted.mean(actualizedSales$onFarmPrice[postRows], actualizedSales$Percent.Sold[postRows])
     commercialRows = NA
@@ -180,7 +180,7 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   }
   
   # IF THE FIRST POST HARVEST DATE HAS >=50% "TOTAL.SOLD"
-  else if(firstDateRow[1] != 1 && actualizedSales$Total.Sold[firstDateRow - 1] >= 50){
+  else if (firstDateRow[1] != 1 && actualizedSales$Total.Sold[firstDateRow - 1] >= 50) {
     # AVERAGE SALES BEFORE STORAGE + STRICTLY ON FARM STORAGE
     storageAdjAvg = weighted.mean(actualizedSales$onFarmPrice, actualizedSales$Percent.Sold)
     # Average storage-adjusted sales in the post harvest
@@ -193,23 +193,23 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
   else{
     # Calculates remaining crop that needs storage
     remainingCrop = 100 - actualizedSales$Total.Sold[firstDateRow - 1]
-    if(firstDateRow[1] == 1){
+    if (firstDateRow[1] == 1) {
       remainingCrop = 100
     }
     
     # Calculates the percent of crop that needs commercial storage
     commercialCrop = remainingCrop - 50
     
-    for (j in firstDateRow:nrow(actualizedSales)){
+    for (j in firstDateRow:nrow(actualizedSales)) {
       # Check if the sale can be made without splitting
-      if(actualizedSales$Percent.Sold[j] <= commercialCrop && commercialCrop != 0){
+      if (actualizedSales$Percent.Sold[j] <= commercialCrop && commercialCrop != 0) {
         # Stores sales that are commercial
         commercialRows = c(commercialRows,j)
         # Calculates remaining crop that needs commercial storage
         commercialCrop = commercialCrop - actualizedSales$Percent.Sold[j]
       }
       
-      else if (commercialCrop != 0){
+      else if (commercialCrop != 0) {
         # Takes in column names. This will be used to reassign column names in new frame
         cols = match(c("Percent.Sold","Total.Sold"),names(actualizedSales))
         # Calculates the percent of a single sale that needs to be stored on farm
@@ -236,14 +236,14 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
       
       # Added to ensure proper functionality when commerical and on-farm 
       # storage is utilized but splitting a sale is not neccessary
-      else if (commercialCrop == 0){
+      else if (commercialCrop == 0) {
         break
       }
     }
     
     # Updates the rows in which preharvest sales were made
     preRowsNew = which(actualizedSales$Date %within% intervalPre)
-    if(!(length(preRowsNew) > 0)){
+    if (!(length(preRowsNew) > 0)) {
       preRowsNew = 0
     }
     # Removes NA value
@@ -253,11 +253,11 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
     
     # Average prearvest sales
     storagePreharvestAvg = weighted.mean(actualizedSales$onFarmPrice[preRowsNew], actualizedSales$Percent.Sold[preRowsNew])
-    if(is.na(storagePreharvestAvg)){
+    if (is.na(storagePreharvestAvg)) {
       storagePreharvestAvg = 0
     }
     
-    if((last(preRowsNew) + 1) != commercialRows[1]){
+    if ((last(preRowsNew) + 1) != commercialRows[1]) {
       # Average storage-adjusted sales in the post harvest
       # No need for pre harvest since storage begins in the post harvest
       commercialPostharvestAvg = weighted.mean(actualizedSales$commercialPrice[(last(preRowsNew) + 1):last(commercialRows)], actualizedSales$Percent.Sold[(last(preRowsNew) + 1):last(commercialRows)])
@@ -285,7 +285,7 @@ getStorageActualized = function(actualizedSales, intervalPre, intervalPost) {
     
     # Calculates percent sold in the preharvest and postharvest
     preharvestPercent = actualizedSales$Total.Sold[last(preRowsNew)] * 0.01
-    if(preRowsNew[1] == 0){
+    if (preRowsNew[1] == 0) {
       preharvestPercent = 0
     }
     postharvestPercent = 1 - preharvestPercent
@@ -319,8 +319,10 @@ preharvestAverageStorage = rep(0, 9)
 postharvestAverageStorage = rep(0, 9)
 
 
-# i = 3
-# actualizedSales = cropYearObjects[[i]]$`TS Actualized`
+
+
+# i = 1
+# actualizedSales = cropYearObjects[[i]]$`SS Actualized`
 # cropYear = cropYearsList$CropYear[i]
 # intervalPre = cropYearObjects[[i]]$`Pre/Post Interval`$intervalPre
 # intervalPost = cropYearObjects[[i]]$`Pre/Post Interval`$intervalPost
@@ -342,12 +344,20 @@ finalizeStorage = function(actualizedSales, cropYear, intervalPre, intervalPost)
                                actualizedSales$Percent.Sold)
   
   # Finds pre harvest and post harvest rows
-  preRows = which(actualizedSales$Date %within% intervalPre)
+  if (length(which(actualizedSales$Date %within% intervalPre)) == 0) {
+    preRows = NA
+  } else {
+    preRows = which(actualizedSales$Date %within% intervalPre)
+  }
   postRows = which(actualizedSales$Date %within% intervalPost)
   
   # Calculates pre harvest average without storage
-  preharvestAverage = weighted.mean(actualizedSales$Price[preRows], 
-                                    actualizedSales$Percent.Sold[preRows])
+  if (is.na(preRows[1])) {
+    preharvestAverage = 0
+  } else {
+    preharvestAverage = weighted.mean(actualizedSales$Price[preRows], 
+                                      actualizedSales$Percent.Sold[preRows])
+  }
   
   # Calculates post harvest average without storage
   postharvestAverage = weighted.mean(actualizedSales$Price[postRows], 
@@ -362,34 +372,41 @@ finalizeStorage = function(actualizedSales, cropYear, intervalPre, intervalPost)
                                          intervalPre,
                                          intervalPost)[[2]]
   
-  preRows = which(actualizedSales$Date %within% intervalPre)
+  # Find pre harvest and post harvest rows again after changing actualizedSales rows
+  if (length(which(actualizedSales$Date %within% intervalPre)) == 0) {
+    preRows = NA
+  } else {
+    preRows = which(actualizedSales$Date %within% intervalPre)
+  }
   postRows = which(actualizedSales$Date %within% intervalPost)
   
+  # Finds rows where commercial storage was used
   commercialRows = getStorageActualized(actualizedSales,
                                         intervalPre,
                                         intervalPost)[[3]]
   
+  # Finds rows where on farm storage was used
   onfarmRows = getStorageActualized(actualizedSales,
                                     intervalPre,
                                     intervalPost)[[4]]
   
-  if (is.na(commercialRows[1])){
+  # If commercial storage was not used, we use on farm prices 
+  # which work regardless of if on farm storage was used
+  if (is.na(commercialRows[1])) {
     actualizedSales$finalPrice = actualizedSales$onFarmPrice
-  }
-  
-  else{
-    for (k in 1:tail(commercialRows, n=1)){
+  } else {
+    for (k in 1:tail(commercialRows, n = 1)) {
       actualizedSales$finalPrice[k] = actualizedSales$commercialPrice[k]
     }
-    
     actualizedSales$finalPrice[onfarmRows] = actualizedSales$onFarmPrice[onfarmRows]
   }
   
+  # Format dates for sales summary
   dates = actualizedSales$Date
   dates = format(dates, "%b-%d-%y")
   dates = make.unique(dates, sep = "Split")
   
-  
+  # Set up sales summary table
   salesSummary = data.frame(matrix(nrow = 6, ncol = length(dates)))
   
   colnames(salesSummary) = dates
@@ -402,14 +419,15 @@ finalizeStorage = function(actualizedSales, cropYear, intervalPre, intervalPost)
   salesSummary[2,2:(length(dates) + 1)] = actualizedSales$Percent.Sold
   salesSummary[3,2:(length(dates) + 1)] = actualizedSales$Type
   
-  
-  if (is.na(commercialRows[1])){
+  # If commercial storage was not used, we use on farm prices 
+  # which work regardless of if on farm storage was used
+  if (is.na(commercialRows[1])) {
     salesSummary[4,2:(length(dates) + 1)] = formatC(round(actualizedSales$onFarmStorage, digits = 2), format = 'f', digits = 2)
     salesSummary[5,2:(length(dates) + 1)] = 0.00
   }
   
   else{
-    for (k in 1:tail(commercialRows, n=1)){
+    for (k in 1:tail(commercialRows, n = 1)) {
       salesSummary[4,(k + 1)] = 0.00
       salesSummary[5,(k + 1)] = formatC(round(actualizedSales$commercialStorage[k], digits = 2), format = 'f', digits = 2)
     }
@@ -419,11 +437,18 @@ finalizeStorage = function(actualizedSales, cropYear, intervalPre, intervalPost)
     
   }
   
+  # Inserts "final price" row
   salesSummary[6,2:(length(dates) + 1)] = formatC(round(actualizedSales$finalPrice, digits = 2), format = 'f', digits = 2)
   
-  preharvestPercent = sum(actualizedSales$Percent.Sold[preRows])
+  # Calculate percent of pre harvest and post harvest crop sold
+  if (is.na(preRows[1])) {
+    preharvestPercent = 0
+  } else {
+    preharvestPercent = sum(actualizedSales$Percent.Sold[preRows])
+  }
   postharvestPercent = sum(actualizedSales$Percent.Sold[postRows])
   
+  # Aggregate infomation into dataframe for export
   finalizedPrices = data.frame("Crop Year" = cropYear, noStorageAvg, storageAdjAvg, preharvestAverage,
                                postharvestAverage, postharvestAverageStorage, preharvestPercent, postharvestPercent)
   
@@ -453,16 +478,21 @@ colnames(TSfinalizedPricesMY) = colnames(POfinalizedPrices)
 
 #Seasonal Sales
 SSfinalizedPrices = data.frame(matrix(nrow = length(cropYearObjects), ncol = 8))
-colnames(SSfinalizedPrices) =colnames(POfinalizedPrices)
+colnames(SSfinalizedPrices) = colnames(POfinalizedPrices)
 
 # Seasonal Sales Multi Year
 SSfinalizedPricesMY = data.frame(matrix(nrow = length(cropYearObjects), ncol = 8))
 colnames(SSfinalizedPricesMY) = colnames(POfinalizedPrices)
 
-for (i in 1:length(cropYearObjects)){
+
+
+# i = 1
+
+
+for (i in 1:length(cropYearObjects)) {
   
   # Price Objective
-  if(nrow(cropYearObjects[[i]][['PO Actualized']]) > 0){
+  if (nrow(cropYearObjects[[i]][['PO Actualized']]) > 0) {
     POtemp = finalizeStorage(cropYearObjects[[i]]$`PO Actualized`,
                              cropYearsList$CropYear[i],
                              cropYearObjects[[i]]$`Pre/Post Interval`$intervalPre,
@@ -473,7 +503,7 @@ for (i in 1:length(cropYearObjects)){
     POfinalizedPrices[i,] = POtemp[[3]]
     
     # Price Objective Multi Year
-    jan1 = paste("01-01", toString(year(mdy(cropYearObjects[[i]]$`Start Date`)) - 2), sep="-")
+    jan1 = paste("01-01", toString(year(mdy(cropYearObjects[[i]]$`Start Date`)) - 2), sep = "-")
     POintervalPreMY = interval(mdy(jan1), int_end(cropYearObjects[[i]]$`Pre/Post Interval`$intervalPre))
     POtempMY = finalizeStorage(cropYearObjects[[i]]$`PO Actualized MY`,
                                cropYearsList$CropYear[i],
@@ -484,9 +514,9 @@ for (i in 1:length(cropYearObjects)){
     cropYearObjects[[i]]$`PO Sales Summary MY` = POtempMY[[2]]
     POfinalizedPricesMY[i,] = POtempMY[[3]]
   }
-    
+  
   # Trailing Stop
-  if(nrow(cropYearObjects[[i]][['TS Actualized']]) > 0){
+  if (nrow(cropYearObjects[[i]][['TS Actualized']]) > 0) {
     TStemp = finalizeStorage(cropYearObjects[[i]]$`TS Actualized`,
                              cropYearsList$CropYear[i],
                              cropYearObjects[[i]]$`Pre/Post Interval`$intervalPre,
@@ -497,7 +527,7 @@ for (i in 1:length(cropYearObjects)){
     TSfinalizedPrices[i,] = TStemp[[3]]
     
     # Trailing Stop Multi Year
-    jan1 = paste("01-01", toString(year(mdy(cropYearObjects[[i]]$`Start Date`)) - 2), sep="-")
+    jan1 = paste("01-01", toString(year(mdy(cropYearObjects[[i]]$`Start Date`)) - 2), sep = "-")
     TSintervalPreMY = interval(mdy(jan1), int_end(cropYearObjects[[i]]$`Pre/Post Interval`$intervalPre))
     TStempMY = finalizeStorage(cropYearObjects[[i]]$`TS Actualized MY`,
                                cropYearsList$CropYear[i],
@@ -508,7 +538,7 @@ for (i in 1:length(cropYearObjects)){
     cropYearObjects[[i]]$`TS Sales Summary MY` = TStempMY[[2]]
     TSfinalizedPricesMY[i,] = TStempMY[[3]]
   }
-    
+  
   #Seasonal Sales
   SStemp = finalizeStorage(cropYearObjects[[i]]$`SS Actualized`,
                            cropYearsList$CropYear[i],
@@ -520,7 +550,7 @@ for (i in 1:length(cropYearObjects)){
   SSfinalizedPrices[i,] = SStemp[[3]]
   
   # Seasonal Sales Multi Year
-  jan1 = paste("01-01", toString(year(mdy(cropYearObjects[[i]]$`Start Date`)) - 2), sep="-")
+  jan1 = paste("01-01", toString(year(mdy(cropYearObjects[[i]]$`Start Date`)) - 2), sep = "-")
   SSintervalPreMY = interval(mdy(jan1), int_end(cropYearObjects[[i]]$`Pre/Post Interval`$intervalPre))
   SStempMY = finalizeStorage(cropYearObjects[[i]]$`SS Actualized MY`,
                              cropYearsList$CropYear[i],
@@ -546,7 +576,7 @@ finalizedPriceObject = list("POfinalizedPrices" = POfinalizedPrices,
                             "SSfinalizedPrices" = SSfinalizedPrices,
                             "SSfinalizedPricesMY" = SSfinalizedPricesMY)
 
-for(i in 1:length(finalizedPriceObject)){
+for (i in 1:length(finalizedPriceObject)) {
   finalizedPriceObject[[i]][is.na(finalizedPriceObject[[i]])] = 0
 }
 
@@ -574,7 +604,7 @@ makeStorageTable = function(finalizedPrices){
   return(storageTable)
 }
 
-for (i in 1:length(cropYearObjects)){
+for (i in 1:length(cropYearObjects)) {
   cropYearObjects[[i]]$`PO Storage` = makeStorageTable(POfinalizedPrices)
   cropYearObjects[[i]]$`PO Storage MY` = makeStorageTable(POfinalizedPricesMY)
   cropYearObjects[[i]]$`TS Storage` = makeStorageTable(TSfinalizedPrices)
@@ -583,27 +613,36 @@ for (i in 1:length(cropYearObjects)){
   cropYearObjects[[i]]$`SS Storage MY` = makeStorageTable(SSfinalizedPricesMY)
 }
 
+# Returns a value of 0 if NaN
+fixIfNan = function(value) {
+  if (is.nan(value)) {
+    return(0)
+  } else {
+    return(value)
+  }
+}
+
 makeResultsTable = function(finalizedPrices){
   resultsTable = data.frame(matrix(nrow = 4, ncol = 3))
   colnames(resultsTable) = c(" ", "No Storage", "Storage")
   
   resultsTable$` ` =  c("Total Avg Price", "Pre-Harvest Avg Price", "Post-Harvest Avg Price", "USDA Average (Basis Adjusted)")
-  resultsTable$`No Storage`[2] = weighted.mean(finalizedPrices$preharvestAverage, finalizedPrices$preharvestPercent)
-  resultsTable$`No Storage`[3] = weighted.mean(finalizedPrices$postharvestAverage, finalizedPrices$postharvestPercent)
-  resultsTable$`Storage`[2] = weighted.mean(finalizedPrices$preharvestAverage, finalizedPrices$preharvestPercent)
-  resultsTable$`Storage`[3] = weighted.mean(finalizedPrices$postharvestAverageStorage, finalizedPrices$postharvestPercent)
+  resultsTable$`No Storage`[2] = fixIfNan(weighted.mean(finalizedPrices$preharvestAverage, finalizedPrices$preharvestPercent))
+  resultsTable$`No Storage`[3] = fixIfNan(weighted.mean(finalizedPrices$postharvestAverage, finalizedPrices$postharvestPercent))
+  resultsTable$`Storage`[2] = fixIfNan(weighted.mean(finalizedPrices$preharvestAverage, finalizedPrices$preharvestPercent))
+  resultsTable$`Storage`[3] = fixIfNan(weighted.mean(finalizedPrices$postharvestAverageStorage, finalizedPrices$postharvestPercent))
   
   preharvestSum = sum(finalizedPrices$preharvestPercent)
   postharvestSum = sum(finalizedPrices$postharvestPercent)
   
-  resultsTable$`No Storage`[1] = ((resultsTable$`No Storage`[2] * (preharvestSum * 0.01)) + (resultsTable$`No Storage`[3] * (postharvestSum * 0.01)))/ ((preharvestSum + postharvestSum) * 0.01)
-  resultsTable$`Storage`[1] = ((resultsTable$`Storage`[2] * (preharvestSum * 0.01)) + (resultsTable$`Storage`[3] * (postharvestSum * 0.01)))/ ((preharvestSum + postharvestSum) * 0.01)
+  resultsTable$`No Storage`[1] = ((resultsTable$`No Storage`[2] * (preharvestSum * 0.01)) + (resultsTable$`No Storage`[3] * (postharvestSum * 0.01))) / ((preharvestSum + postharvestSum) * 0.01)
+  resultsTable$`Storage`[1] = ((resultsTable$`Storage`[2] * (preharvestSum * 0.01)) + (resultsTable$`Storage`[3] * (postharvestSum * 0.01))) / ((preharvestSum + postharvestSum) * 0.01)
   
   # USDA Average price inputs
-  if(type == "corn"){
+  if (type == "corn") {
     resultsTable$`No Storage`[4] = 4.75
   }
-  else if(type == "soybean"){
+  else if (type == "soybean") {
     resultsTable$`No Storage`[4] = 11.41
   }
   
@@ -626,11 +665,11 @@ finalizedPriceObject[["AllResultsTable"]] = cbind(finalizedPriceObject[["POResul
                                                   finalizedPriceObject[["SSResultsTable"]][1:3, 2:3], 
                                                   finalizedPriceObject[["SSResultsTableMY"]][1:3, 2:3])
 
-if(type == "corn"){
+if (type == "corn") {
   Corn_CropYearObjects = cropYearObjects
 }
 
-if(type == "soybean"){
+if (type == "soybean") {
   Soybean_CropYearObjects = cropYearObjects
 }
 

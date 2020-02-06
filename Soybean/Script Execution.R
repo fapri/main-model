@@ -20,7 +20,7 @@ source("Model/TrailingStop.R")
 
 source("Model/TrailingStopV3.R")
 
-source("Soybean/SeasonalSaleActualized.R")
+# source("Soybean/SeasonalSaleActualized.R")
 
 ##################################################################################################
 # Soybean
@@ -85,9 +85,16 @@ source("Model/Storage.R")
 source("Model/Graphing.R")
 saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), file = "appObjectsSoybeanV6.rds")
 
+rm(list = ls())
+load("Environments/Soybean/SS.RData")
 
-
-
+#HarvestTime
+source("Soybean/HarvestTimeSalesActualized.R")
+source("Soybean/PriceObjectiveActualized.R")
+source("Soybean/TrailingStopActualized.R")
+source("Model/Storage.R")
+source("Model/Graphing.R")
+saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), file = "appObjectsSoybeanHarvestTime.rds")
 
 
 
@@ -153,6 +160,7 @@ source("Model/Graphing.R")
 saveRDS(list(Soybean_CropYearObjects, Soybean_CropYears, finalizedPriceObject), file = "appObjectsSoybeanV3V6.rds")
 
 rm(list = ls())
+load("Environments/Soybean/SSV3.RData")
 
 
 
@@ -220,6 +228,17 @@ source("Soybean/TrailingStopActualizedV9.R")
 source("Model/Storage.R")
 source("Model/Graphing.R")
 saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file = "appObjectsCornV6.rds")
+
+rm(list = ls())
+load("Environments/Corn/SS.RData")
+
+#HarvestTime
+source("Soybean/HarvestTimeSalesActualized.R")
+source("Soybean/PriceObjectiveActualized.R")
+source("Soybean/TrailingStopActualized.R")
+source("Model/Storage.R")
+source("Model/Graphing.R")
+saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file = "appObjectsCornHarvestTime.rds")
 
 
 
@@ -289,4 +308,3 @@ source("Model/Graphing.R")
 saveRDS(list(Corn_CropYearObjects, Corn_CropYears, finalizedPriceObject), file = "appObjectsCornV3V6.rds")
 
 rm(list = ls())
-
