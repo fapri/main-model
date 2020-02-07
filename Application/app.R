@@ -64,7 +64,10 @@ Corn_CropYearObjectsHarvestTime = appObjectsCornHarvestTime[[1]]
 Corn_CropYearsHarvestTime = appObjectsCornHarvestTime[[2]]
 finalizedPriceObjectCornHarvestTime = appObjectsCornHarvestTime[[3]]
 
-
+appObjectsCorn404020 = readRDS("appObjectsCorn404020.rds")
+Corn_CropYearObjects404020 = appObjectsCorn404020[[1]]
+Corn_CropYears404020 = appObjectsCorn404020[[2]]
+finalizedPriceObjectCorn404020 = appObjectsCorn404020[[3]]
 
 # Corn V3/__
 appObjectsCornV3Base = readRDS("appObjectsCornV3Base.rds")
@@ -146,6 +149,10 @@ Soybean_CropYearObjectsHarvestTime = appObjectsSoybeanHarvestTime[[1]]
 Soybean_CropYearsHarvestTime = appObjectsSoybeanHarvestTime[[2]]
 finalizedPriceObjectSoybeanHarvestTime = appObjectsSoybeanHarvestTime[[3]]
 
+appObjectsSoybean404020 = readRDS("appObjectsSoybean404020.rds")
+Soybean_CropYearObjects404020 = appObjectsSoybean404020[[1]]
+Soybean_CropYears404020 = appObjectsSoybean404020[[2]]
+finalizedPriceObjectSoybean404020 = appObjectsSoybean404020[[3]]
 
 # Soybean V3/__
 appObjectsSoybeanV3Base = readRDS("appObjectsSoybeanV3Base.rds")
@@ -206,7 +213,8 @@ priceObjectListCorn = list(finalizedPriceObjectCornBase,
                            finalizedPriceObjectCornV3V6,
                            finalizedPriceObjectCornMarch,
                            finalizedPriceObjectCornMarchBaselines,
-                           finalizedPriceObjectCornHarvestTime)
+                           finalizedPriceObjectCornHarvestTime,
+                           finalizedPriceObjectCorn404020)
 
 priceObjectListSoybean = list(finalizedPriceObjectSoybeanBase,
                               finalizedPriceObjectSoybeanV2,
@@ -222,7 +230,8 @@ priceObjectListSoybean = list(finalizedPriceObjectSoybeanBase,
                               finalizedPriceObjectSoybeanV3V6,
                               finalizedPriceObjectSoybeanMarch,
                               finalizedPriceObjectSoybeanMarchBaselines,
-                              finalizedPriceObjectSoybeanHarvestTime)
+                              finalizedPriceObjectSoybeanHarvestTime,
+                              finalizedPriceObjectSoybean404020)
 
 
 # These could be different for corn and soybean if we have different strategies
@@ -240,7 +249,8 @@ versions = c("Base",
              "V3V6",
              "March",
              "MarchBaselines",
-             "HarvestTime")
+             "HarvestTime",
+             "404020")
 
 MYversions = c("Multiyear",
                "MYV2",
@@ -256,7 +266,8 @@ MYversions = c("Multiyear",
                "MYV3V6",
                "MYMarch",
                "MYMarchBaselines",
-               "MYHarvestTime")
+               "MYHarvestTime",
+               "MY404020")
 
 POversions = c("Base",
                "Multiyear",
@@ -287,6 +298,18 @@ TSversions = c("Base",
                "MYV5",
                "V6",
                "MYV6",
+               "V3Base",
+               "MYV3Base",
+               "V3V2",
+               "MYV3V2",
+               "V3V3",
+               "MYV3V3",
+               "V3V4",
+               "MYV3V4",
+               "V3V5",
+               "MYV3V5",
+               "V3V6",
+               "MYV3V6",
                "March",
                "MYMarch",
                "MarchBaselines",
@@ -299,7 +322,9 @@ SSversions = c("Base",
                "MarchBaselines",
                "MYMarchBaselines",
                "HarvestTime",
-               "MYHarvestTime")
+               "MYHarvestTime",
+               "404020",
+               "MY404020")
 
 # Initialize objects
 nonMultiYearCorn = data.frame()
@@ -317,23 +342,23 @@ getResults = function(strategy, resultsTable, resultsTableMY, strategyName, MY) 
     }
     
     if (strategyName %in% TSversions) {
-    TS = which(names(strategy) == "TSResultsTable")
-    TSRow = cbind("Trailing Stop", 
-                  strategyName,
-                  strategy[[TS]][1, 2],
-                  strategy[[TS]][2, 2],
-                  strategy[[TS]][3, 2],
-                  strategy[[TS]][1, 3],
-                  strategy[[TS]][3, 3])
-    
-    
-    colnames(TSRow) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
-                        "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
-    } else{
+      TS = which(names(strategy) == "TSResultsTable")
+      TSRow = cbind("Trailing Stop", 
+                    strategyName,
+                    strategy[[TS]][1, 2],
+                    strategy[[TS]][2, 2],
+                    strategy[[TS]][3, 2],
+                    strategy[[TS]][1, 3],
+                    strategy[[TS]][3, 3])
+      
+      
+      colnames(TSRow) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
+                          "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
+    } else {
       TSRow = NULL
     }
     
-    if(strategyName %in% POversions){
+    if (strategyName %in% POversions) {
       PO = which(names(strategy) == "POResultsTable")
       PORow = cbind("Price Objective", 
                     strategyName,
@@ -345,11 +370,11 @@ getResults = function(strategy, resultsTable, resultsTableMY, strategyName, MY) 
       
       colnames(PORow) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
                           "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
-    } else{
+    } else {
       PORow = NULL
     }
     
-    if(strategyName %in% SSversions){
+    if (strategyName %in% SSversions) {
       SS = which(names(strategy) == "SSResultsTable")
       
       SSRow = cbind("Seasonal Sales", 
@@ -362,7 +387,7 @@ getResults = function(strategy, resultsTable, resultsTableMY, strategyName, MY) 
       
       colnames(SSRow) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
                           "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
-    } else{
+    } else {
       SSRow = NULL
     }
     
@@ -371,30 +396,30 @@ getResults = function(strategy, resultsTable, resultsTableMY, strategyName, MY) 
     return(resultsTable)
   }
   
-  if(MY == TRUE){
-    if (nrow(resultsTableMY) == 0){
+  if (MY == TRUE) {
+    if (nrow(resultsTableMY) == 0) {
       resultsTableMY = data.frame(matrix(nrow = 0, ncol = 7))
       colnames(resultsTableMY) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
                                    "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
     }
     
-    if(strategyName %in% TSversions){
-    TSMY = which(names(strategy) == "TSResultsTableMY")
-    TSMYRow = cbind("Trailing Stop", 
-                    strategyName,
-                    strategy[[TSMY]][1, 2],
-                    strategy[[TSMY]][2, 2],
-                    strategy[[TSMY]][3, 2],
-                    strategy[[TSMY]][1, 3],
-                    strategy[[TSMY]][3, 3])
-    
-    colnames(TSMYRow) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
-                          "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
-    } else{
+    if (strategyName %in% TSversions) {
+      TSMY = which(names(strategy) == "TSResultsTableMY")
+      TSMYRow = cbind("Trailing Stop", 
+                      strategyName,
+                      strategy[[TSMY]][1, 2],
+                      strategy[[TSMY]][2, 2],
+                      strategy[[TSMY]][3, 2],
+                      strategy[[TSMY]][1, 3],
+                      strategy[[TSMY]][3, 3])
+      
+      colnames(TSMYRow) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
+                            "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
+    } else {
       TSMYRow = NULL
     }
     
-    if(strategyName %in% POversions){
+    if (strategyName %in% POversions) {
       POMY = which(names(strategy) == "POResultsTableMY")
       POMYRow = cbind("Price Objective", 
                       strategyName,
@@ -405,11 +430,11 @@ getResults = function(strategy, resultsTable, resultsTableMY, strategyName, MY) 
                       strategy[[POMY]][3, 3])
       colnames(POMYRow) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
                             "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
-    } else{
+    } else {
       POMYRow = NULL
     }
     
-    if(strategyName %in% SSversions){
+    if (strategyName %in% SSversions) {
       SSMY = which(names(strategy) == "SSResultsTableMY")
       
       SSMYRow = cbind("Seasonal Sales", 
@@ -422,7 +447,7 @@ getResults = function(strategy, resultsTable, resultsTableMY, strategyName, MY) 
       
       colnames(SSMYRow) = c("Strategy", "Version", "RawAveragePrice", "PreHarvestAverage", "PostHarvestAverage", 
                             "StorageAdjustedAverage", "StorageAdjustedPostHarvestAverage")
-    } else{
+    } else {
       SSMYRow = NULL
     }
     
@@ -433,19 +458,18 @@ getResults = function(strategy, resultsTable, resultsTableMY, strategyName, MY) 
 }
 
 # Load the tables for later use. Strategy Results
-for(i in 1:length(priceObjectListCorn)){
+for(i in 1:length(priceObjectListCorn)) {
   nonMultiYearCorn = data.frame(getResults(priceObjectListCorn[[i]], nonMultiYearCorn, multiYearCorn, versions[i], FALSE))
   multiYearCorn = data.frame(getResults(priceObjectListCorn[[i]], nonMultiYearCorn, multiYearCorn, MYversions[i], TRUE))
 }
 
-for(i in 1:length(priceObjectListSoybean)){
+for(i in 1:length(priceObjectListSoybean)) {
   nonMultiYearSoybean = data.frame(getResults(priceObjectListSoybean[[i]], nonMultiYearSoybean, multiYearSoybean, versions[i], FALSE))
   multiYearSoybean = data.frame(getResults(priceObjectListSoybean[[i]], nonMultiYearSoybean, multiYearSoybean, MYversions[i], TRUE))
-  
 }
 
 # Gets a results table for all crop years in a single strategy
-yearlyResultsByStrategy = function(finalizedPriceList, strategyName){
+yearlyResultsByStrategy = function(finalizedPriceList, strategyName) {
   
   resultsTable = data.frame(matrix(nrow = 0, ncol = 6))
   
@@ -479,10 +503,10 @@ getYearlyResultsTable = function(data, cropType) {
   data[,2:6] = lapply(data[2:6], function(x) as.numeric(as.character(x)))
   rownames(data) <- c()
   data = cbind("Crop Year" = data[,1], round(data[, 2:6], digits = 2))
-  if(cropType == "corn"){
+  if (cropType == "corn") {
     tableCaption = tags$caption("USDA Average: $4.66", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;")
   }
-  if(cropType == "soybean"){
+  if (cropType == "soybean") {
     tableCaption = tags$caption("USDA Average: $11.26", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;")
   }
   table = as.datatable(formattable(data, 
@@ -536,7 +560,7 @@ POSoybean = c("Base" = "base",
               "March Baselines" = "MarchBaselines",
               "Multi-Year March Baselines" = "MYMarchBaselines")
 
-TSCorn = c(Base = "base",
+TSCorn = c("Base" = "base",
            "Multi-Year" = "multiyear",
            "Version 2" = "V2",
            "Multi-Year Version 2" = "MYV2",
@@ -565,7 +589,7 @@ TSCorn = c(Base = "base",
            "March Baselines" = "MarchBaselines",
            "Multi-Year March Baselines" = "MYMarchBaselines")
 
-TSSoybean = c(Base = "base",
+TSSoybean = c("Base" = "base",
               "Multi-Year" = "multiyear",
               "Version 2" = "V2",
               "Multi-Year Version 2" = "MYV2",
@@ -601,7 +625,9 @@ SSCorn = c("Base" = "base",
            "March Baselines" = "MarchBaselines",
            "Multi-Year March Baselines" = "MYMarchBaselines",
            "Harvest Time Sales" = "HarvestTime",
-           "Multi-Year Harvest Time Sales" = "MYHarvestTime")
+           "Multi-Year Harvest Time Sales" = "MYHarvestTime",
+           "Oct/Jan/Aug Sales" = "404020",
+           "Multi-Year Oct/Jan/Aug Sales" = "MY404020")
 
 SSSoybean = c("Base" = "base",
               "Multi-Year" = "multiyear",
@@ -610,7 +636,9 @@ SSSoybean = c("Base" = "base",
               "March Baselines" = "MarchBaselines",
               "Multi-Year March Baselines" = "MYMarchBaselines",
               "Harvest Time Sales" = "HarvestTime",
-              "Multi-Year Harvest Time Sales" = "MYHarvestTime")
+              "Multi-Year Harvest Time Sales" = "MYHarvestTime",
+              "Oct/Jan/Aug Sales" = "404020",
+              "Multi-Year Oct/Jan/Aug Sales" = "MY404020")
 
 POVersions = list("Corn" = POCorn, "Soybeans" = POSoybean)
 TSVersions = list("Corn" = TSCorn, "Soybeans" = TSSoybean)
@@ -661,7 +689,7 @@ getTables = function(data) {
 
 # Sales Summary Table creation and formatting
 getSalesTable = function(data) {
-  if(!is.null(data)){
+  if (!is.null(data)) {
     table = as.datatable(formattable(data, 
                                      align = "c",
                                      list(~ formatter("span",
@@ -677,7 +705,7 @@ getSalesTable = function(data) {
                          rownames = FALSE, 
                          caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), 
                          options = list(dom = 't'))
-  } else{
+  } else {
     data = data.frame("NO SALES ACTUALIZED" = "NO SALES ACTUALIZED")
     table = as.datatable(formattable(data, 
                                      align = "c",
@@ -697,7 +725,7 @@ getSalesTable = function(data) {
                          rownames = FALSE, 
                          caption = tags$caption("Sales Summary", style = "color:#c90e0e; font-weight:bold; font-size:150%; text-align:center;"), 
                          options = list(dom = 't'),
-                         colnames=c(" "))
+                         colnames = c(" "))
   }
   return(table)
 }
@@ -747,9 +775,9 @@ ui <- shinyUI(
                               plotOutput('POsalesPlot'),
                               style = "padding-bottom:50px"
                             ),
-
+                            
                             tags$style(type="text/css", '#POsummaryTables tfoot {display:none;}'),
-
+                            
                             sidebarLayout(
                               sidebarPanel(
                                 fluidRow(selectInput('yearPO','Crop Year', choices = cropYearMenuChoices, width = "100%"),
@@ -760,7 +788,7 @@ ui <- shinyUI(
                                 fluidRow(
                                   dataTableOutput('POsummaryTables'),
                                   style = "padding-bottom:100px")
-
+                                
                               )
                             ),
                             fluidRow(
@@ -2304,6 +2332,66 @@ ui <- shinyUI(
                               style = "padding-bottom:50px"
                             )
                           )
+                        ), 
+                        # 404020
+                        conditionalPanel(
+                          condition = "input.SSstrategy == '404020'",
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('SSdistPlot404020'),
+                              style = "padding-bottom:50px"
+                            ),
+                            
+                            tags$style(type="text/css", '#summaryTables tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearSS404020','Crop Year', choices = cropYearMenuChoices, width = "100%"),
+                                         column(12, dataTableOutput('SSstorageTables404020')),
+                                         tags$style(type="text/css", '#SSstorageTables404020 tfoot {display:none;}'))
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('SSsummaryTables404020'),
+                                  style = "padding-bottom:100px")
+                                
+                              )
+                            ),
+                            fluidRow(
+                              dataTableOutput('SSyearTable404020'),
+                              style = "padding-bottom:50px"
+                            )
+                          )
+                        ),
+                        conditionalPanel(
+                          condition = "input.SSstrategy == 'MY404020'",
+                          fluidPage(
+                            fluidRow(
+                              plotOutput('SSMYdistPlot404020'),
+                              style = "padding-bottom:50px"
+                            ),
+                            
+                            tags$style(type="text/css", '#SSMYsummaryTables404020 tfoot {display:none;}'),
+                            
+                            sidebarLayout(
+                              sidebarPanel(
+                                fluidRow(selectInput('yearSSMY404020','Crop Year', choices = cropYearMenuChoices, width = "100%"),
+                                         column(12, dataTableOutput('SSMYstorageTables404020')),
+                                         tags$style(type="text/css", '#SSMYstorageTables404020 tfoot {display:none;}'))
+                                
+                              ),
+                              mainPanel(
+                                fluidRow(
+                                  dataTableOutput('SSMYsummaryTables404020'),
+                                  style = "padding-bottom:100px")
+                                
+                              )
+                            ),
+                            fluidRow(
+                              dataTableOutput('SSMYyearTable404020'),
+                              style = "padding-bottom:50px"
+                            )
+                          )
                         )
                       )
              ),
@@ -2329,7 +2417,8 @@ ui <- shinyUI(
                                  div(style = "display: inline-block; padding-bottom: 50px", dataTableOutput("fullResultsTableMY"))
                           )
                           
-                        ))
+                        )
+                      )
              ),
              tabPanel("About Our Strategies",
                       fluidPage(
@@ -2346,11 +2435,12 @@ ui <- shinyUI(
                         )
                         
                         )
-                      ))
+                      )
+             )
   )
 ) 
 
-server <- shinyServer(function(input,output,session){
+server <- shinyServer(function(input,output,session) {
   
   #saves slider input for on-farm storage available
   # storagePercent <- reactive({
@@ -2391,22 +2481,22 @@ server <- shinyServer(function(input,output,session){
   
   
   output$fullResultsTable = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       as.datatable(getFullResultsTable(nonMultiYearCorn), rownames = FALSE, 
                    caption = tags$caption("USDA Average: $4.66", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       as.datatable(getFullResultsTable(nonMultiYearSoybean), rownames = FALSE, 
                    caption = tags$caption("USDA Average: $11.26", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
   output$fullResultsTableMY = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       as.datatable(getFullResultsTable(multiYearCorn), rownames = FALSE, 
                    caption = tags$caption("USDA Average: $4.66", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       as.datatable(getFullResultsTable(multiYearSoybean), rownames = FALSE, 
                    caption = tags$caption("USDA Average: $11.26", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
@@ -2443,37 +2533,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$POsalesPlot <- renderPlot({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsBase[[yearPO()]]$POPlot
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsBase[[yearPO()]]$POPlot
     }
   })
   
   output$POstorageTables = renderDataTable({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsBase[[yearPO()]]$`PO Storage`)
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsBase[[yearPO()]]$`PO Storage`)
     }
   })
   
   output$POsummaryTables = renderDataTable({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsBase[[yearPO()]]$`Sales Summary`)
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsBase[[yearPO()]]$`Sales Summary`)
     }
   })
   
   output$POyearTable = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "POfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "POfinalizedPrices"), "soybean")
     }
   })
@@ -2497,39 +2587,39 @@ server <- shinyServer(function(input,output,session){
            "2016-17" = 9,
            "2017-18" = 10)
   })
-
+  
   output$POdistPlotV2 <- renderPlot({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV2[[yearPOV2()]]$POPlot
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV2[[yearPOV2()]]$POPlot
     }
   })
   
   output$POstorageTablesV2 = renderDataTable({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV2[[yearPOV2()]]$`PO Storage`)
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV2[[yearPOV2()]]$`PO Storage`)
     }
   })
   
   output$POsummaryTablesV2 = renderDataTable({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV2[[yearPOV2()]]$`Sales Summary`)
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV2[[yearPOV2()]]$`Sales Summary`)
     }
   })
   
   output$POyearTableV2 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "POfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "POfinalizedPrices"), "soybean")
     }
   })
@@ -2553,40 +2643,40 @@ server <- shinyServer(function(input,output,session){
            "2016-17" = 9,
            "2017-18" = 10)
   })
-
+  
   output$POdistPlotV3 <- renderPlot({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV3[[yearPOV3()]]$POPlot
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV3[[yearPOV3()]]$POPlot
     }
   })
   
   output$POstorageTablesV3 = renderDataTable({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV3[[yearPOV3()]]$`PO Storage`)
       
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV3[[yearPOV3()]]$`PO Storage`)
     }
   })
   
   output$POsummaryTablesV3 = renderDataTable({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV3[[yearPOV3()]]$`Sales Summary`)
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV3[[yearPOV3()]]$`Sales Summary`)
     }
   })
   
   output$POyearTableV3 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "POfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "POfinalizedPrices"), "soybean")
     }
   })
@@ -2612,38 +2702,38 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$POdistPlotV4 <- renderPlot({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV4[[yearPOV4()]]$POPlot
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV4[[yearPOV4()]]$POPlot
     }
   })
   
   output$POstorageTablesV4 = renderDataTable({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV4[[yearPOV4()]]$`PO Storage`)
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV4[[yearPOV4()]]$`PO Storage`)
       
     }
   })
   
   output$POsummaryTablesV4 = renderDataTable({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV4[[yearPOV4()]]$`Sales Summary`)
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV4[[yearPOV4()]]$`Sales Summary`)
     }
   })
   
   output$POyearTableV4 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "POfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "POfinalizedPrices"), "soybean")
     }
   })
@@ -2669,37 +2759,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$POdistPlotV5 <- renderPlot({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV5[[yearPOV5()]]$POPlot
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV5[[yearPOV5()]]$POPlot
     }
   })
   
   output$POstorageTablesV5 = renderDataTable({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV5[[yearPOV5()]]$`PO Storage`)
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV5[[yearPOV5()]]$`PO Storage`)
     }
   })
   
   output$POsummaryTablesV5 = renderDataTable({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV5[[yearPOV5()]]$`Sales Summary`)
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV5[[yearPOV5()]]$`Sales Summary`)
     }
   })
   
   output$POyearTableV5 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "POfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "POfinalizedPrices"), "soybean")
     }
   })
@@ -2725,37 +2815,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$POdistPlotV6 <- renderPlot({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV6[[yearPOV6()]]$POPlot
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV6[[yearPOV6()]]$POPlot
     }
   })
   
   output$POstorageTablesV6 = renderDataTable({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV6[[yearPOV6()]]$`PO Storage`)
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV6[[yearPOV6()]]$`PO Storage`)
     }
   })
   
   output$POsummaryTablesV6 = renderDataTable({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV6[[yearPOV6()]]$`Sales Summary`)
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV6[[yearPOV6()]]$`Sales Summary`)
     }
   })
   
   output$POyearTableV6 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV6, "POfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV6, "POfinalizedPrices"), "soybean")
     }
   })
@@ -2782,37 +2872,37 @@ server <- shinyServer(function(input,output,session){
   
   
   output$POdistPlotMarch <- renderPlot({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsMarch[[yearPOMarch()]]$POPlot
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsMarch[[yearPOMarch()]]$POPlot
     }
   })
   
   output$POstorageTablesMarch = renderDataTable({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsMarch[[yearPOMarch()]]$`PO Storage`)
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsMarch[[yearPOMarch()]]$`PO Storage`)
     }
   })
   
   output$POsummaryTablesMarch = renderDataTable({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsMarch[[yearPOMarch()]]$`Sales Summary`)
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsMarch[[yearPOMarch()]]$`Sales Summary`)
     }
   })
   
   output$POyearTableMarch = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "POfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "POfinalizedPrices"), "soybean")
     }
   })
@@ -2838,37 +2928,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$POdistPlotMarchBaselines <- renderPlot({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsMarchBaselines[[yearPOMarchBaselines()]]$POPlot
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsMarchBaselines[[yearPOMarchBaselines()]]$POPlot
     }
   })
   
   output$POstorageTablesMarchBaselines = renderDataTable({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsMarchBaselines[[yearPOMarchBaselines()]]$`PO Storage`)
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsMarchBaselines[[yearPOMarchBaselines()]]$`PO Storage`)
     }
   })
   
   output$POsummaryTablesMarchBaselines = renderDataTable({
-    if(input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsMarchBaselines[[yearPOMarchBaselines()]]$`Sales Summary`)
     }
-    else if(input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsMarchBaselines[[yearPOMarchBaselines()]]$`Sales Summary`)
     }
   })
   
   output$POyearTableMarchBaselines = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "POfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "POfinalizedPrices"), "soybean")
     }
   })
@@ -2894,37 +2984,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSdistPlot <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsBase[[yearTS()]]$TSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsBase[[yearTS()]]$TSPlot
     }
   })
   
   output$TSstorageTables = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsBase[[yearTS()]]$`TS Storage`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsBase[[yearTS()]]$`TS Storage`)
     }
   })
   
   output$TSsummaryTables = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsBase[[yearTS()]]$`TS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsBase[[yearTS()]]$`TS Sales Summary`)
     }
   })
   
   output$TSyearTable = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "TSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "TSfinalizedPrices"), "soybean")
     }
   })
@@ -2950,37 +3040,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSdistPlotV2 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV2[[yearTSV2()]]$TSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV2[[yearTSV2()]]$TSPlot
     }
   })
   
   output$TSstorageTablesV2 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV2[[yearTSV2()]]$`TS Storage`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV2[[yearTSV2()]]$`TS Storage`)
     }
   })
   
   output$TSsummaryTablesV2 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV2[[yearTSV2()]]$`TS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV2[[yearTSV2()]]$`TS Sales Summary`)
     }
   })
   
   output$TSyearTableV2 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "TSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "TSfinalizedPrices"), "soybean")
     }
   })
@@ -3006,37 +3096,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSdistPlotV3 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV3[[yearTSV3()]]$TSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV3[[yearTSV3()]]$TSPlot
     }
   })
   
   output$TSstorageTablesV3 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV3[[yearTSV3()]]$`TS Storage`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV3[[yearTSV3()]]$`TS Storage`)
     }
   })
   
   output$TSsummaryTablesV3 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV3[[yearTSV3()]]$`TS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV3[[yearTSV3()]]$`TS Sales Summary`)
     }
   })
   
   output$TSyearTableV3 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "TSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "TSfinalizedPrices"), "soybean")
     }
   })
@@ -3062,37 +3152,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSdistPlotV4 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV4[[yearTSV4()]]$TSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV4[[yearTSV4()]]$TSPlot
     }
   })
   
   output$TSstorageTablesV4 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV4[[yearTSV4()]]$`TS Storage`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV4[[yearTSV4()]]$`TS Storage`)
     }
   })
   
   output$TSsummaryTablesV4 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV4[[yearTSV4()]]$`TS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV4[[yearTSV4()]]$`TS Sales Summary`)
     }
   })
   
   output$TSyearTableV4 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "TSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "TSfinalizedPrices"), "soybean")
     }
   })
@@ -3118,37 +3208,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSdistPlotV5 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV5[[yearTSV5()]]$TSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV5[[yearTSV5()]]$TSPlot
     }
   })
   
   output$TSstorageTablesV5 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV5[[yearTSV5()]]$`TS Storage`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV5[[yearTSV5()]]$`TS Storage`)
     }
   })
   
   output$TSsummaryTablesV5 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV5[[yearTSV5()]]$`TS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV5[[yearTSV5()]]$`TS Sales Summary`)
     }
   })
   
   output$TSyearTableV5 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "TSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "TSfinalizedPrices"), "soybean")
     }
   })
@@ -3174,37 +3264,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSdistPlotV6 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV6[[yearTSV6()]]$TSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV6[[yearTSV6()]]$TSPlot
     }
   })
   
   output$TSstorageTablesV6 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV6[[yearTSV6()]]$`TS Storage`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV6[[yearTSV6()]]$`TS Storage`)
     }
   })
   
   output$TSsummaryTablesV6 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV6[[yearTSV6()]]$`TS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV6[[yearTSV6()]]$`TS Sales Summary`)
     }
   })
   
   output$TSyearTableV6 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV6, "TSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV6, "TSfinalizedPrices"), "soybean")
     }
   })
@@ -3230,37 +3320,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSdistPlotV3Base <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV3Base[[yearTSV3Base()]]$TSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV3Base[[yearTSV3Base()]]$TSPlot
     }
   })
   
   output$TSstorageTablesV3Base = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV3Base[[yearTSV3Base()]]$`TS Storage`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV3Base[[yearTSV3Base()]]$`TS Storage`)
     }
   })
   
   output$TSsummaryTablesV3Base = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV3Base[[yearTSV3Base()]]$`TS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV3Base[[yearTSV3Base()]]$`TS Sales Summary`)
     }
   })
   
   output$TSyearTableV3Base = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3Base, "TSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3Base, "TSfinalizedPrices"), "soybean")
     }
   })
@@ -3286,37 +3376,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSdistPlotV3V2 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV3V2[[yearTSV3V2()]]$TSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV3V2[[yearTSV3V2()]]$TSPlot
     }
   })
   
   output$TSstorageTablesV3V2 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV3V2[[yearTSV3V2()]]$`TS Storage`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV3V2[[yearTSV3V2()]]$`TS Storage`)
     }
   })
   
   output$TSsummaryTablesV3V2 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV3V2[[yearTSV3V2()]]$`TS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV3V2[[yearTSV3V2()]]$`TS Sales Summary`)
     }
   })
   
   output$TSyearTableV3V2 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V2, "TSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V2, "TSfinalizedPrices"), "soybean")
     }
   })
@@ -3341,37 +3431,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSdistPlotV3V3 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV3V3[[yearTSV3V3()]]$TSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV3V3[[yearTSV3V3()]]$TSPlot
     }
   })
   
   output$TSstorageTablesV3V3 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV3V3[[yearTSV3V3()]]$`TS Storage`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV3V3[[yearTSV3V3()]]$`TS Storage`)
     }
   })
   
   output$TSsummaryTablesV3V3 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV3V3[[yearTSV3V3()]]$`TS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV3V3[[yearTSV3V3()]]$`TS Sales Summary`)
     }
   })
   
   output$TSyearTableV3V3 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V3, "TSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V3, "TSfinalizedPrices"), "soybean")
     }
   })
@@ -3397,37 +3487,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSdistPlotV3V4 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV3V4[[yearTSV3V4()]]$TSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV3V4[[yearTSV3V4()]]$TSPlot
     }
   })
   
   output$TSstorageTablesV3V4 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV3V4[[yearTSV3V4()]]$`TS Storage`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV3V4[[yearTSV3V4()]]$`TS Storage`)
     }
   })
   
   output$TSsummaryTablesV3V4 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV3V4[[yearTSV3V4()]]$`TS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV3V4[[yearTSV3V4()]]$`TS Sales Summary`)
     }
   })
   
   output$TSyearTableV3V4 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V4, "TSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V4, "TSfinalizedPrices"), "soybean")
     }
   })
@@ -3453,37 +3543,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSdistPlotV3V5 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV3V5[[yearTSV3V5()]]$TSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV3V5[[yearTSV3V5()]]$TSPlot
     }
   })
   
   output$TSstorageTablesV3V5 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV3V5[[yearTSV3V5()]]$`TS Storage`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV3V5[[yearTSV3V5()]]$`TS Storage`)
     }
   })
   
   output$TSsummaryTablesV3V5 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV3V5[[yearTSV3V5()]]$`TS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV3V5[[yearTSV3V5()]]$`TS Sales Summary`)
     }
   })
   
   output$TSyearTableV3V5 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V5, "TSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V5, "TSfinalizedPrices"), "soybean")
     }
   })
@@ -3509,37 +3599,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSdistPlotV3V6 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV3V6[[yearTSV3V6()]]$TSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV3V6[[yearTSV3V6()]]$TSPlot
     }
   })
   
   output$TSstorageTablesV3V6 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV3V6[[yearTSV3V6()]]$`TS Storage`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV3V6[[yearTSV3V6()]]$`TS Storage`)
     }
   })
   
   output$TSsummaryTablesV3V6 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV3V6[[yearTSV3V6()]]$`TS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV3V6[[yearTSV3V6()]]$`TS Sales Summary`)
     }
   })
   
   output$TSyearTableV3V6 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V6, "TSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V6, "TSfinalizedPrices"), "soybean")
     }
   })
@@ -3565,37 +3655,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSdistPlotMarch <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsMarch[[yearTSMarch()]]$TSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsMarch[[yearTSMarch()]]$TSPlot
     }
   })
   
   output$TSstorageTablesMarch = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsMarch[[yearTSMarch()]]$`TS Storage`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsMarch[[yearTSMarch()]]$`TS Storage`)
     }
   })
   
   output$TSsummaryTablesMarch = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsMarch[[yearTSMarch()]]$`TS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsMarch[[yearTSMarch()]]$`TS Sales Summary`)
     }
   })
   
   output$TSyearTableMarch = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "TSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "TSfinalizedPrices"), "soybean")
     }
   })
@@ -3621,37 +3711,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSdistPlotMarchBaselines <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsMarchBaselines[[yearTSMarchBaselines()]]$TSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsMarchBaselines[[yearTSMarchBaselines()]]$TSPlot
     }
   })
   
   output$TSstorageTablesMarchBaselines = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsMarchBaselines[[yearTSMarchBaselines()]]$`TS Storage`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsMarchBaselines[[yearTSMarchBaselines()]]$`TS Storage`)
     }
   })
   
   output$TSsummaryTablesMarchBaselines = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsMarchBaselines[[yearTSMarchBaselines()]]$`TS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsMarchBaselines[[yearTSMarchBaselines()]]$`TS Sales Summary`)
     }
   })
   
   output$TSyearTableMarchBaselines = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "TSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "TSfinalizedPrices"), "soybean")
     }
   })
@@ -3677,37 +3767,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$SSdistPlot <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsBase[[yearSS()]]$SSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsBase[[yearSS()]]$SSPlot
     }
   })
   
   output$SSstorageTables = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsBase[[yearSS()]]$`SS Storage`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsBase[[yearSS()]]$`SS Storage`)
     }
   })
   
   output$SSsummaryTables = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsBase[[yearSS()]]$`SS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsBase[[yearSS()]]$`SS Sales Summary`)
     }
   })
   
   output$SSyearTable = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "SSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "SSfinalizedPrices"), "soybean")
     }
   })
@@ -3733,37 +3823,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$SSdistPlotMarch <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsMarch[[yearSSMarch()]]$SSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsMarch[[yearSSMarch()]]$SSPlot
     }
   })
   
   output$SSstorageTablesMarch = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsMarch[[yearSSMarch()]]$`SS Storage`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsMarch[[yearSSMarch()]]$`SS Storage`)
     }
   })
   
   output$SSsummaryTablesMarch = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsMarch[[yearSSMarch()]]$`SS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsMarch[[yearSSMarch()]]$`SS Sales Summary`)
     }
   })
   
   output$SSyearTableMarch = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "SSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "SSfinalizedPrices"), "soybean")
     }
   })
@@ -3789,40 +3879,41 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$SSdistPlotMarchBaselines <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsMarchBaselines[[yearSSMarchBaselines()]]$SSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsMarchBaselines[[yearSSMarchBaselines()]]$SSPlot
     }
   })
   
   output$SSstorageTablesMarchBaselines = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsMarchBaselines[[yearSSMarchBaselines()]]$`SS Storage`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsMarchBaselines[[yearSSMarchBaselines()]]$`SS Storage`)
     }
   })
   
   output$SSsummaryTablesMarchBaselines = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsMarchBaselines[[yearSSMarchBaselines()]]$`SS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsMarchBaselines[[yearSSMarchBaselines()]]$`SS Sales Summary`)
     }
   })
   
   output$SSyearTableMarchBaselines = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "SSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "SSfinalizedPrices"), "soybean")
     }
   })
+  
   
   #################################################################################################
   # Seasonal Sales VERSION Harvest Time
@@ -3844,38 +3935,94 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$SSdistPlotHarvestTime <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsHarvestTime[[yearSSHarvestTime()]]$SSPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsHarvestTime[[yearSSHarvestTime()]]$SSPlot
     }
   })
   
   output$SSstorageTablesHarvestTime = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsHarvestTime[[yearSSHarvestTime()]]$`SS Storage`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsHarvestTime[[yearSSHarvestTime()]]$`SS Storage`)
     }
   })
   
   output$SSsummaryTablesHarvestTime = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsHarvestTime[[yearSSHarvestTime()]]$`SS Sales Summary`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsHarvestTime[[yearSSHarvestTime()]]$`SS Sales Summary`)
     }
   })
   
   output$SSyearTableHarvestTime = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornHarvestTime, "SSfinalizedPrices"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanHarvestTime, "SSfinalizedPrices"), "soybean")
+    }
+  })
+  
+  
+  #################################################################################################
+  # Seasonal Sales VERSION 404020
+  #################################################################################################
+  
+  
+  yearSS404020 <- reactive({
+    switch(input$yearSS404020,
+           "2008-09" = 1,
+           "2009-10" = 2,
+           "2010-11" = 3,
+           "2011-12" = 4,
+           "2012-13" = 5,
+           "2013-14" = 6,
+           "2014-15" = 7,
+           "2015-16" = 8,
+           "2016-17" = 9,
+           "2017-18" = 10)
+  })
+  
+  output$SSdistPlot404020 <- renderPlot({
+    if (input$cropType == "Corn") {
+      Corn_CropYearObjects404020[[yearSS404020()]]$SSPlot
+    }
+    else if (input$cropType == "Soybeans") {
+      Soybean_CropYearObjects404020[[yearSS404020()]]$SSPlot
+    }
+  })
+  
+  output$SSstorageTables404020 = renderDataTable({
+    if (input$cropType == "Corn") {
+      getTables(Corn_CropYearObjects404020[[yearSS404020()]]$`SS Storage`)
+    }
+    else if (input$cropType == "Soybeans") {
+      getTables(Soybean_CropYearObjects404020[[yearSS404020()]]$`SS Storage`)
+    }
+  })
+  
+  output$SSsummaryTables404020 = renderDataTable({
+    if (input$cropType == "Corn") {
+      getSalesTable(Corn_CropYearObjects404020[[yearSS404020()]]$`SS Sales Summary`)
+    }
+    else if (input$cropType == "Soybeans") {
+      getSalesTable(Soybean_CropYearObjects404020[[yearSS404020()]]$`SS Sales Summary`)
+    }
+  })
+  
+  output$SSyearTable404020 = renderDataTable({
+    if (input$cropType == "Corn") {
+      getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCorn404020, "SSfinalizedPrices"), "corn")
+    }
+    else if (input$cropType == "Soybeans") {
+      getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybean404020, "SSfinalizedPrices"), "soybean")
     }
   })
   
@@ -3900,37 +4047,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$POMYdistPlot <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsBase[[yearPOMY()]]$POMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsBase[[yearPOMY()]]$POMYPlot
     }
   })
   
   output$POMYstorageTables = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsBase[[yearPOMY()]]$`PO Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsBase[[yearPOMY()]]$`PO Storage MY`)
     }
   })
   
   output$POMYsummaryTables = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsBase[[yearPOMY()]]$`PO Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsBase[[yearPOMY()]]$`PO Sales Summary MY`)
     }
   })
   
   output$POMYyearTable = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "POfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "POfinalizedPricesMY"), "soybean")
     }
   })
@@ -3956,37 +4103,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$POMYdistPlotV2 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV2[[yearPOMYV2()]]$POMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV2[[yearPOMYV2()]]$POMYPlot
     }
   })
   
   output$POMYstorageTablesV2 = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV2[[yearPOMYV2()]]$`PO Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV2[[yearPOMYV2()]]$`PO Storage MY`)
     }
   })
   
   output$POMYsummaryTablesV2 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV2[[yearPOMYV2()]]$`PO Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV2[[yearPOMYV2()]]$`PO Sales Summary MY`)
     }
   })
   
   output$POMYyearTableV2 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "POfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "POfinalizedPricesMY"), "soybean")
     }
   })
@@ -4012,37 +4159,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$POMYdistPlotV3 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV3[[yearPOMYV3()]]$POMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV3[[yearPOMYV3()]]$POMYPlot
     }
   })
   
   output$POMYstorageTablesV3 = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV3[[yearPOMYV3()]]$`PO Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV3[[yearPOMYV3()]]$`PO Storage MY`)
     }
   })
   
   output$POMYsummaryTablesV3 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV3[[yearPOMYV3()]]$`PO Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV3[[yearPOMYV3()]]$`PO Sales Summary MY`)
     }
   })
   
   output$POMYyearTableV3 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "POfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "POfinalizedPricesMY"), "soybean")
     }
   })
@@ -4068,37 +4215,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$POMYdistPlotV4 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV4[[yearPOMYV4()]]$POMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV4[[yearPOMYV4()]]$POMYPlot
     }
   })
   
   output$POMYstorageTablesV4 = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV4[[yearPOMYV4()]]$`PO Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV4[[yearPOMY4()]]$`PO Storage MY`)
     }
   })
   
   output$POMYsummaryTablesV4 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV4[[yearPOMYV4()]]$`PO Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV4[[yearPOMYV4()]]$`PO Sales Summary MY`)
     }
   })
   
   output$POMYyearTableV4 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "POfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "POfinalizedPricesMY"), "soybean")
     }
   })
@@ -4124,37 +4271,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$POMYdistPlotV5 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV5[[yearPOMYV5()]]$POMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV5[[yearPOMYV5()]]$POMYPlot
     }
   })
   
   output$POMYstorageTablesV5 = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV5[[yearPOMYV5()]]$`PO Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV5[[yearPOMYV5()]]$`PO Storage MY`)
     }
   })
   
   output$POMYsummaryTablesV5 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV5[[yearPOMYV5()]]$`PO Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV5[[yearPOMYV5()]]$`PO Sales Summary MY`)
     }
   })
   
   output$POMYyearTableV5 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "POfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "POfinalizedPricesMY"), "soybean")
     }
   })
@@ -4180,37 +4327,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$POMYdistPlotV6 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV6[[yearPOMYV6()]]$POMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV6[[yearPOMYV6()]]$POMYPlot
     }
   })
   
   output$POMYstorageTablesV6 = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV6[[yearPOMYV6()]]$`PO Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV6[[yearPOMYV6()]]$`PO Storage MY`)
     }
   })
   
   output$POMYsummaryTablesV6 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV6[[yearPOMYV6()]]$`PO Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV6[[yearPOMYV6()]]$`PO Sales Summary MY`)
     }
   })
   
   output$POMYyearTableV6 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV6, "POfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV6, "POfinalizedPricesMY"), "soybean")
     }
   })
@@ -4236,37 +4383,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$POMYdistPlotMarch <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsMarch[[yearPOMYMarch()]]$POMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsMarch[[yearPOMYMarch()]]$POMYPlot
     }
   })
   
   output$POMYstorageTablesMarch = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsMarch[[yearPOMYMarch()]]$`PO Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsMarch[[yearPOMYMarch()]]$`PO Storage MY`)
     }
   })
   
   output$POMYsummaryTablesMarch = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsMarch[[yearPOMYMarch()]]$`PO Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsMarch[[yearPOMYMarch()]]$`PO Sales Summary MY`)
     }
   })
   
   output$POMYyearTableMarch = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "POfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "POfinalizedPricesMY"), "soybean")
     }
   })
@@ -4292,37 +4439,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$POMYdistPlotMarchBaselines <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsMarchBaselines[[yearPOMYMarchBaselines()]]$POMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsMarchBaselines[[yearPOMYMarchBaselines()]]$POMYPlot
     }
   })
   
   output$POMYstorageTablesMarchBaselines = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsMarchBaselines[[yearPOMYMarchBaselines()]]$`PO Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsMarchBaselines[[yearPOMYMarchBaselines()]]$`PO Storage MY`)
     }
   })
   
   output$POMYsummaryTablesMarchBaselines = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsMarchBaselines[[yearPOMYMarchBaselines()]]$`PO Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsMarchBaselines[[yearPOMYMarchBaselines()]]$`PO Sales Summary MY`)
     }
   })
   
   output$POMYyearTableMarchBaselines = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "POfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "POfinalizedPricesMY"), "soybean")
     }
   })
@@ -4348,37 +4495,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSMYdistPlot <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsBase[[yearTSMY()]]$TSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsBase[[yearTSMY()]]$TSMYPlot
     }
   })
   
   output$TSMYstorageTables = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsBase[[yearTSMY()]]$`TS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsBase[[yearTSMY()]]$`TS Storage MY`)
     }
   })
-
+  
   output$TSMYsummaryTables = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsBase[[yearTSMY()]]$`TS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsBase[[yearTSMY()]]$`TS Sales Summary MY`)
     }
   })
   
   output$TSMYyearTable = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "TSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "TSfinalizedPricesMY"), "soybean")
     }
   })
@@ -4404,37 +4551,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSMYdistPlotV2 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV2[[yearTSMYV2()]]$TSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV2[[yearTSMYV2()]]$TSMYPlot
     }
   })
   
   output$TSMYstorageTablesV2 = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV2[[yearTSMYV2()]]$`TS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV2[[yearTSMYV2()]]$`TS Storage MY`)
     }
   })
   
   output$TSMYsummaryTablesV2 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV2[[yearTSMYV2()]]$`TS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV2[[yearTSMYV2()]]$`TS Sales Summary MY`)
     }
   })
   
   output$TSMYyearTableV2 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV2, "TSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV2, "TSfinalizedPricesMY"), "soybean")
     }
   })
@@ -4460,37 +4607,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSMYdistPlotV3 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV3[[yearTSMYV3()]]$TSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV3[[yearTSMYV3()]]$TSMYPlot
     }
   })
   
   output$TSMYstorageTablesV3 = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV3[[yearTSMYV3()]]$`TS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV3[[yearTSMYV3()]]$`TS Storage MY`)
     }
   })
   
   output$TSMYsummaryTablesV3 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV3[[yearTSMYV3()]]$`TS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV3[[yearTSMYV3()]]$`TS Sales Summary MY`)
     }
   })
   
   output$TSMYyearTableV3 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3, "TSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3, "TSfinalizedPricesMY"), "soybean")
     }
   })
@@ -4516,37 +4663,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSMYdistPlotV4 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV4[[yearTSMYV4()]]$TSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV4[[yearTSMYV4()]]$TSMYPlot
     }
   })
   
   output$TSMYstorageTablesV4 = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV4[[yearTSMYV4()]]$`TS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV4[[yearTSMYV4()]]$`TS Storage MY`)
     }
   })
   
   output$TSMYsummaryTablesV4 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV4[[yearTSMYV4()]]$`TS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV4[[yearTSMYV4()]]$`TS Sales Summary MY`)
     }
   })
   
   output$TSMYyearTableV4 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV4, "TSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV4, "TSfinalizedPricesMY"), "soybean")
     }
   })
@@ -4572,37 +4719,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSMYdistPlotV5 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV5[[yearTSMYV5()]]$TSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV5[[yearTSMYV5()]]$TSMYPlot
     }
   })
   
   output$TSMYstorageTablesV5 = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV5[[yearTSMYV5()]]$`TS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV5[[yearTSMYV5()]]$`TS Storage MY`)
     }
   })
   
   output$TSMYsummaryTablesV5 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV5[[yearTSMYV5()]]$`TS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV5[[yearTSMYV5()]]$`TS Sales Summary MY`)
     }
   })
   
   output$TSMYyearTableV5 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV5, "TSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV5, "TSfinalizedPricesMY"), "soybean")
     }
   })
@@ -4628,37 +4775,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSMYdistPlotV6 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV6[[yearTSMYV6()]]$TSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV6[[yearTSMYV6()]]$TSMYPlot
     }
   })
   
   output$TSMYstorageTablesV6 = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV6[[yearTSMYV6()]]$`TS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV6[[yearTSMYV6()]]$`TS Storage MY`)
     }
   })
   
   output$TSMYsummaryTablesV6 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV6[[yearTSMYV6()]]$`TS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV6[[yearTSMYV6()]]$`TS Sales Summary MY`)
     }
   })
   
   output$TSMYyearTableV6 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV6, "TSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV6, "TSfinalizedPricesMY"), "soybean")
     }
   })
@@ -4684,37 +4831,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSMYdistPlotV3Base <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV3Base[[yearTSMYV3Base()]]$TSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV3Base[[yearTSMYV3Base()]]$TSMYPlot
     }
   })
   
   output$TSMYstorageTablesV3Base = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV3Base[[yearTSMYV3Base()]]$`TS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV3Base[[yearTSMYV3Base()]]$`TS Storage MY`)
     }
   })
   
   output$TSMYsummaryTablesV3Base = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV3Base[[yearTSMYV3Base()]]$`TS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV3Base[[yearTSMYV3Base()]]$`TS Sales Summary MY`)
     }
   }) 
   
   output$TSMYyearTableV3Base = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3Base, "TSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3Base, "TSfinalizedPricesMY"), "soybean")
     }
   })
@@ -4740,37 +4887,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSMYdistPlotV3V2 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV3V2[[yearTSMYV3V2()]]$TSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV3V2[[yearTSMYV3V2()]]$TSMYPlot
     }
   })
   
   output$TSMYstorageTablesV3V2 = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV3V2[[yearTSMYV3V2()]]$`TS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV3V2[[yearTSMYV3V2()]]$`TS Storage MY`)
     }
   })
   
   output$TSMYsummaryTablesV3V2 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV3V2[[yearTSMYV3V2()]]$`TS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV3V2[[yearTSMYV3V2()]]$`TS Sales Summary MY`)
     }
   })
   
   output$TSMYyearTableV3V2 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V2, "TSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V2, "TSfinalizedPricesMY"), "soybean")
     }
   })
@@ -4796,37 +4943,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSMYdistPlotV3V3 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV3V3[[yearTSMYV3V3()]]$TSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV3V3[[yearTSMYV3V3()]]$TSMYPlot
     }
   })
   
   output$TSMYstorageTablesV3V3 = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV3V3[[yearTSMYV3V3()]]$`TS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV3V3[[yearTSMYV3V3()]]$`TS Storage MY`)
     }
   })
   
   output$TSMYsummaryTablesV3V3 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV3V3[[yearTSMYV3V3()]]$`TS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV3V3[[yearTSMYV3V3()]]$`TS Sales Summary MY`)
     }
   })
   
   output$TSMYyearTableV3V3 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V3, "TSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V3, "TSfinalizedPricesMY"), "soybean")
     }
   })
@@ -4852,37 +4999,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSMYdistPlotV3V4 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV3V4[[yearTSMYV3V4()]]$TSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV3V4[[yearTSMYV3V4()]]$TSMYPlot
     }
   })
   
   output$TSMYstorageTablesV3V4 = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV3V4[[yearTSMYV3V4()]]$`TS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV3V4[[yearTSMYV3V4()]]$`TS Storage MY`)
     }
   })
   
   output$TSMYsummaryTablesV3V4 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV3V4[[yearTSMYV3V4()]]$`TS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV3V4[[yearTSMYV3V4()]]$`TS Sales Summary MY`)
     }
   })
   
   output$TSMYyearTableV3V4 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V4, "TSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V4, "TSfinalizedPricesMY"), "soybean")
     }
   })
@@ -4908,37 +5055,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSMYdistPlotV3V5 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV3V5[[yearTSMYV3V5()]]$TSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV3V5[[yearTSMYV3V5()]]$TSMYPlot
     }
   })
   
   output$TSMYstorageTablesV3V5 = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV3V5[[yearTSMYV3V5()]]$`TS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV3V5[[yearTSMYV3V5()]]$`TS Storage MY`)
     }
   })
   
   output$TSMYsummaryTablesV3V5 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV3V5[[yearTSMYV3V5()]]$`TS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV3V5[[yearTSMYV3V5()]]$`TS Sales Summary MY`)
     }
   })
   
   output$TSMYyearTableV3V5 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V5, "TSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V5, "TSfinalizedPricesMY"), "soybean")
     }
   })
@@ -4964,37 +5111,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSMYdistPlotV3V6 <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsV3V6[[yearTSMYV3V6()]]$TSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsV3V6[[yearTSMYV3V6()]]$TSMYPlot
     }
   })
   
   output$TSMYstorageTablesV3V6 = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsV3V6[[yearTSMYV3V6()]]$`TS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsV3V6[[yearTSMYV3V6()]]$`TS Storage MY`)
     }
   })
   
   output$TSMYsummaryTablesV3V6 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsV3V6[[yearTSMYV3V6()]]$`TS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsV3V6[[yearTSMYV3V6()]]$`TS Sales Summary MY`)
     }
   })
   
   output$TSMYyearTableV3V6 = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornV3V6, "TSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanV3V6, "TSfinalizedPricesMY"), "soybean")
     }
   })
@@ -5020,37 +5167,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSMYdistPlotMarch <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsMarch[[yearTSMYMarch()]]$TSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsMarch[[yearTSMYMarch()]]$TSMYPlot
     }
   })
   
   output$TSMYstorageTablesMarch = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsMarch[[yearTSMYMarch()]]$`TS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsMarch[[yearTSMYMarch()]]$`TS Storage MY`)
     }
   })
   
   output$TSMYsummaryTablesMarch = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsMarch[[yearTSMYMarch()]]$`TS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsMarch[[yearTSMYMarch()]]$`TS Sales Summary MY`)
     }
   })
   
   output$TSMYyearTableMarch = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "TSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "TSfinalizedPricesMY"), "soybean")
     }
   })
@@ -5076,37 +5223,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$TSMYdistPlotMarchBaselines <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsMarchBaselines[[yearTSMYMarchBaselines()]]$TSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsMarchBaselines[[yearTSMYMarchBaselines()]]$TSMYPlot
     }
   })
   
   output$TSMYstorageTablesMarchBaselines = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsMarchBaselines[[yearTSMYMarchBaselines()]]$`TS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsMarchBaselines[[yearTSMYMarchBaselines()]]$`TS Storage MY`)
     }
   })
   
   output$TSMYsummaryTablesMarchBaselines = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsMarchBaselines[[yearTSMYMarchBaselines()]]$`TS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsMarchBaselines[[yearTSMYMarchBaselines()]]$`TS Sales Summary MY`)
     }
   })
   
   output$TSMYyearTableMarchBaselines = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "TSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "TSfinalizedPricesMY"), "soybean")
     }
   })
@@ -5132,37 +5279,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$SSMYdistPlot <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsBase[[yearSSMY()]]$SSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsBase[[yearSSMY()]]$SSMYPlot
     }
   })
   
   output$SSMYstorageTables = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsBase[[yearSSMY()]]$`SS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsBase[[yearSSMY()]]$`SS Storage MY`)
     }
   })
   
   output$SSMYsummaryTables = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsBase[[yearSSMY()]]$`SS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsBase[[yearSSMY()]]$`SS Sales Summary MY`)
     }
   })
   
   output$SSMYyearTable = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornBase, "SSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanBase, "SSfinalizedPricesMY"), "soybean")
     }
   })
@@ -5188,37 +5335,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$SSMYdistPlotMarch <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsMarch[[yearSSMYMarch()]]$SSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsMarch[[yearSSMYMarch()]]$SSMYPlot
     }
   })
   
   output$SSMYstorageTablesMarch = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsMarch[[yearSSMYMarch()]]$`SS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsMarch[[yearSSMYMarch()]]$`SS Storage MY`)
     }
   })
   
   output$SSMYsummaryTablesMarch = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsMarch[[yearSSMYMarch()]]$`SS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsMarch[[yearSSMYMarch()]]$`SS Sales Summary MY`)
     }
   })
   
   output$SSMYyearTableMarch = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarch, "SSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarch, "SSfinalizedPricesMY"), "soybean")
     }
   })
@@ -5244,37 +5391,37 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$SSMYdistPlotMarchBaselines <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsMarchBaselines[[yearSSMYMarchBaselines()]]$SSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsMarchBaselines[[yearSSMYMarchBaselines()]]$SSMYPlot
     }
   })
   
   output$SSMYstorageTablesMarchBaselines = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsMarchBaselines[[yearSSMYMarchBaselines()]]$`SS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsMarchBaselines[[yearSSMYMarchBaselines()]]$`SS Storage MY`)
     }
   })
   
   output$SSMYsummaryTablesMarchBaselines = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsMarchBaselines[[yearSSMYMarchBaselines()]]$`SS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsMarchBaselines[[yearSSMYMarchBaselines()]]$`SS Sales Summary MY`)
     }
   })
   
   output$SSMYyearTableMarchBaselines = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornMarchBaselines, "SSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanMarchBaselines, "SSfinalizedPricesMY"), "soybean")
     }
   })
@@ -5304,38 +5451,94 @@ server <- shinyServer(function(input,output,session){
   })
   
   output$SSMYdistPlotHarvestTime <- renderPlot({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       Corn_CropYearObjectsHarvestTime[[yearSSMYHarvestTime()]]$SSMYPlot
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       Soybean_CropYearObjectsHarvestTime[[yearSSMYHarvestTime()]]$SSMYPlot
     }
   })
   
   output$SSMYstorageTablesHarvestTime = renderDataTable({
-    if(input$cropType == "Corn") {
+    if (input$cropType == "Corn") {
       getTables(Corn_CropYearObjectsHarvestTime[[yearSSMYHarvestTime()]]$`SS Storage MY`)
     }
-    else if(input$cropType == "Soybeans") {
+    else if (input$cropType == "Soybeans") {
       getTables(Soybean_CropYearObjectsHarvestTime[[yearSSMYHarvestTime()]]$`SS Storage MY`)
     }
   })
   
   output$SSMYsummaryTablesHarvestTime = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getSalesTable(Corn_CropYearObjectsHarvestTime[[yearSSMYHarvestTime()]]$`SS Sales Summary MY`)
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getSalesTable(Soybean_CropYearObjectsHarvestTime[[yearSSMYHarvestTime()]]$`SS Sales Summary MY`)
     }
   })
   
   output$SSMYyearTableHarvestTime = renderDataTable({
-    if (input$cropType == "Corn"){
+    if (input$cropType == "Corn") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCornHarvestTime, "SSfinalizedPricesMY"), "corn")
     }
-    else if (input$cropType == "Soybeans"){
+    else if (input$cropType == "Soybeans") {
       getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybeanHarvestTime, "SSfinalizedPricesMY"), "soybean")
+    }
+  })
+  
+  
+  #################################################################################################
+  # Seasonal Sales Multi Year VERSION 404020
+  #################################################################################################
+  
+  
+  yearSSMY404020 <- reactive({
+    switch(input$yearSSMY404020,
+           "2008-09" = 1,
+           "2009-10" = 2,
+           "2010-11" = 3,
+           "2011-12" = 4,
+           "2012-13" = 5,
+           "2013-14" = 6,
+           "2014-15" = 7,
+           "2015-16" = 8,
+           "2016-17" = 9,
+           "2017-18" = 10)
+  })
+  
+  output$SSMYdistPlot404020 <- renderPlot({
+    if (input$cropType == "Corn") {
+      Corn_CropYearObjects404020[[yearSSMY404020()]]$SSMYPlot
+    }
+    else if (input$cropType == "Soybeans") {
+      Soybean_CropYearObjects404020[[yearSSMY404020()]]$SSMYPlot
+    }
+  })
+  
+  output$SSMYstorageTables404020 = renderDataTable({
+    if (input$cropType == "Corn") {
+      getTables(Corn_CropYearObjects404020[[yearSSMY404020()]]$`SS Storage MY`)
+    }
+    else if (input$cropType == "Soybeans") {
+      getTables(Soybean_CropYearObjects404020[[yearSSMY404020()]]$`SS Storage MY`)
+    }
+  })
+  
+  output$SSMYsummaryTables404020 = renderDataTable({
+    if (input$cropType == "Corn") {
+      getSalesTable(Corn_CropYearObjects404020[[yearSSMY404020()]]$`SS Sales Summary MY`)
+    }
+    else if (input$cropType == "Soybeans") {
+      getSalesTable(Soybean_CropYearObjects404020[[yearSSMY404020()]]$`SS Sales Summary MY`)
+    }
+  })
+  
+  output$SSMYyearTable404020 = renderDataTable({
+    if (input$cropType == "Corn") {
+      getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectCorn404020, "SSfinalizedPricesMY"), "corn")
+    }
+    else if (input$cropType == "Soybeans") {
+      getYearlyResultsTable(yearlyResultsByStrategy(finalizedPriceObjectSoybean404020, "SSfinalizedPricesMY"), "soybean")
     }
   })
   
