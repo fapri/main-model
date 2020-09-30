@@ -1,25 +1,25 @@
 ---
-title: "Marketing Strategy Documentation Guide"
+  title: "Marketing Strategy Documentation Guide"
 output:
   html_document:
-    toc: false
-    toc_float: true
+  toc: false
+toc_float: true
 
 ---
-
-## Welcome to our site!
-This site contains the aggregation of information for our models. Use the tabs 
+  
+  ## Welcome to our site!
+  This site contains the aggregation of information for our models. Use the tabs 
 below to see the data and documentation.
 
 Mission: Can FAPRI Baselines be used to effectively market crop?
-
   
-## {.tabset .tabset-fade}
-
-### Data
-
-<h1>Futures Pricing Data:</h1>
-<i><a href = "https://www.trackntrade.com/futures/eod/">Source</a>: Track n' Trade EOD Futures</i>
+  
+  ## {.tabset .tabset-fade}
+  
+  ### Data
+  
+  <h1>Futures Pricing Data:</h1>
+  <i><a href = "https://www.trackntrade.com/futures/eod/">Source</a>: Track n' Trade EOD Futures</i>
 
 
 <h1>FAPRI Baseline Data:</h1>
@@ -96,6 +96,7 @@ In our price objective and trailing stop strategies, not all sales that are trig
 * Only up to 50% of crop can be sold in the pre-harvest. This should not be confused as a quota we need to reach. We can sell less than 50%, but never more than. In the post-harvest we sell out our remaining crop. In multi-year, this percentage increase to 60%.
 
 * During some intervals we limit sales based on if a sale has already been actualized in that percentile. The diagram below shows the timeline for our marketing year and when sales are limited, unlimited, or just not allowed. During the limited times, we only limit price objective and trailing stop sales. Only one sale can be actualized per percentile. For example, if we are in a limited interval for the price objective strategy and have already actualized a 70th percentile sale, if another 70th percentile sale is triggered later in the interval it would not be actualized due to the fact that we already have a 70th percentile sale.
+<center>![](https://raw.githubusercontent.com/fapri/main-model/master/Documentation/limitingSalesChart.png)</center>
 
 * Seasonal Sales are not to be made when the market is at or above the 70th percentile.
 
