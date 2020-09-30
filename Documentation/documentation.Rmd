@@ -1,0 +1,109 @@
+---
+title: "Marketing Strategy Documentation Guide"
+output:
+  html_document:
+    toc: false
+    toc_float: true
+
+---
+
+## Welcome to our site!
+This site contains the aggregation of information for our models. Use the tabs 
+below to see the data and documentation.
+
+Mission: Can FAPRI Baselines be used to effectively market crop?
+
+  
+## {.tabset .tabset-fade}
+
+### Data
+
+<h1>Futures Pricing Data:</h1>
+<i><a href = "https://www.trackntrade.com/futures/eod/">Source</a>: Track n' Trade EOD Futures</i>
+
+
+<h1>FAPRI Baseline Data:</h1>
+<i><a href = "https://www.fapri.missouri.edu/publications/outlook/">Source</a>: FAPRI-MU Baseline Outlook (March and August)</i>
+
+
+<h1>Basis Data:</h1>
+<i><a href = "https://www.ers.usda.gov/data-products/season-average-price-forecasts/">Source</a>: USDA ERS Season-Average Price Forecasts</i>
+
+
+<h1>USDA Averages:</h1>
+<i><a href = "https://www.ers.usda.gov/data-products/season-average-price-forecasts/">Source</a>: USDA ERS Season-Average Price Forecasts</i>
+
+
+<h1>Codebase:</h1>
+<i><a href = "https://github.com/fapri/main-model">Source</a>: GitHub</i>
+
+
+
+### Model Constraints
+
+
+
+
+
+### Strategies
+
+<h1>Price Objective:</h1>
+
+Our Price Objective strategy can be defined as our upside strategy. FAPRI’s 
+baseline ranges are used for this strategy. As prices trend higher, sales are 
+triggered when a price hits or goes up through a higher baseline. For example, 
+if the market was at the 90th percentile but then moved through the 95th 
+percentile, a sale would be triggered. In general, Price Objective sales are 
+made at 10%. It is important to note that just because a sale is triggered 
+does not mean it will be actualized.
+
+
+<h1>Trailing Stop:</h1>
+
+Our Trailing Stop strategy can be defined as our downside strategy. FAPRI’s 
+baseline ranges are used for this strategy. As prices trend higher, sales are 
+triggered when a price falls of goes down through a lower baseline. For 
+example, if the market was at the 90th percentile but then moved through the 
+80th percentile, a sale would be triggered. Because of the way this strategy 
+is defined, the highest price will never be captured. In general, Trailing 
+Stop sales are made at 10%. It is important to note that just because a sale 
+is triggered does not mean it will be actualized.
+
+
+<h1>Seasonal Sales:</h1>
+
+It is common knowledge that commodity markets tend to have seasonal trends. 
+Prices rise in the spring, when supplies get tighter, and decline in the fall. 
+Because of these historical trends, we assume that prices will generally be 
+highest in March and June of each crop year for corn, and May and July for 
+soybeans. In this strategy, seasonal sales are made on the 10th and 20th of 
+March and June (May and July for soybeans) and no other types of sales are 
+made. Seasonal sales will always be made at 12.5% of crop production. This 
+is because there are 8 seasonal sale opportunities in each marketing year, 
+and we sell an equal share of crop for each one. 
+
+
+
+### Actualization
+
+In our price objective and trailing stop strategies, not all sales that are triggered are actualized. In other words, we don’t make a sale each time a price triggers a trailing stop or price objective sale. We have a set of rules that help us decide which sales are actualized as follows:
+
+* No sales can be made within 7 days of the last sale. If a sale was made on a Tuesday, another sale cannot be made until the following Tuesday. If a sale was made on the 5th, another sale could not be made until the 12th. You do not need to wait until the 8th day to make a sale.
+  
+  + The exception to this rule is with the End of the Year Trailing Stop. Since we are trying to sell out, we can make sales multiple days in a row if necessary.
+<br>
+<br>
+* Only up to 50% of crop can be sold in the pre-harvest. This should not be confused as a quota we need to reach. We can sell less than 50%, but never more than. In the post-harvest we sell out our remaining crop. In multi-year, this percentage increase to 60%.
+
+* During some intervals we limit sales based on if a sale has already been actualized in that percentile. The diagram below shows the timeline for our marketing year and when sales are limited, unlimited, or just not allowed. During the limited times, we only limit price objective and trailing stop sales. Only one sale can be actualized per percentile. For example, if we are in a limited interval for the price objective strategy and have already actualized a 70th percentile sale, if another 70th percentile sale is triggered later in the interval it would not be actualized due to the fact that we already have a 70th percentile sale.
+
+* Seasonal Sales are not to be made when the market is at or above the 70th percentile.
+
+* On every first day of March and September, when there is a baseline change, the previous baseline and percentiles should be used to determine which percentile the futures market price is at for that day. Without this rule, it would be possible for a sale to be made without the price changing. Additionally, the September futures market price on the last day of August must be considered when determining which percentile the previous day’s future market price was at on the first day of September. In other words, on the first day of September, refer to the previous baseline and percentiles to determine the percentile for both the current day and the previous day, but look at the September futures market price on the previous day. 
+
+
+
+
+##
+
+
