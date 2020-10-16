@@ -612,10 +612,10 @@ makeResultsTable = function(finalizedPrices) {
   preharvestSum = sum(finalizedPrices$preharvestPercent)
   postharvestSum = sum(finalizedPrices$postharvestPercent)
   
-  resultsTable$`No Storage`[1] = ((resultsTable$`No Storage`[2] * (preharvestSum * 0.01)) + (resultsTable$`No Storage`[3] * (postharvestSum * 0.01)))
-  / ((preharvestSum + postharvestSum) * 0.01)
-  resultsTable$`Storage`[1] = ((resultsTable$`Storage`[2] * (preharvestSum * 0.01)) + (resultsTable$`Storage`[3] * (postharvestSum * 0.01)))
-  / ((preharvestSum + postharvestSum) * 0.01)
+  resultsTable$`No Storage`[1] = ((resultsTable$`No Storage`[2] * (preharvestSum * 0.01)) + 
+                                  (resultsTable$`No Storage`[3] * (postharvestSum * 0.01))) / ((preharvestSum + postharvestSum) * 0.01)
+  resultsTable$`Storage`[1] = ((resultsTable$`Storage`[2] * (preharvestSum * 0.01)) + 
+                                 (resultsTable$`Storage`[3] * (postharvestSum * 0.01))) / ((preharvestSum + postharvestSum) * 0.01)
   
   # USDA Average price inputs
   if (type == "corn") {
