@@ -10,11 +10,11 @@ library(ggplot2)
 ####################################################################################
 
 # Load GitHub links for remote access to appObjects and HTML files
-load(url("https://github.com//fapri/main-model/blob/master/Application/cornV1.RData?raw=true"))
-load(url("https://github.com/fapri/main-model//blob/master/Application/cornV3.RData?raw=true"))
-load(url("https://github.com/fapri/main-model/blob/master/Application/soybeanV1.RData?raw=true"))
-load(url("https://github.com/fapri/main-model/blob/master/Application/soybeanV3.RData?raw=true"))
-load(url("https://github.com//fapri/main-model/blob/master/Application/otherStrategies.RData?raw=true"))
+load(url("https://github.com/fapri/main-model/blob/feature/newCropYears/Application/cornV1.RData?raw=true"))
+load(url("https://github.com/fapri/main-model//blob/feature/newCropYears/Application/cornV3.RData?raw=true"))
+load(url("https://github.com/fapri/main-model/blob/feature/newCropYears/Application/soybeanV1.RData?raw=true"))
+load(url("https://github.com/fapri/main-model/blob/feature/newCropYears/Application/soybeanV3.RData?raw=true"))
+load(url("https://github.com/fapri/main-model/blob/feature/newCropYears/Application/otherStrategies.RData?raw=true"))
 
 versionsHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/versions.html")
 indexHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/index.html")
@@ -71,7 +71,7 @@ homePageHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Ap
 # Corn_CropYearObjects404020 = appObjectsCorn404020[[1]]
 # Corn_CropYears404020 = appObjectsCorn404020[[2]]
 # finalizedPriceObjectCorn404020 = appObjectsCorn404020[[3]]
-# 
+#  
 # # Corn V3/__
 # appObjectsCornV3Base = readRDS("appObjectsCornV3Base.rds")
 # Corn_CropYearObjectsV3Base = appObjectsCornV3Base[[1]]
@@ -507,10 +507,10 @@ getYearlyResultsTable = function(data, cropType) {
   rownames(data) <- c()
   data = cbind("Crop Year" = data[,1], round(data[, 2:6], digits = 2))
   if (cropType == "corn") {
-    tableCaption = tags$caption("USDA Average: $4.66", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;")
+    tableCaption = tags$caption("USDA Average: $4.59", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;")
   }
   if (cropType == "soybean") {
-    tableCaption = tags$caption("USDA Average: $11.26", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;")
+    tableCaption = tags$caption("USDA Average: $10.90", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;")
   }
   table = as.datatable(formattable(data, 
                                    align = "c",
@@ -2486,22 +2486,22 @@ server <- shinyServer(function(input,output,session) {
   output$fullResultsTable = renderDataTable({
     if (input$cropType == "Corn") {
       as.datatable(getFullResultsTable(nonMultiYearCorn), rownames = FALSE, 
-                   caption = tags$caption("USDA Average: $4.66", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+                   caption = tags$caption("USDA Average: $4.59", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
     else if (input$cropType == "Soybeans") {
       as.datatable(getFullResultsTable(nonMultiYearSoybean), rownames = FALSE, 
-                   caption = tags$caption("USDA Average: $11.26", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+                   caption = tags$caption("USDA Average: $10.90", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
   output$fullResultsTableMY = renderDataTable({
     if (input$cropType == "Corn") {
       as.datatable(getFullResultsTable(multiYearCorn), rownames = FALSE, 
-                   caption = tags$caption("USDA Average: $4.66", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+                   caption = tags$caption("USDA Average: $4.59", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
     else if (input$cropType == "Soybeans") {
       as.datatable(getFullResultsTable(multiYearSoybean), rownames = FALSE, 
-                   caption = tags$caption("USDA Average: $11.26", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
+                   caption = tags$caption("USDA Average: $10.90", style = "color:#000000; font-weight:bold; font-size:100%; text-align:center;"), options = list(dom = 't', pageLength = 30))
     }
   })
   
