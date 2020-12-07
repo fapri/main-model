@@ -22,6 +22,7 @@ load(url("https://github.com/fapri/main-model/blob/feature/newCropYears/Applicat
 versionsHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/versions.html")
 indexHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/index.html")
 homePageHTML = url("https://raw.githubusercontent.com/fapri/main-model/master/Application/homePage.html")
+rulesHTML = "rules.html"
 
 # versionsHTML = "versions.html"
 # indexHTML = "index.html"
@@ -2437,6 +2438,15 @@ ui <- shinyUI(
              tabPanel("Version Descriptions",
                       fluidPage(
                         fluidRow(column(12, includeHTML(versionsHTML)
+                                        # fluidRow(column(12, includeHTML("versions.html")
+                        )
+                        
+                        )
+                      )
+             ),
+             tabPanel("Rules",
+                      fluidPage(
+                        fluidRow(column(12, includeHTML(rulesHTML)
                                         # fluidRow(column(12, includeHTML("versions.html")
                         )
                         
